@@ -1,0 +1,150 @@
+# config.yaml
+# to install yaml: conda install -c anaconda pyyaml
+# ==========================================================================================
+# 1. General Configuration
+# ==========================================================================================
+# General settings for the entire project
+generalSettings:
+  # Directories
+  directories:
+    dataPath: "/home/ignaciobl2004/MVTTools/data" # data path
+    processedDataPath: "/home/ignaciobl2004/MVTTools/processed" # processed data path
+    sharedObjectsPath: "./cFiles" # shared objects path
+    logPath: "./logs" # log path
+
+  # Logging settings
+  logging:
+    logToFile: true # if true, logs to file
+
+
+  # system settings
+  system:
+    highRAMSystem: false # if true, uses high RAM system settings
+
+  # other settings
+  floatType: "float32" # data type for analysis, options: any valid numpy float type
+  intType: "int32" # data type for analysis, options: any valid numpy int type
+
+
+
+# ==========================================================================================
+# Data Pre-processing Configuration
+# ==========================================================================================
+preProcessingConfig:
+  # General settings
+  general:
+    downloadData: true # if true, downloads data from the source
+    deleteWhenDone: true # if true, deletes downloaded files after processing
+
+  # ======================================================================================
+  # 2.1 Swift BAT Configuration
+  # ======================================================================================
+  # Configuration for Swift BAT data pre-processing
+  swiftBATConfig:
+    # Download settings
+    download:
+      energyRange: "15-150" # energy range
+    # Processing settings
+    processing:
+      initialBinSize: 100e-6 # initial bin size
+      positionTolerance: 0.01 # absolute tolerance for position matching in degrees
+      fullBurst: false # if true, extracts the full burst light curve, otherwise extracts a slice
+      sliceDuration: 60.0 # duration of the slice in seconds, only used if fullBurst is False
+
+
+  # ======================================================================================
+  # 2.2 Fermi GMB Configuration
+  # ======================================================================================
+  # Configuration for Fermi GMB data pre-processing
+
+  # placeholder for future Fermi GMB configuration settings change values later
+  fermiGMBConfig:
+    # Download settings
+    download:
+      energyRange: "8-1000" # energy range
+    # Processing settings
+    processing:
+      initialBinSize: 64e-3 # initial bin size
+      maxDetectorCombinations: 5 # maximum number of detector combinations to use for analysis HIGH MEMORY USAGE!
+
+  # ======================================================================================
+  # 2.3 SVOM Configuration
+  # ======================================================================================
+  # Configuration for SVOM data pre-processing
+  SVOMConfig:
+    # Download settings??? Not sure if SVOM will have a download portal?
+    download:
+      energyRange: "15-350" # energy range
+    # Processing settings
+    processing:
+      initialBinSize: 100e-6 # initial bin size
+
+  # placeholder for future SVOM configuration settings change values later
+
+
+# ==========================================================================================
+# 3. MVT Analysis Configuration
+# ==========================================================================================
+mvtAnalysisConfig:
+  # Analysis settings
+  signalToNoiseThreshold: 5.0 # signal-to-noise threshold
+  significanceSigmaThreshold: 3.0 # significance sigma threshold for power over background noise
+  numberOfRealisations: 300 # number of realizations for MVT uncertainty estimation
+
+  haarPowerModelSettings:
+    # Power model settings
+    maximumBinSizeSeconds: 100.0 # maximum bin size in seconds
+    maxBackgroundTimescale: 0.01 # maximum background timescale in seconds
+    totalSignalRepetitions: 2 # number of times to repeat the time series 
+    shouldGeneratePlots: false # if true, generates plots for power model analysis do not use if using time-resolved MVT analysis!
+    outputBinningRatio: 4 # output binning ratio larger numbers result in more bins
+    shouldVerifyZeroBaseline: false # if true, generates a plot of the zero level
+    scalingAdjustmentFactor: -1.0 # scaling adjustment factor, set to negative to have it estimated
+    shouldPrintDiagnostics: false # if true, prints diagnostic information TODO: this needs to be switched to logging
+    shouldApplyStatisticalWeight: true # if true, applies statistical weight to the analysis
+    outputExportFilename: "test" # output export filename for power model analysis TODO: this needs to be consistent with filestructure ect.
+
+  timeResolvedMVTSettings:
+    # Time-resolved MVT settings
+    timeWindowSize: 2.0 # time window size in seconds
+    stepDurationSeconds: 0.1 # step duration in seconds for sliding window analysis
+
+
+
+# ==========================================================================================
+# 4. Logging Configuration
+# ==========================================================================================
+loggingConfigs:
+  version: 1
+  disable_existing_loggers: false
+
+  formatters:
+    simple:
+      format: "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+      datefmt: "%Y-%m-%d %H:%M:%S"
+
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: DEBUG
+      formatter: simple
+      stream: ext://sys.stdout
+
+    file:
+      class: logging.FileHandler
+      level: DEBUG
+      formatter: simple
+      filename: ""  # Placeholder: Python will overwrite this dynamically
+      mode: "a"     # 'w' starts a fresh file; change to 'a' to append
+
+  loggers:
+    "":
+      level: DEBUG
+      handlers: [console, file]  # Leave both default handlers active here
+      propagate: false
+
+    # Explicitly force matplotlib to only log warnings/errors
+    matplotlib:
+      level: WARNING
+      propagate: true  # Allows any valid warnings 
+
