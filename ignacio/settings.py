@@ -30,3 +30,11 @@ BKG_ORDER = 3
 
 BAD_TIME_INTERVAL = (3.0, 7.0)             # s, pile-up (Dichiara)
 PRECURSOR = (-0.064, 0.320)                # s, precursor spectrum (Dichiara)
+
+# Spectral fits (09, 10). Channels overlapping these ranges are fitted; these
+# are the ranges that reproduce Dichiara's Band fit, with 484 d.o.f. against their
+# 480 (my inference, the paper does not give them, see 09_precursor_band_fit.ipynb)
+SPECTRAL_DETECTORS = ["n6", "n8", "na", "b1"]
+FIT_RANGE_NAI = (8.0, 900.0)               # keV
+FIT_RANGE_BGO = (200.0, 40000.0)           # keV
+FLUX_RANGE = (10.0, 1000.0)                # keV, Dichiara Table 2

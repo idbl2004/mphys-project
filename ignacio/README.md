@@ -14,8 +14,12 @@ Burst, data folder, detectors, bands and time windows are in `settings.py`.
 | `05_background_subtracted.py` | poly3 background, dead-time corrected net counts | precursor 5995 +/- 86 counts soft, 37 +/- 18 hard (not detected) |
 | `06_pileup_deadtime_gaps.py` | live fraction and data gaps per detector | b1 live fraction down to 0.77; ~2 ms gaps at 4.80, 5.83, 6.85 s in all four detectors |
 | `07_pileup_spectral_test.py` | detector hardness ratios vs rate | no evidence of pile-up; needs forward-folding with .rsp2 |
+| `08_precursor_spectrum.ipynb` | precursor count spectra (n6, n8, na, b1), poly3 background per channel, responses; writes `spectra/` | net 1623, 883, 6184, 2829 counts |
+| `09_precursor_band_fit.ipynb` | Band fit, n6 alone and joint; which choices move the result away from GDT's defaults | E_peak 170.3 ± 5.3 keV, α −0.63 ± 0.04, β −2.95 ± 0.10, C-stat 568.7/484 |
+| `10_precursor_flux_and_models.ipynb` | 10–1000 keV flux, νFν plot (Fig. 3), BB / Comptonized / Band+BB | flux 3.32 ± 0.04 × 10⁻⁵ erg/cm²/s; all of Table 2 reproduced |
+| `11_robustness_checks.ipynb` | background convention, P/PG/W-stat, response, background order, channel cuts, simulated errors, Band+BB null test | parameters stable to <1 keV except channel cuts (E_peak 152–170 keV over cuts giving 480 dof) |
 
-`lightcurve_tools.py` holds the functions the scripts share.
+`lightcurve_tools.py` holds the functions the scripts share; `spectral_fit_tools.py` the ones for spectral fits.
 
 ## Where things live
 
@@ -30,4 +34,4 @@ Burst, data folder, detectors, bands and time windows are in `settings.py`.
 2. Background order check (poly 1-4)
 3. Why these detectors (angles / S/N)
 4. Bin size check (8 and 32 ms)
-5. Precursor Band fit with the .rsp2 responses, compare with Dichiara's 170.3 +/- 4.7 keV
+5. ~~Precursor Band fit~~ done (09, 10); open: is Band+BB really not significant? (ΔC = 27 for 2 parameters, near the iodine K-edge)
