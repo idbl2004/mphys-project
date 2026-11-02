@@ -1,37 +1,61 @@
-# GRB 230307A light curves (MPhys, Ignacio)
+# GRB 230307A: light curves, precursor and time-resolved spectra (MPhys, Ignacio)
 
-Reproduction of Dichiara et al. (2023, ApJL 954, L29) Fig. 1 from Fermi/GBM
-TTE data, then checks that go beyond it. Run from `~/MVTTools` as
-`python ignacio/03_reproduce_dichiara_fig1.py` (etc.). Figures go to `ignacio/figures/`.
-Burst, data folder, detectors, bands and time windows are in `settings.py`.
+Reproduction of Dichiara et al. (2023, ApJL 954, L29) from Fermi/GBM TTE data, Fig. 1 to Table 2, then checks
+that go beyond the paper, and the same pipeline run on GRB 211211A. Scripts 01-07 run from the repo root
+(`python ignacio/03_reproduce_dichiara_fig1.py`); notebooks 08-14 run from `ignacio/` with the MVTEnv kernel, in
+order. Figures go to `ignacio/figures/`. Burst, data folder, detectors, bands and time windows are in
+`settings.py` (`settings_211211A.py` for GRB 211211A).
 
-| Script | What it does | Key result |
+| Script / notebook | What it does | Key result |
 |---|---|---|
-| `01_first_lightcurve.py` | n6 light curve, 16 ms, 8-1000 keV | double-peaked precursor at ~0.03 and ~0.14 s |
+| `01_first_lightcurve.py` | n6 light curve, 16 ms, 8-1000 keV | double-peaked precursor |
 | `02_four_detectors.py` | same, summed over n6, n8, na, b1 | |
 | `03_reproduce_dichiara_fig1.py` | Fig. 1: 7-99 keV and 883-38367 keV | soft 42 pre-burst, peak 604 at 6.104 s; hard 11, peak 579 at 1.832 s |
 | `04_check_hard_band.py` | which detectors make the hard band | all four detectors match the paper; b1 alone is ~20% short |
 | `05_background_subtracted.py` | poly3 background, dead-time corrected net counts | precursor 5995 +/- 86 counts soft, 37 +/- 18 hard (not detected) |
 | `06_pileup_deadtime_gaps.py` | live fraction and data gaps per detector | b1 live fraction down to 0.77; ~2 ms gaps at 4.80, 5.83, 6.85 s in all four detectors |
-| `07_pileup_spectral_test.py` | detector hardness ratios vs rate | no evidence of pile-up; needs forward-folding with .rsp2 |
-| `08_precursor_spectrum.ipynb` | precursor count spectra (n6, n8, na, b1), poly3 background per channel, responses; writes `spectra/` | net 1623, 883, 6184, 2829 counts |
-| `09_precursor_band_fit.ipynb` | Band fit, n6 alone and joint; which choices move the result away from GDT's defaults | E_peak 170.3 ± 5.3 keV, α −0.63 ± 0.04, β −2.95 ± 0.10, C-stat 568.7/484 |
-| `10_precursor_flux_and_models.ipynb` | 10–1000 keV flux, νFν plot (Fig. 3), BB / Comptonized / Band+BB | flux 3.32 ± 0.04 × 10⁻⁵ erg/cm²/s; all of Table 2 reproduced |
-| `11_robustness_checks.ipynb` | background convention, P/PG/W-stat, response, background order, channel cuts, simulated errors, Band+BB null test | parameters stable to <1 keV except channel cuts (E_peak 152–170 keV over cuts giving 480 dof) |
+| `07_pileup_spectral_test.py` | detector hardness ratios vs rate | no evidence of pile-up |
+| `08_precursor_spectrum.ipynb` | which detectors see the burst (angles, effective area, counts); precursor count spectra, poly3 background per channel, responses; writes `spectra/` | na is the only NaI with signal below 40 keV (n6 and n8 see the burst 134 and 94 deg off axis); net 1623, 883, 6184, 2829 counts |
+| `09_precursor_band_fit.ipynb` | Band fit, n6 alone and joint; which choices move the result away from GDT's defaults | E_peak 170.3 +/- 5.3 keV, alpha -0.63 +/- 0.04, beta -2.95 +/- 0.10 |
+| `10_precursor_flux_and_models.ipynb` | 10-1000 keV flux, nuFnu plot (Fig. 3), BB / Comptonized / Band+BB, where the models' nuFnu peaks | flux 3.32 +/- 0.04 x 10^-5 erg/cm^2/s; all of Table 2's precursor rows reproduced |
+| `11_robustness_checks.ipynb` | background convention, P/PG/W-stat, response, background order, channel cuts, GDT errors, Band+BB | stable to <1 keV except the channel cuts (E_peak 152-170 keV over cuts giving 480 dof); GDT's errors 3-8x too small |
+| `12_time_resolved_spectra.ipynb` | Band fits in Dichiara's 12 spectral windows and the 2 extra MVT windows; errors, flux, systematics, detector checks, Comptonized vs Band, low-energy shape, GBM catalogue check, precursor structure; writes `shared/epeak_230307A.csv` | E_peak within 0.8 sigma of Table 2 in all 12 windows; catalogue Comptonized fits reproduced; precursor = two pulses with the same E_peak (172 +/- 8 and 169 +/- 8 keV) but alpha softening from -0.43 to -0.77 (3.8 sigma), and no quiet gap before the main emission |
+| `13_epeak_mvt_merge.ipynb` | joins E_peak to MVT by window label; Dichiara Fig. 2; first E_peak vs MVT plot | uses Dichiara's Table 1 MVT until `shared/mvt_230307A.csv` exists |
+| `14_grb211211a.ipynb` | the same pipeline on GRB 211211A, only the settings changed; comparison with Troja et al. (2022) and, slice by slice, Gompertz et al. (2023) | precursor 64-67 keV (Comptonized), then a quiet 0.7-0.9 s gap; E_peak within 2 sigma of Gompertz et al. in 18 of 20 slices and their low-energy break in all 12 where both find one; extended emission agrees with Troja et al. |
 
-`lightcurve_tools.py` holds the functions the scripts share; `spectral_fit_tools.py` the ones for spectral fits.
+`lightcurve_tools.py` holds the light-curve functions; `spectral_fit_tools.py` the spectral-fit ones (including
+the `BandLowBreak` model used in 12 and 14).
+
+## Run times
+
+On my laptop (i7-1255U, 7 GB RAM in WSL), each notebook uses one core and under 1 GB: 08-10 take 2-3 min each,
+11 about 20 min the first time (the 1000 simulated spectra are then saved in `spectra/sim_band_null.npz` and
+reloaded), 12 about 35 min, 13 under a minute and 14 about 1.5-2 h (three models with profile errors in 23
+windows). 08 has to run before 09-12, and 12 before 13 and 14 (they read its E_peak table); otherwise they can
+run side by side.
 
 ## Where things live
 
-- Code: `~/MVTTools/ignacio/` on the laptop, branch `ignacio-setup`, pushed to github.com/idbl2004/MVTTools
-- Data: `~/MVTTools/data/fermiGBM/GRB230307A/current/` (TTE + responses, not in git)
-- Figures: `~/MVTTools/ignacio/figures/`, regenerated by rerunning the scripts
+- Code: `~/mphys_project/ignacio/` (git, branch `precursor-spectrum`, github.com/idbl2004/mphys-project)
+- Data: `~/mphys_project/data/fermiGBM/GRB230307A/current/` and `.../GRB211211A/current/` (TTE, responses, catalogue files)
+- Spectra written by the notebooks: `spectra/` (precursor), `spectra/time_resolved/`, `spectra/time_resolved_211211A/`
+- Shared with the MVT analysis: `shared/` (windows files, E_peak tables, format in `shared/README.md`)
+- Figures: `figures/`, regenerated by rerunning the scripts and notebooks
 - Never commit `config.yaml` or the edited files in `fermiDataTools/`
 
-## Next
+## Open points
 
-1. Precursor properties: start/end (Bayesian blocks), significance, duration, gap to main burst, counts with errors
-2. Background order check (poly 1-4)
-3. Why these detectors (angles / S/N)
-4. Bin size check (8 and 32 ms)
-5. ~~Precursor Band fit~~ done (09, 10); open: is Band+BB really not significant? (ΔC = 27 for 2 parameters, near the iodine K-edge)
+1. The 0.32-3 s flux is ~9% above Dichiara's with the same spectral shape (12, section 9).
+2. alpha is 0.025-0.032 harder than Dichiara's in 13-29 s (2.2-2.6 sigma on the combined errors), not explained
+   by the analysis choices tested.
+3. The Band function doesn't describe the NaI data down to 8 keV in the bright windows: starting the NaI at
+   40 keV moves E_peak by up to ~50 keV, and a two-break model improves the C-stat by 23-325 (12, section 12).
+   na is the only one of the twelve NaI detectors with real effective area below 40 keV for this burst (08), so
+   GBM alone can't tell a low-energy break from na's calibration.
+4. Detector choice: Dichiara's n6 and n8 see the burst 134 and 94 deg off axis, far outside the 60 deg the GBM
+   catalogue allows. With na and b1 alone E_peak comes out 0-14 keV higher, up to 1.8 sigma (12, section 11).
+5. Band+BB for the precursor: Delta C = 27 for 2 parameters, ~17 without na's 30-40 keV channels (11).
+6. GRB 211211A: systematics not run yet. Its E_peak depends strongly on the model in 0-26 s (Band against the
+   two-break model, a factor of ~2), so 14 takes the two-break E_peak where that model is clean and clearly
+   better, while 12 keeps Band for 230307A to compare with Dichiara. Its precursor flux is 1.5-2.7 times
+   Troja et al.'s, with the same E_peak.
