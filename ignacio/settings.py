@@ -28,7 +28,9 @@ PLOT_RANGE = (-5.0, 50.0)                  # s
 BKG_WINDOWS = [(-89.0, -7.0), (162.0, 273.0)]   # s
 BKG_ORDER = 3
 
-BAD_TIME_INTERVAL = (3.0, 7.0)             # s, pile-up (Dichiara)
+BAD_TIME_INTERVAL = (3.0, 7.0)             # s, excluded by Dichiara: TTE packet losses (GCN 33551)
+# s, where the GBM team reports pile-up for this burst (GCN 33551). They also advise caution next to these
+GBM_PILEUP = {"na": (2.5, 7.5), "b1": (2.5, 11.0)}
 PRECURSOR = (-0.064, 0.320)                # s, precursor spectrum (Dichiara)
 
 # Spectral fits (09, 10). Channels overlapping these ranges are fitted; these

@@ -1,10 +1,11 @@
 """
-Is there pulse pile-up in GRB 230307A, and is it what defines the 3-7 s
-bad time interval?
+Can pulse pile-up in the NaI detectors of GRB 230307A be seen by comparing
+detectors? (The 3-7 s interval itself comes from TTE packet losses, see
+15_bright_emission_checks.ipynb, not from pile-up.)
 
 06_pileup_deadtime_gaps.py showed that dead time is as severe at ~1.5-2 s and
 ~8-10 s as inside 3-7 s, so dead time alone doesn't explain why 3-7 s
-was flagged. Pulse pile-up is the other candidate: two photons arriving
+was flagged. Pulse pile-up is a separate effect: two photons arriving
 within ~1 us are recorded as one event with the summed energy. That
 moves counts to higher energies and into the top (overflow) channel, and
 it grows with the square of the rate.
@@ -39,9 +40,10 @@ Result for GRB 230307A: n6/n8 stays at ~1 throughout. na/n8 rises to
 That points to the different detector responses, not pile-up. The size of
 the effect also argues against pile-up: at a few percent of events piled,
 mostly from photons below 100 keV, the 300-850 keV band cannot triple.
-So this test does not show pile-up; a proper test needs the detector
-responses (fit n8, predict na, look for a rate-dependent mismatch), which
-belongs with the spectral fits.
+So this test does not show pile-up, but it could not have ruled it out
+either: it leaves out b1, the detector with the highest rate, and the GBM
+team do report pile-up in na and b1 (GCN 33551). The test that uses the
+detector responses is in 15_bright_emission_checks.ipynb.
 
 Output: 07_pileup_spectral_test.png
 """

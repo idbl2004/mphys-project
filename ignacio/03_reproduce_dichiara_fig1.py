@@ -5,7 +5,7 @@ Fermi/GBM light curves of GRB 230307A (bn230307656) in two energy bands:
     soft  7-99 keV
     hard  883-38367 keV
 16 ms bins, raw counts per bin (no background subtraction), with the
-pile-up bad time interval (3-7 s) marked and an inset on the first 2.5 s.
+bad time interval (3-7 s) marked and an inset on the first 2.5 s.
 
 Detectors
 ---------
@@ -121,7 +121,7 @@ ax.set_ylim(bottom=-10)
 ax.set_xlabel("Time since GBM trigger [s]")
 ax.set_ylabel("Counts [cts/bin]")
 
-# Pile-up interval: dashed line along the bottom, as in the paper
+# Bad time interval: dashed line along the bottom, as in the paper
 ax.hlines(0, *BAD_TIME_INTERVAL, colors="grey", linestyles="--", lw=1.5)
 ax.text(np.mean(BAD_TIME_INTERVAL), 8, "BTI", color="grey", ha="center")
 # Thick bar marking the start of the burst

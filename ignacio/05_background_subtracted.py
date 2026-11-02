@@ -126,7 +126,7 @@ for ax, (name, band) in zip(axes, BANDS.items()):
     ax.plot(fine_t, r["net_uncorrected"], color="black", lw=0.3, alpha=0.6,
             label="without correction")
     ax.axhline(0, color="black", lw=0.6)
-    ax.axvspan(*BAD_TIME_INTERVAL, color="grey", alpha=0.15, label="BTI (pile-up)")
+    ax.axvspan(*BAD_TIME_INTERVAL, color="grey", alpha=0.15, label="BTI")
     ax.set_ylabel("Net counts [cts/bin]")
     ax.legend(loc="upper right")
 axes[-1].set_xlim(*PLOT_RANGE)

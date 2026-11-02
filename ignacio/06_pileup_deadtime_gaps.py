@@ -1,10 +1,11 @@
 """
-How badly is GRB 230307A affected by the detector saturating at 3-7 s?
+How badly is GRB 230307A affected by dead time and lost data around 3-7 s?
 
 Second step past the Fig. 1 reproduction (03_reproduce_dichiara_fig1.py).
-Dichiara (and the GBM team) only flag 3-7 s as a bad time interval and
-exclude it. Here two effects are measured for each detector, using all
-energy channels, since every recorded photon costs the detector time:
+Dichiara exclude 3-7 s. The GBM team (GCN 33551, Dalessi 2023) report TTE
+packet losses at 3-7 s, and pile-up over a longer stretch: 2.5-7.5 s in na
+and 2.5-11 s in b1. Here two effects are measured for each detector, using
+all energy channels, since every recorded photon costs the detector time:
 
 1. Dead time. After each event the electronics are busy for 2.6 us
    (10 us for the overflow channel), so at high rates part of each bin is
@@ -18,8 +19,9 @@ energy channels, since every recorded photon costs the detector time:
 
 Pile-up proper (two photons arriving within ~1 us and being recorded as
 one photon with the summed energy) also distorts the spectrum; that can't
-be undone with counts alone and is why the interval stays excluded from
-spectral fits. This script measures how much is lost, not how to fix it.
+be undone with counts alone. This script measures how much is lost, not how
+to fix it. 15_bright_emission_checks.ipynb works out how much pile-up moves
+E_peak.
 
 Output: 06_pileup_check.png (total rate, live fraction, gaps per detector).
 """

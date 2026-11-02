@@ -7,7 +7,10 @@ Files that the E_peak and MVT analyses both read, so that the two can be joined 
 - **T0** = GBM trigger time: 699896651.671248 s MET for GRB 230307A (bn230307656), 660921004.65092 s MET for
   GRB 211211A (bn211211549). All times are in seconds from T0.
 - **Windows** are joined by their `label`, never by their times.
-- For GRB 230307A, **3-7 s** is the bad time interval (pile-up) and no window overlaps it.
+- For GRB 230307A, **3-7 s** has TTE packet losses and no window overlaps it (Dichiara's choice). The GBM team also
+  report pile-up in na at 2.5-7.5 s and in b1 at 2.5-11 s (GCN 33551), and advise using only na and b1 for this burst.
+  m01, m02, m03 and `t1_07_18` overlap those intervals: see `notes` in the E_peak table and
+  `epeak_230307A_instrument_check.csv`.
 
 ## `windows_230307A.csv`
 
@@ -46,14 +49,44 @@ fit of n6, n8, na and b1 (NaI 8-900 keV, BGO 200 keV-40 MeV), Poisson likelihood
 | `notes` | anything that needs care in that window |
 | `notebook`, `commit`, `run_date` | where the row came from |
 
-Notebook 12 also refits every window with na and b1 alone, the only detectors within 60 deg of this burst
-(section 11). That shift is reported there, not in this file.
+Notebook 12 also refits every window with na and b1 alone, the only detectors within 60 deg of this burst and the
+ones the GBM team recommend (section 11). That shift is reported there, not in this file.
+
+## `moradi2024_table1.csv`
+
+Table 1 of Moradi et al. (2024, arXiv:2410.17189) as published: time-resolved fits of GRB 230307A from GECAM, joined with
+GBM only before T0 + 0.65 s and after T0 + 17.5 s. Used in notebooks 12 and 15 as an independent check, never as a result.
+
+| Column | Meaning |
+|---|---|
+| `t_start`, `t_stop` | time bin, s from T0 |
+| `model` | `band`, `cpl` (Comptonized) or `pl` |
+| `alpha`, `beta`, `Ep_keV` | fit parameters, each with `_err_hi` and `_err_lo` |
+| `flux_erg_cm2_s` | energy flux at 6-8000 keV |
+| `photon_flux`, `photon_flux_err_hi`, `photon_flux_err_lo` | photon flux, as in their table |
+| `cstat`, `dof` | their fit statistic and degrees of freedom |
+
+## `epeak_230307A_instrument_check.csv`
+
+Written by `15_bright_emission_checks.ipynb`. One row per window, kept apart from `epeak_230307A.csv` so that file stays
+the reproduction of Dichiara's analysis.
+
+| Column | Meaning |
+|---|---|
+| `label`, `t_start`, `t_stop`, `Epeak_keV` | as in the E_peak table |
+| `share_na_pileup`, `share_b1_pileup` | share of the window inside the GBM team's pile-up interval for that detector |
+| `b1_max_kcps` | highest recorded rate in b1, 16 ms bins |
+| `pileup_Epeak_ratio_sim`, `pileup_dalpha_sim` | simulated effect of pile-up on E_peak (ratio) and alpha (difference); a check, not a correction |
+| `gecam_Ep_keV`, `gecam_share_of_bins_without_gbm` | energy-weighted mean E_p of the bins of `moradi2024_table1.csv` inside the window, and the share of them with no GBM data |
+| `Epeak_over_gecam` | `Epeak_keV` over that mean: a rough check, since it compares one Band fit with an average of 0.1 s Comptonized fits |
+| `Epeak_instrument_frac` | fractional uncertainty on E_peak from the instruments disagreeing: 0.10, and 0.20 for the precursor (my rounding of notebook 15, sections 6 and 10) |
 
 ## `epeak_mvt_230307A.csv`
 
 Written by `13_epeak_mvt_merge.ipynb`: the rows of `epeak_230307A.csv` that have an MVT value, with the MVT
 columns joined on. `mvt_source` says where the MVT came from (Dichiara et al. 2023, Table 1, until
-`mvt_230307A.csv` exists), and `Epeak_err` is the mean statistical error and the systematic in quadrature.
+`mvt_230307A.csv` exists), `Epeak_err` is the mean statistical error and the systematic in quadrature, and
+`Epeak_instrument_keV` is the instrument uncertainty from notebook 15, kept separate.
 
 ## GRB 211211A: `windows_211211A.csv` and `epeak_211211A.csv`
 

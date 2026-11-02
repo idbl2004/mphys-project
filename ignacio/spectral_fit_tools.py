@@ -1,5 +1,5 @@
 """
-Spectral-fit helpers for the GBM spectra in notebooks 08-14.
+Spectral-fit helpers for the GBM spectra in notebooks 08-15.
 
 Fits use SpectralFitterPstat: Poisson data with the polynomial background held
 fixed. GDT's own Hessian gives errors 3-8x too small for these fits (notebook 11),
