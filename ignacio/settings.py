@@ -38,3 +38,14 @@ SPECTRAL_DETECTORS = ["n6", "n8", "na", "b1"]
 FIT_RANGE_NAI = (8.0, 900.0)               # keV
 FIT_RANGE_BGO = (200.0, 40000.0)           # keV
 FLUX_RANGE = (10.0, 1000.0)                # keV, Dichiara Table 2
+
+# Time-resolved spectra (12). The windows file is the one shared with Rodrigo
+# for the MVT: label, t_start, t_stop in s from T0 (format in shared/README.md)
+WINDOWS_FILE = CODE_DIR / "shared" / "windows_230307A.csv"
+REDSHIFT = 0.065                           # host galaxy, as quoted by Dichiara
+
+
+def load_windows(path=WINDOWS_FILE):
+    """The windows file as a table indexed by label."""
+    import pandas as pd
+    return pd.read_csv(path, comment="#", index_col="label")

@@ -1,24 +1,13 @@
 """
-Shared functions for fitting the GBM count spectra made in 08_precursor_spectrum.ipynb.
+Spectral-fit helpers for the GBM spectra in notebooks 08-14.
 
-Three things here differ from a fit done with GDT's defaults; the evidence for
-each is in 09_precursor_band_fit.ipynb and 11_robustness_checks.ipynb:
-
-* The statistic is GDT's SpectralFitterPstat (Poisson data, background model
-  taken as known). With it the fit reproduces Dichiara's RMfit C-stat values;
-  PG-stat gives the same parameters. GDT's SpectralFitterCstat is XSPEC's
-  W-stat, which treats the background as a second Poisson measurement.
-* GDT's default Band amplitude (0.01) is far below the best fit (1.6), and from
-  there the minimiser can stop early, so every fit is restarted from several
-  points and the best one kept.
-* GDT's Hessian, and so its symmetric errors, came out ~5x too small here.
-  In GDT 2.2.3 the nested finite differences in _mixed_pderiv share one
-  parameter array, which shifts the off-diagonal terms (shown on a toy
-  function in notebook 11). covariance() recomputes the Hessian with central
-  differences; profile_error() gives profile-likelihood errors. Both agree
-  with the scatter of simulated fits.
+Fits use SpectralFitterPstat: Poisson data with the polynomial background held
+fixed. GDT's own Hessian gives errors 3-8x too small for these fits (notebook 11),
+so the covariance is recomputed here with central differences.
 """
+import copy
 import warnings
+from pathlib import Path
 
 import numpy as np
 from scipy.optimize import brentq
@@ -27,28 +16,132 @@ from gdt.core.data_primitives import EnergyBins
 from gdt.core.binning.unbinned import bin_by_edges
 from gdt.core.background.primitives import BackgroundSpectrum
 from gdt.missions.fermi.gbm.tte import GbmTte
-from gdt.missions.fermi.gbm.response import GbmRsp
+from gdt.missions.fermi.gbm.response import GbmRsp, GbmRsp2
 from gdt.core.spectra.fitting import SpectralFitterPstat
+from gdt.core.spectra.functions import Function
 
 from lightcurve_tools import tte_path, fit_background
 
 
+class BandLowBreak(Function):
+    """Band function with a smooth extra break below the peak.
+
+    N(E) = A (E/Epiv)^alpha2 exp(-E/E0) S(E)  below Ec = (alpha2 - beta) E0, E0 = Epeak / (2 + alpha2),
+    and the Band power law with slope beta above Ec, continuous at Ec.
+    S(E) = [1 + (Eb/E)^s]^((alpha2 - alpha1)/s) turns the slope from alpha1 below Eb into alpha2 above it;
+    s sets the sharpness of the break (fixed). With Eb -> 0 or alpha1 = alpha2 it is the Band function.
+    """
+    nparams = 8
+    param_list = [("A", "ph/s/cm^2/keV", "Amplitude"), ("Eb", "keV", "Low-energy break"),
+                  ("alpha1", "", "Index below the break"), ("alpha2", "", "Index between break and peak"),
+                  ("Epeak", "keV", "SED peak"), ("beta", "", "High-energy index"),
+                  ("s", "", "Break sharpness"), ("Epiv", "keV", "Pivot energy")]
+    default_values = [0.01, 50.0, -0.67, -1.5, 500.0, -3.0, 2.0, 100.0]
+    delta_abs = [0.1] * 8
+    delta_rel = [0.01] * 8
+    min_values = [1e-10, 1.0, -1.9, -1.99, 1.0, -10.0, 0.5, 0.01]
+    max_values = [np.inf, 5000.0, 2.0, 2.0, np.inf, -2.0001, 10.0, np.inf]
+    free = [True, True, True, True, True, True, False, False]
+
+    def eval(self, params, x):
+        A, Eb, alpha1, alpha2, Epeak, beta, s, Epiv = params
+        x = np.asarray(x, dtype=float)
+        e0 = Epeak / (2.0 + alpha2)
+        ec = (alpha2 - beta) * e0
+
+        def shape(e):
+            return (1.0 + (Eb / e) ** s) ** ((alpha2 - alpha1) / s)
+
+        out = np.empty_like(x)
+        low = x < ec
+        out[low] = A * (x[low] / Epiv) ** alpha2 * np.exp(-x[low] / e0) * shape(x[low])
+        out[~low] = (A * (ec / Epiv) ** alpha2 * np.exp(beta - alpha2) * shape(ec)
+                     * (x[~low] / ec) ** beta)
+        return out
+
+
+def make_spectra(data_dir, burst_id, det, windows, bkg_windows, order):
+    """Source PHA and background spectrum of one detector for each window.
+
+    windows is {label: (t_start, t_stop)}. The background polynomial is fitted
+    once and integrated over every window. Returns ({label: (pha, bkg)},
+    background reduced chi2).
+    """
+    fitter, reduced_chi2 = fit_background(data_dir, burst_id, det, bkg_windows, order)
+    tte = GbmTte.open(tte_path(data_dir, burst_id, det))
+    spectra = {}
+    for label, window in windows.items():
+        # one bin with exactly these edges, so the exposure is the live time of the window
+        pha = tte.to_phaii(bin_by_edges, np.array(window)).to_pha(time_ranges=[window])
+        model = fitter.interpolate_bins(np.array([window[0]]), np.array([window[1]]))
+        # GDT's own integrate_time would use the exposure of the 1.024 s fit bins,
+        # so the background rate is multiplied by the source live time instead
+        bkg = BackgroundSpectrum(np.ravel(model.rates), np.ravel(model.rate_uncertainty),
+                                 pha.data.lo_edges, pha.data.hi_edges,
+                                 np.full(pha.num_chans, pha.exposure))
+        spectra[label] = (pha, bkg)
+    tte.close()
+    return spectra, reduced_chi2
+
+
+def make_spectrum(data_dir, burst_id, det, window, bkg_windows, order):
+    """Source PHA, background spectrum and background reduced chi2 for one window."""
+    spectra, reduced_chi2 = make_spectra(data_dir, burst_id, det, {"window": window}, bkg_windows, order)
+    pha, bkg = spectra["window"]
+    return pha, bkg, reduced_chi2
+
+
+def rsp2_path(data_dir, burst_id, det):
+    """Newest CSPEC response file (.rsp2) for one detector."""
+    return sorted(Path(data_dir).glob(f"glg_cspec_{det}_{burst_id}_v*.rsp2"))[-1]
+
+
+def write_rsp(rsp, directory, filename):
+    """Write a single-DRM response so that it reads back exactly.
+
+    GDT 2.2.3 writes the full matrix but keeps the F_CHAN/N_CHAN row packing of
+    the file the DRM came from, so rows packed differently there are read back
+    shifted. Declaring one group per row, covering every channel, fixes that.
+    """
+    n_rows = rsp.num_ebins
+    rsp._ngrp = np.ones(n_rows, dtype=np.int16)
+    rsp._fchan = [np.array([1], dtype=np.int16)] * n_rows
+    rsp._nchan = [np.array([rsp.num_chans], dtype=np.int16)] * n_rows
+    rsp.write(directory, filename=filename, overwrite=True)
+
+
+def window_response(data_dir, burst_id, det, window, bin_width=0.256):
+    """Response for a time window, and how it was made.
+
+    The .rsp2 file has one DRM every ~40 s. If the window sits inside one of
+    them, that DRM is used. If it crosses a boundary, each 0.256 s bin of the
+    window takes its nearest DRM, weighted by the counts in the bin (GDT's
+    Rsp2.weighted, which GDT suggests for long accumulations).
+    """
+    rsp2 = GbmRsp2.open(rsp2_path(data_dir, burst_id, det))
+    covers = np.flatnonzero((np.asarray(rsp2.tstart) <= window[0]) & (np.asarray(rsp2.tstop) >= window[1]))
+    if covers.size:
+        rsp, how = rsp2.extract_drm(index=covers[0]), "single DRM"
+    else:
+        edges = np.append(np.arange(window[0], window[1], bin_width), window[1])
+        tte = GbmTte.open(tte_path(data_dir, burst_id, det))
+        lightcurve = tte.to_phaii(bin_by_edges, edges).to_lightcurve()
+        tte.close()
+        rsp, how = rsp2.weighted(lightcurve), "counts-weighted"
+    rsp2.close()
+    return rsp, how
+
+
 def load_spectra(spectrum_dir, burst_id, detectors, label="precursor"):
-    """PHA, BAK and RSP objects written by 08_precursor_spectrum.ipynb."""
+    """PHA, BAK and RSP files written by notebook 08."""
     stems = [spectrum_dir / f"{burst_id}_{det}_{label}" for det in detectors]
-    phas = [Pha.open(f"{s}.pha") for s in stems]
-    baks = [Bak.open(f"{s}.bak") for s in stems]
-    rsps = [GbmRsp.open(f"{s}.rsp") for s in stems]
-    return phas, baks, rsps
+    return ([Pha.open(f"{s}.pha") for s in stems],
+            [Bak.open(f"{s}.bak") for s in stems],
+            [GbmRsp.open(f"{s}.rsp") for s in stems])
 
 
 def channel_mask(rsp, energy_range):
-    """Channels to fit: every channel that overlaps energy_range.
-
-    A channel is kept if any part of it is inside the range (as slice_energy
-    does), so the real range is a little wider than the numbers given.
-    Channel 0 and the overflow channel (last) are never real energy bins.
-    """
+    """Channels overlapping energy_range, without channel 0 and the overflow channel."""
     lo = np.asarray(rsp.ebounds.low_edges())
     hi = np.asarray(rsp.ebounds.high_edges())
     mask = (hi > energy_range[0]) & (lo < energy_range[1])
@@ -57,141 +150,150 @@ def channel_mask(rsp, energy_range):
 
 
 def cstat(fitter):
-    """Fit statistic on the scale RMfit / XSPEC print (GDT stores -ln L, not -2 ln L)."""
+    """C-stat as RMfit/XSPEC quote it; GDT stores -ln L."""
     return 2.0 * fitter.statistic
 
 
-def fit_model(phas, baks, rsps, masks, function, starts):
-    """Fit one model from several starting points; return the best fitter.
+def fit_model(phas, baks, rsps, masks, function, starts,
+              statistic=SpectralFitterPstat, method="SLSQP", polish=False):
+    """Best of several fits started from `starts` (full parameter vectors).
 
-    starts is a list of full parameter vectors (fixed parameters included).
+    With polish=True the best fit is restarted with L-BFGS-B and kept if that
+    lowers the C-stat: SLSQP can report success after a few steps when the
+    gradient at the start is very large. The best-fit values are left in
+    function.default_values.
     """
+    free = np.array(function.free)
     best = None
     for start in starts:
-        fitter = SpectralFitterPstat(phas, baks, rsps, channel_masks=masks, method="SLSQP")
+        fitter = statistic(phas, baks, rsps, channel_masks=masks, method=method)
         function.default_values = list(start)
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        with warnings.catch_warnings(action="ignore"):
             fitter.fit(function, options={"maxiter": 2000})
         if best is None or fitter.statistic < best.statistic:
+            best, best_full = fitter, np.array(start, dtype=float)
+    best_full[free] = best.parameters
+
+    if polish:
+        fitter = statistic(phas, baks, rsps, channel_masks=masks, method="L-BFGS-B")
+        function.default_values = list(best_full)
+        with warnings.catch_warnings(action="ignore"):
+            fitter.fit(function, options={"maxiter": 5000})
+        if fitter.statistic < best.statistic:
             best = fitter
-    # leave the function holding the best-fit values, so it can be reused as a start
-    full = np.array(function.default_values, dtype=float)
-    full[np.array(function.free)] = best.parameters
-    function.default_values = list(full)
+            best_full[free] = best.parameters
+    function.default_values = list(best_full)
     return best
 
 
-def minus_two_log_like(fitter, free_params):
-    """-2 ln L (the C-stat) at any free-parameter vector, without refitting."""
-    return -2.0 * fitter._fold_model(fitter._function.fit_eval, np.asarray(free_params))
+def scaled_starts(function, phas, baks, rsps, masks, shapes):
+    """Starting vectors whose amplitude (first parameter) reproduces the observed net counts.
+
+    shapes are full parameter vectors; only their amplitude is replaced.
+    Starting from the right normalisation keeps the minimiser away from the
+    huge gradients a wrong amplitude gives.
+    """
+    net, starts = 0.0, []
+    for pha, bak, mask in zip(phas, baks, masks):
+        bkg_counts = bak.data.counts if isinstance(bak, Bak) else bak.counts
+        net += np.sum((np.asarray(pha.data.counts) - np.asarray(bkg_counts))[mask])
+    for shape in shapes:
+        unit = [1.0] + list(shape[1:])
+        model = sum(np.sum(np.asarray(rsp.drm.fold_spectrum(function.eval, unit))[mask]) * pha.exposure
+                    for pha, rsp, mask in zip(phas, rsps, masks))
+        starts.append([max(net, 1.0) / model] + list(shape[1:]))
+    return starts
 
 
-def covariance(fitter, step_fraction=1.0):
+def covariance(fitter, step=1.0):
     """Covariance of the free parameters from a central-difference Hessian of -2 ln L.
 
-    The step for each parameter is step_fraction times its conditional error
-    (from GDT's diagonal, which is correct); results are stable for 0.3-1.
+    Steps are `step` times each parameter's conditional error (the diagonal of
+    GDT's Hessian, which is fine); the result is stable for steps of 0.3-1.
+    A step is capped at 10% of the parameter's value, so a parameter the data
+    barely constrain (beta in faint windows) isn't stepped out of its range.
     """
     x = np.asarray(fitter.parameters, dtype=float)
-    h = step_fraction / np.sqrt(np.abs(np.diag(fitter.hessian)))
+    h = np.minimum(step / np.sqrt(np.abs(np.diag(fitter.hessian))), 0.1 * np.abs(x) + 1e-6)
+
+    def m2lnl(params):
+        return -2.0 * fitter._fold_model(fitter._function.fit_eval, params)
+
     n = x.size
     hess = np.zeros((n, n))
     for i in range(n):
         for j in range(i, n):
-            def shifted(si, sj):
+            corners = []
+            for si, sj in ((1, 1), (1, -1), (-1, 1), (-1, -1)):
                 y = x.copy()
                 y[i] += si * h[i]
                 y[j] += sj * h[j]
-                return minus_two_log_like(fitter, y)
-            hess[i, j] = hess[j, i] = (shifted(1, 1) - shifted(1, -1)
-                                       - shifted(-1, 1) + shifted(-1, -1)) / (4 * h[i] * h[j])
-    # Fisher matrix is half the Hessian of -2 ln L
-    return np.linalg.inv(hess / 2.0)
+                corners.append(m2lnl(y))
+            hess[i, j] = hess[j, i] = (corners[0] - corners[1] - corners[2] + corners[3]) / (4 * h[i] * h[j])
+    return np.linalg.inv(hess / 2.0)     # Fisher matrix = Hessian of -ln L
 
 
-def profile_error(phas, baks, rsps, masks, function, fitter, index, delta=1.0, reach=10.0):
-    """(minus, plus) 1-sigma error on free parameter `index` from the profile likelihood.
+def profile_error(phas, baks, rsps, masks, function, fitter, index, reach=10.0, delta=1.0,
+                  extra_starts=()):
+    """(-, +) profile-likelihood error on free parameter `index`, others refitted.
 
-    The parameter is fixed at trial values and all the others are refitted; the
-    error is where the C-stat has risen by `delta` (1.0 = 68% for one parameter).
-    It can be asymmetric. For the Band fit it matches Dichiara's quoted errors.
+    delta = 1 gives the 68% interval; delta = 2.71 gives a one-sided 95% limit.
+    A side that doesn't reach delta within `reach` sigma (or the parameter
+    bound) comes back as NaN: the data don't constrain it. Each refit starts
+    from the best fit and from extra_starts (full vectors), so it can't stall
+    in a local minimum that the full fit avoided.
     """
-    free_idx = np.flatnonzero(function.free)[index]
-    best_full = np.array(function.default_values, dtype=float)
+    best = list(function.default_values)
+    k = np.flatnonzero(function.free)[index]
+    with np.errstate(invalid="ignore"):
+        sigma = np.sqrt(covariance(fitter)[index, index])
+    if not np.isfinite(sigma) or sigma <= 0:
+        sigma = 0.1 * abs(best[k]) + 0.1          # covariance unusable here: search on a fixed scale
     c_min = cstat(fitter)
-    sigma = np.sqrt(covariance(fitter)[index, index])
-    lo_bound, hi_bound = function.min_values[free_idx], function.max_values[free_idx]
 
-    def rise(value):
-        free = list(function.free)
-        start = best_full.copy()
-        start[free_idx] = value
-        function.free = [f and k != free_idx for k, f in enumerate(free)]
-        try:
-            refit = fit_model(phas, baks, rsps, masks, function, [start])
-        finally:
-            function.free = free
-            function.default_values = list(best_full)
-        return cstat(refit) - c_min - delta
+    def delta_c(value):
+        trial = copy.deepcopy(function)
+        trial.free = [f and i != k for i, f in enumerate(function.free)]
+        starts = [list(best)] + [list(s) for s in extra_starts]
+        for s in starts:
+            s[k] = value
+        c = cstat(fit_model(phas, baks, rsps, masks, trial, starts))
+        if c < c_min - 0.01:
+            warnings.warn(f"profiling found a fit {c_min - c:.2f} better than the best fit")
+        return c - c_min - delta
 
-    centre = best_full[free_idx]
     errors = []
-    for direction, bound in ((-1, lo_bound), (1, hi_bound)):
-        edge = centre + direction * reach * sigma
-        edge = max(edge, bound) if direction < 0 else min(edge, bound)
-        if rise(edge) < 0:
-            errors.append(np.nan)      # not constrained within reach
-            continue
-        root = brentq(rise, centre, edge, xtol=1e-3 * sigma)
-        errors.append(abs(root - centre))
+    for sign, bound in ((-1, function.min_values[k]), (1, function.max_values[k])):
+        edge = best[k] + sign * reach * sigma
+        edge = max(edge, bound) if sign < 0 else min(edge, bound)
+        if delta_c(edge) < 0:
+            errors.append(np.nan)                    # not constrained within `reach` sigma
+        else:
+            root = brentq(delta_c, best[k], edge, xtol=1e-3 * sigma)
+            errors.append(abs(root - best[k]))
     return tuple(errors)
 
 
 def energy_flux(function, params, erange=(10.0, 1000.0)):
-    """Energy flux in erg cm^-2 s^-1 over erange (GDT already converts keV to erg)."""
+    """Energy flux in erg/cm2/s (GDT converts keV to erg)."""
     return function.integrate(params, erange, energy=True)
 
 
 def flux_with_error(function, fitter, erange=(10.0, 1000.0), num_samples=2000, seed=1):
-    """Energy flux and its 1-sigma error, sampling the parameters from covariance()."""
+    """Flux and its error, propagated by sampling the parameters from covariance()."""
     rng = np.random.default_rng(seed)
     best = np.asarray(fitter.parameters, dtype=float)
     samples = rng.multivariate_normal(best, covariance(fitter), size=num_samples)
-    lo = np.array(function.min_values)[np.array(function.free)]
-    hi = np.array(function.max_values)[np.array(function.free)]
-    samples = samples[np.all((samples > lo) & (samples < hi), axis=1)]
-    fluxes = np.array([energy_flux(function, s, erange) for s in samples])
+    free = np.array(function.free)
+    inside = np.all((samples > np.array(function.min_values)[free])
+                    & (samples < np.array(function.max_values)[free]), axis=1)
+    fluxes = [energy_flux(function, s, erange) for s in samples[inside]]
     return energy_flux(function, best, erange), np.std(fluxes)
 
 
-def make_spectrum(data_dir, burst_id, det, window, bkg_windows, order):
-    """Source PHA and background spectrum for one detector, as in notebook 08.
-
-    Lets the robustness checks rebuild the spectrum with a different
-    background order. Returns (pha, background_spectrum, background reduced chi2).
-    """
-    tte = GbmTte.open(tte_path(data_dir, burst_id, det))
-    phaii = tte.to_phaii(bin_by_edges, np.array(window))
-    tte.close()
-    pha = phaii.to_pha(time_ranges=[window])
-    fitter, reduced_chi2 = fit_background(data_dir, burst_id, det, bkg_windows, order)
-    model = fitter.interpolate_bins(np.array([window[0]]), np.array([window[1]]))
-    bkg = BackgroundSpectrum(np.asarray(model.rates).reshape(-1),
-                             np.asarray(model.rate_uncertainty).reshape(-1),
-                             pha.data.lo_edges, pha.data.hi_edges,
-                             np.full(pha.num_chans, pha.exposure))
-    return pha, bkg, reduced_chi2
-
-
 def simulate_pha(pha, bak, rsp, function, params, rng):
-    """A fake PHA: Poisson draw of (model folded through the response + background).
-
-    params is the full parameter vector. The background is kept at its model
-    value, which is what the known-background statistic assumes.
-    """
-    rates = np.asarray(rsp.drm.fold_spectrum(function.eval, params))
-    expected = rates * pha.exposure + np.asarray(bak.data.counts)
-    data = pha.data
-    fake = EnergyBins(rng.poisson(expected), data.lo_edges, data.hi_edges, pha.exposure)
+    """Poisson realisation of model (full parameter vector) + background, for checks only."""
+    expected = np.asarray(rsp.drm.fold_spectrum(function.eval, params)) * pha.exposure \
+        + np.asarray(bak.data.counts)
+    fake = EnergyBins(rng.poisson(expected), pha.data.lo_edges, pha.data.hi_edges, pha.exposure)
     return Pha.from_data(fake, gti=pha.gti, trigger_time=pha.trigtime)

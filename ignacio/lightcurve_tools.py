@@ -61,6 +61,27 @@ def live_fraction(data_dir, burst_id, det, bin_edges):
     return np.asarray(phaii.data.exposure) / np.diff(bin_edges)
 
 
+def data_gaps(data_dir, burst_id, det, time_range, bin_width=0.016, significance=20.0):
+    """Gaps in the TTE stream too long to be Poisson waiting times.
+
+    Same test as 06_pileup_deadtime_gaps.py: at a local rate r a gap dt has
+    chance exp(-r dt), so a gap with r dt > significance is lost data. The
+    local rate is the busier of the 16 ms bins either side of the gap.
+    Returns (gap start times, gap lengths) in s.
+    """
+    tte = GbmTte.open(tte_path(data_dir, burst_id, det))
+    times = np.asarray(tte.data.times)
+    tte.close()
+    times = times[(times > time_range[0]) & (times < time_range[1])]
+    edges = aligned_bin_edges(time_range, bin_width)
+    rate = np.histogram(times, bins=edges)[0] / bin_width
+    gaps = np.diff(times)
+    i = np.clip(np.digitize(times[:-1], edges) - 1, 0, len(rate) - 1)
+    local_rate = np.maximum(rate[i], rate[np.clip(i + 1, 0, len(rate) - 1)])
+    lost = local_rate * gaps > significance
+    return times[:-1][lost], gaps[lost]
+
+
 def fit_background(data_dir, burst_id, det, windows, order=3, fit_bin_width=1.024):
     """Fit the background of one detector; returns the fitter and its fit quality.
 
