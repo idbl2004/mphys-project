@@ -95,11 +95,38 @@ Written by `14_grb211211a.ipynb`. Windows: `pre` (precursor, edges from Bayesian
 (the GRB 211211A bars in Dichiara's Fig. 2, edges read off the figure). The `source` column says which.
 
 The E_peak table has the same columns as for GRB 230307A, with three differences:
-- `model` can change from window to window: `Band`, or where Band's beta runs into its -2 limit, `BandLowBreak`
-  (when its two-break fit is clean) or `Comptonized`. `notes` says why.
+- `model` can change from window to window: `BandLowBreak` where its two-break fit is clean and better than Band by
+  Delta C > 11.8; otherwise `Band` if its tail is needed (Delta C > 9 over Comptonized) and its beta is clear of the -2 limit; otherwise `Comptonized`. `notes` says why.
 - alpha and beta errors are symmetric, from the covariance matrix.
-- `dichiara_table`, `Epeak_sys`, `Epeak_NaI40_keV`, `alpha_sys`, `beta_upper95` and `Epeak_rest_keV` are empty:
-  those checks haven't been run for this burst.
+- `dichiara_table`, `Epeak_sys`, `Epeak_NaI40_keV`, `alpha_sys`, `beta_upper95` and `Epeak_rest_keV` are empty. The
+  systematics are in `epeak_211211A_systematics.csv` instead.
+
+## `epeak_211211A_systematics.csv`
+
+Written by `16_grb211211a_checks.ipynb`. One row per window, kept apart from `epeak_211211A.csv`.
+
+| Column | Meaning |
+|---|---|
+| `t_start`, `t_stop`, `model`, `Epeak_keV` | as in the E_peak table |
+| `Epeak_sys`, `alpha_sys` | the three shifts below in quadrature, and the same for alpha |
+| `dEpeak_BGO_300keV`, `dEpeak_interpolated_response`, `dEpeak_background_order2` | the shift from each choice |
+| `b0_max_kcps`, `n2_max_kcps`, `na_max_kcps` | highest recorded rate, 16 ms bins |
+| `pileup_Epeak_band_ratio_sim` | simulated effect of pile-up on Band's E_peak; a check, and empty where b0 stays under 20 kcps |
+
+## `energetics_known_bursts.csv`
+
+Written by `19_energetics.ipynb`: k-correction, L_iso and E_iso for every window of both known bursts.
+
+## The sample: `windows_sample.csv`, `sample_fits.csv`, `sample_precursors.csv`, `sample_snr.csv`, `sample_budget.csv`, `sample_lags.csv`
+
+Written by `18_sample_precursors.ipynb`, except `sample_lags.csv` from `20_spectral_lags.ipynb`.
+
+- `windows_sample.csv`: `burst`, `label` (`<burst>_pre`, `<burst>_main`), `t_start`, `t_stop`, in s from each burst's own GBM trigger.
+- `sample_fits.csv`: one row per episode. Comptonized `Ep` with 68% errors and 95% limits, `alpha`, power-law index, Band and blackbody fits, `net_counts`, `sigma`, `flux_cpl` (10-1000 keV), and `usable` (at least 5 sigma) and `measured` (also Delta C > 9 over a power law).
+- `sample_precursors.csv`: one row per burst, including the two known ones. `Ep_pre`, `Ep_main`, `Ep_main_best` (Band where it wins by Delta C > 9), `ratio`, `ratio_best`, `T_pre`, `z`, `limit` (95% upper limit on `Ep_pre`).
+- `sample_snr.csv`: SNR_MVT of each precursor at 4-64 ms (`snr_*`), and the same in a quiet stretch before the burst (`quiet_*`).
+- `sample_budget.csv`: the tidal energy rate a precursor needs, against the fiducial 1e50 erg/s, and for bursts with no redshift the z at which it would need 1 and 18 times that.
+- `sample_lags.csv`: the lag of 25-50 keV behind 100-300 keV (`lag_ms`, with the low band running past the window; `lag_cut_ms`, with both cut at it) and the significance in each band.
 
 ## MVT file (format to agree)
 
