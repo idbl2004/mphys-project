@@ -128,6 +128,15 @@ Written by `18_sample_precursors.ipynb`, except `sample_lags.csv` from `20_spect
 - `sample_budget.csv`: the tidal energy rate a precursor needs, against the fiducial 1e50 erg/s, and for bursts with no redshift the z at which it would need 1 and 18 times that.
 - `sample_lags.csv`: the lag of 25-50 keV behind 100-300 keV (`lag_ms`, with the low band running past the window; `lag_cut_ms`, with both cut at it) and the significance in each band.
 
+## Zhu et al. 2025 and 2026: `zhu2026_table1.csv`, `zhu_sample.csv`, `redshifts_greiner.csv`, `zhu_literature_values.csv`
+
+Read and written by the package `zhu/` (see the main README). Lines starting with `#` are comments saying where the numbers come from.
+
+- `zhu2026_table1.csv`: Table 1 of Zhu et al. (2026, ApJ 1003, 142) from the journal's machine-readable file, one row per burst: their time bin `Tres`, durations `T100_PE`, `T100_ME`, `T100_WE`, `T100_QE1` and MVTs `TMVT_PE`, `TMVT_ME` in s, `Ep_ME` in keV, lags `tau32_ME_ms`, `tau32_WE_ms` and their `Type` (I-S, I-L or II).
+- `zhu_sample.csv`: the 111 bursts measured again, with the GBM `trigger`, their `Type`, `Tres` and `EPI`, why each is in the sample (`reason`: `z25`, `type_I`, `supernova`, `near_line`, `random`) and the redshift `z` where one is known.
+- `redshifts_greiner.csv`: J. Greiner's table of GRB redshifts as read on 11 Nov 2026, with a note and whether the redshift is photometric.
+- `zhu_literature_values.csv`: every published number the re-analysis uses, one per row: `paper`, `where` (table, text or figure), `burst`, `quantity`, `value` with `minus` and `plus` errors where given, `units`, `definition`, and `source` (`tabulated`, `text`, `read from figure`, or `named in figure` for a burst whose name is only in a figure label).
+
 ## MVT file (format to agree)
 
 My proposal, so the merge in `13_epeak_mvt_merge.ipynb` can read it directly: `mvt_230307A.csv`, keyed by the
