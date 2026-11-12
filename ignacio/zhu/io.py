@@ -61,6 +61,27 @@ def read_json(path, default=None):
     return json.loads(path.read_text()) if path.exists() else default
 
 
+HELD = []           # lock files this process holds (run.claim); a forked worker closes its copies of them (worker_start)
+
+
+def worker_start():
+    """Run at the start of every forked worker (the initializer of the pools in episodes and spectra). A worker inherits the batch
+    process's lock on its burst, and a lock is only released when every copy of it is closed, so a worker left running after the batch
+    process was stopped would keep the burst taken. The worker closes its copies, and asks the kernel to stop it when the process that
+    made it dies (prctl PR_SET_PDEATHSIG, Linux)."""
+    for handle in HELD:
+        try:
+            os.close(handle.fileno())
+        except OSError:
+            pass
+    try:
+        import ctypes
+        import signal
+        ctypes.CDLL("libc.so.6", use_errno=True).prctl(1, int(signal.SIGTERM))
+    except (OSError, AttributeError):
+        pass
+
+
 _VERSION = None
 
 

@@ -27,6 +27,7 @@ from scipy.optimize import brentq
 from grbtool.fitting import (BAND_SHAPES, CPL_SHAPES, FLUX_RANGE, MEASURED_DC, NAMES, PL_SHAPES, USABLE_SIGMA, OutOfTime, Stages,
                              all_spectra, choose_model, errors_of, fit_all_models, fit_flags, time_limit, window_data)
 from spectral_fit_tools import channel_mask, covariance, cstat, energy_flux, fit_model, flux_with_error, scaled_starts
+from .io import worker_start
 
 SEARCH_FAILURES = (ValueError, RuntimeError, ZeroDivisionError, np.linalg.LinAlgError)
 
@@ -336,7 +337,7 @@ def fit_episodes(burst, windows, workers=1, minutes=10.0, ways=("ours", "zhu")):
     spectra, _ = all_spectra(burst, windows)
     _SHARED.update(burst=burst, windows=windows, spectra=spectra, minutes=minutes, ways=tuple(ways))
     if workers > 1 and len(windows) > 1:
-        with multiprocessing.get_context("fork").Pool(min(workers, len(windows))) as pool:
+        with multiprocessing.get_context("fork").Pool(min(workers, len(windows)), initializer=worker_start) as pool:
             rows = pool.map(_worker, range(len(windows)), chunksize=1)
     else:
         rows = [_worker(i) for i in range(len(windows))]

@@ -508,6 +508,9 @@ def test_the_light_curve_runs_between_the_background_intervals_on_whichever_side
     assert emission_span(burst) == (-29.0, 50.0)
     burst.bkg_windows = [(-25.0, -5.0)]                  # nothing after: to 1 s before the data end
     assert emission_span(burst) == (-5.0, 299.0)
+    burst.t90 = 400.0                                    # T90 running past the end of the data doesn't move an interval to the wrong side
+    burst.bkg_windows = [(-25.0, -5.0), (260.0, 299.0)]
+    assert emission_span(burst) == (-5.0, 260.0)
 
 
 def test_a_ccf_peak_counts_only_if_it_is_a_real_top():
@@ -603,3 +606,88 @@ def test_each_modes_spectra_are_on_its_own_windows_and_a_window_is_fitted_once(t
     assert ours.loc["PE", "fit_flags"] == "window_inside_bad_interval" and not np.isfinite(ours.loc["PE", "Epeak"])
     assert ours.loc["ME", "Epeak"] == 100.0 and not [c for c in ours.columns if c.startswith("zhu_") or c == "seconds_zhu"]
 
+
+
+
+def test_a_lag_is_quoted_only_when_its_own_resamples_pass_the_peak_rule(monkeypatch):
+    from zhu import lags
+    source = object.__new__(lags.EpisodeLags)            # no photons needed: the curves and resamples are made up
+    curves = (np.ones(450), np.zeros(450), np.ones(400), np.zeros(400), slice(25, 425), 50.0, 50.0)
+    monkeypatch.setattr(lags.EpisodeLags, "curves", lambda self, name, window, bin_width: curves)
+    monkeypatch.setattr(lags.EpisodeLags, "peak_fraction", lambda self, *a, **k: 0.95)        # every resolution passes the quick screen
+    cut_share = {"value": 0.95}
+
+    def made_up(soft, soft_b, hard, hard_b, bin_width, realisations=1000, seed=20, half_width=4, cut=False):
+        share = cut_share["value"] if cut else (0.88 if bin_width < 0.005 else 0.95)       # the margin lag fails at 4 ms on its own resamples
+        return 0.001, 0.0005, 0.0005, share
+
+    monkeypatch.setattr(lags, "lag_with_errors", made_up)
+    monkeypatch.setattr(lags, "ccf_peak", lambda *a, **k: (0.001, True))
+    out = lags.EpisodeLags.measure(source, "tau32", (0.0, 2.0), tres=0.004)
+    assert out["status"] == "measured" and out["res_ms"] == 8.0 and "4ms:peak_in_0.880_of_1000" in out["tried"]
+    assert out["cut_status"] == "measured" and out["lag_cut_ms"] == pytest.approx(1.0)
+    cut_share["value"] = 0.88
+    out = lags.EpisodeLags.measure(source, "tau32", (0.0, 2.0), tres=0.004)
+    assert np.isnan(out["lag_cut_ms"]) and out["cut_status"] == "unusable:peak_in_0.880" and out["lag_ms"] == pytest.approx(1.0)
+
+
+def test_statuses_for_a_missing_episode_an_unfinished_burst_and_the_cut_lag(tmp_path):
+    from zhu.features import write_table
+    from zhu.quality import epeak_status, lag_status
+    rows = pd.DataFrame([
+        dict(name="done", mode="zhu2026", status="complete", pe_start=0.0, me_start=1.0, T100_PE=0.2, T100_ME=2.0, Ep_ME_zhu=500.0,
+             Ep_ME_zhu_lo=50.0, Ep_ME_zhu_hi=60.0, tau32_ME_ms=3.0, tau32_ME_status="measured", tau32_ME_cut_ms=np.nan,
+             tau32_ME_cut_status="unusable:peak_in_0.880", flags=""),
+        dict(name="no_pe", mode="zhu2026", status="complete", pe_start=np.nan, me_start=1.0, T100_ME=2.0, Ep_ME_zhu=400.0,
+             Ep_ME_zhu_lo=40.0, Ep_ME_zhu_hi=40.0, flags=""),
+        dict(name="running", mode="zhu2026", status="in_progress", pe_start=0.0, me_start=1.0, T100_PE=0.3, T100_ME=2.0, flags="")]).set_index("name")
+    table = write_table(rows, tmp_path / "table.csv")
+    assert table.loc["no_pe", "Ep_PE_our_rule_status"] == "missing" and table.loc["no_pe", "tau32_PE_status"] == "missing"
+    statuses = [c for c in table.columns if c.endswith("_status")]
+    assert (table.loc["running", statuses] == "in_progress").all()              # not final, so nothing is called measured
+    assert table.loc["done", "tau32_ME_status"] == "measured" and table.loc["done", "tau32_ME_cut_status"] == "unusable:peak_in_0.880"
+    assert lag_status(rows.loc["done"], "tau32_ME", "cut") == "unusable:peak_in_0.880"
+    assert epeak_status(dict(mode="project", me_start=1.0, Ep_ME_ours=300.0), "ME", "zhu") == "not_fitted"
+
+
+def test_a_stopped_batch_lets_go_of_its_burst_while_its_workers_are_busy(tmp_path):
+    import signal
+    import subprocess
+    import time
+    from zhu import run
+    code = (f"import multiprocessing, time\nfrom zhu import io, run\nhandle = run.claim('b1', {str(tmp_path)!r})\n"
+            "pool = multiprocessing.get_context('fork').Pool(1, initializer=io.worker_start)\n"
+            "job = pool.apply_async(time.sleep, (60,))\ntime.sleep(1)\nprint('busy', flush=True)\ntime.sleep(120)\n")
+    child = subprocess.Popen([sys.executable, "-c", code], cwd=Path(__file__).resolve().parents[1], stdout=subprocess.PIPE, text=True)
+    try:
+        assert child.stdout.readline().strip() == "busy"
+        assert run.claim("b1", tmp_path) is None
+        child.send_signal(signal.SIGTERM)                # stopped as `kill <pid>` stops it, with a worker in the middle of a task
+        child.wait(timeout=30)
+        handle = None
+        for _ in range(50):
+            handle = run.claim("b1", tmp_path)
+            if handle is not None:
+                break
+            time.sleep(0.1)
+        assert handle is not None                        # the worker had closed its copy of the lock
+        run.release(handle)
+    finally:
+        child.kill()
+
+
+def test_the_one_burst_command_records_a_failure_and_goes_on(tmp_path, monkeypatch):
+    from zhu import io, run
+    sample = pd.DataFrame(dict(trigger=["t1", "t2"], reason=["z25"] * 2, Tres=[0.004] * 2), index=["broken", "good"])
+    done = []
+
+    def made_up(name, row, workers, realisations, redo, out_root):
+        if name == "broken":
+            raise RuntimeError("a bug")
+        done.append(name)
+        io.set_status(name, "complete", "", out_root)
+
+    monkeypatch.setattr(run, "measure", made_up)
+    run.measure_named(["broken", "good"], sample, out_root=tmp_path)
+    assert io.state("broken", tmp_path)["status"] == "failed" and "a bug" in io.state("broken", tmp_path)["reason"]
+    assert done == ["good"]

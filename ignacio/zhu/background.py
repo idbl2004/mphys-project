@@ -50,12 +50,18 @@ def background_counts(fitter, band, edges, step=COARSE_BACKGROUND):
     return np.diff(np.interp(edges, coarse, cumulative))
 
 
+def sides(burst):
+    """The background intervals before the burst (those that end by the start of T90) and after it (the rest). An interval before
+    always ends at least 2 s before T90 starts, and one after always starts after the last emission block, so this holds even when
+    T90 runs past the end of the TTE data."""
+    before = [w for w in burst.bkg_windows if w[1] <= burst.t90_start]
+    return before, [w for w in burst.bkg_windows if w[1] > burst.t90_start]
+
+
 def emission_span(burst):
     """From the end of the background interval before the burst to the start of the one after it. Where there is no interval on one side
     (the flags no_background_before_burst or no_background_after_burst), the span runs to 1 s inside that end of the TTE data instead."""
-    middle = burst.t90_start + 0.5 * burst.t90
-    before = [w for w in burst.bkg_windows if 0.5 * (w[0] + w[1]) < middle]
-    after = [w for w in burst.bkg_windows if 0.5 * (w[0] + w[1]) >= middle]
+    before, after = sides(burst)
     start = before[-1][1] if before else burst.tte_range[0] + 1.0
     stop = after[0][0] if after else burst.tte_range[1] - 1.0
     return start, stop
@@ -104,9 +110,7 @@ def clear_background(burst, rounds=5):
         loud = blocks[blocks.sigma >= EMISSION_SIGMA]
         if loud.empty:
             break
-        middle = burst.t90_start + 0.5 * burst.t90           # which side of the burst each interval is on
-        before = [w for w in burst.bkg_windows if 0.5 * (w[0] + w[1]) < middle]
-        after = [w for w in burst.bkg_windows if 0.5 * (w[0] + w[1]) >= middle]
+        before, after = sides(burst)
         pre, post = (before[-1] if before else None), (after[0] if after else None)
         first_loud, last_loud = float(loud.start.min()), float(loud.stop.max())
         windows = []

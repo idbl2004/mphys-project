@@ -43,6 +43,7 @@ from gdt.core.data_primitives import TimeBins
 from gdt.misc.bayesian_blocks import bayesian_blocks
 
 from .background import BAND, LightCurve, light_curve
+from .io import worker_start
 
 P0 = 0.05                       # false-alarm rate of a change point (both papers)
 EMISSION_BLOCK_SIGMA = 3.0      # a block is emission if it is this far above the background as a whole
@@ -425,7 +426,7 @@ def with_errors(lc, blocks, realisations=40, seed=2026, workers=1, modes=tuple(M
     _SIM.update(lc=lc, blocks=blocks, modes=modes)
     seeds = [seed + i for i in range(realisations)]
     if workers > 1:
-        with multiprocessing.get_context("fork").Pool(workers) as pool:
+        with multiprocessing.get_context("fork").Pool(workers, initializer=worker_start) as pool:
             rows = pool.map(_one_realisation, seeds, chunksize=1)
     else:
         rows = [_one_realisation(s) for s in seeds]

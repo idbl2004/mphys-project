@@ -118,7 +118,8 @@ def load_burst(folder, mode="zhu2026"):
                 continue
             row.update({f"{key}_ms": r.get("lag_ms", np.nan), f"{key}_down": r.get("err_down_ms", np.nan), f"{key}_up": r.get("err_up_ms", np.nan),
                         f"{key}_cut_ms": r.get("lag_cut_ms", np.nan), f"{key}_cut_down": r.get("cut_down_ms", np.nan), f"{key}_cut_up": r.get("cut_up_ms", np.nan),
-                        f"{key}_res_ms": r.get("res_ms", np.nan), f"{key}_status": r.get("status", "")})
+                        f"{key}_res_ms": r.get("res_ms", np.nan), f"{key}_status": r.get("status", ""),
+                        f"{key}_cut_status": r.get("cut_status", "")})
     path = spectra_file(folder, mode)
     if path.exists():
         spectra = pd.read_csv(path, index_col=0)
@@ -288,11 +289,12 @@ def write_table(ours, path):
     out["Ep_ME_their_way_status"] = [epeak_status(r, "ME", "zhu") for _, r in ours.iterrows()]
     out["Ep_PE_our_rule_status"] = [epeak_status(r, "PE", "ours") for _, r in ours.iterrows()]
     out["tau32_ME_status"] = [lag_status(r, "tau32_ME") for _, r in ours.iterrows()]
+    out["tau32_ME_cut_status"] = [lag_status(r, "tau32_ME", "cut") for _, r in ours.iterrows()]
     out["tau32_PE_status"] = [lag_status(r, "tau32_PE") for _, r in ours.iterrows()]
     out["episode_mode"] = ours["mode"]
-    blank = ~ours.get("T100_ME", pd.Series(np.nan, index=ours.index)).notna()
-    for column in [c for c in out.columns if c.endswith("_status")]:
-        out.loc[blank & ours["status"].ne("complete"), column] = "not_measured"
+    unfinished = ours["status"].ne("complete")              # a burst still running, failed or not measurable: its numbers aren't final
+    for column in [c for c in out.columns if c.endswith("_status") and c != "status"]:
+        out.loc[unfinished, column] = ours.loc[unfinished, "status"]
     header = ("# Zhu et al.'s bursts measured again (ignacio/zhu, notebooks 23-25). Times in s from the trigger; _p16/_p84 are the 16th and 84th\n"
               "# percentiles over 40 light curves simulated from each burst's blocks. E_peak in keV with profile-likelihood errors, their way (their\n"
               "# models, BIC, PGSTAT, their energy ranges) and by our rule (notebook 14). Ep_PE_95_low/high: the 95% interval of the Comptonized\n"
@@ -364,7 +366,7 @@ def paper_vs_ours(ours, table, root=RESULTS):
                 key = q.replace("_ms", "")
                 value = r.get(f"{key}_cut_ms", np.nan)
                 lo, hi = value - r.get(f"{key}_cut_down", np.nan), value + r.get(f"{key}_cut_up", np.nan)
-                status = lag_status(r, key)
+                status = lag_status(r, key, "cut")
             elif q == "EPI":
                 value, lo, hi = r.get("EPI_zhu", np.nan), r.get("EPI_p16_zhu", np.nan), r.get("EPI_p84_zhu", np.nan)
                 status = "measured" if np.isfinite(value) else "missing"

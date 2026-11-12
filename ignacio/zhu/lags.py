@@ -9,11 +9,13 @@ Here the resolution is the finest of 4, 8, ... 256 ms (and no finer than their T
   - the episode is at least MIN_BINS bins long, and
   - at least MIN_PEAK_FRACTION of the Poisson resamples have a real CCF peak (ccf_peak): the highest point at least 4 bins from either end
     of the range of lags, a parabola through the 9 points around it that opens downwards, and its top inside those 9 points.
-That last test is our reading of "reliably fitted". A lag that fails is not quoted: its status says why (faint, too few bins, or no
-reliable peak up to 256 ms), and a lag that raises an error is stored as failed by run.py. The lag is measured two ways at that resolution:
+That last test is our reading of "reliably fitted". It is made first on TRIAL_RESAMPLES as a quick screen, and then again on the 1000
+resamples the quoted lag comes from, so a quoted lag always meets it on its own resamples. A lag that fails is not quoted: its status says
+why (faint, too few bins, or no reliable peak up to 256 ms), and a lag that raises an error is stored as failed by run.py. The lag is
+measured two ways at that resolution:
 with the soft band running MARGIN_BINS past the episode, so every trial lag uses the same bins, and with both bands cut at the episode,
 the usual recipe and probably theirs, which pulls lags towards zero. The value is the median of 1000 Poisson resamples with a real peak and
-the errors their 16th and 84th percentiles; the cut version gets its own peak test and status.
+the errors their 16th and 84th percentiles; the cut version is judged by the same rule on its own resamples and has its own status.
 """
 import numpy as np
 from gdt.core.data_primitives import TimeBins
@@ -141,16 +143,19 @@ class EpisodeLags:
                 break                                   # coarser bins don't add counts
             fraction = self.peak_fraction(soft, soft_b, hard, hard_b, bin_width)
             if fraction < MIN_PEAK_FRACTION:
-                tried.append(f"{1e3 * bin_width:.0f}ms:peak_in_{fraction:.2f}")
+                tried.append(f"{1e3 * bin_width:.0f}ms:peak_in_{fraction:.3f}")
                 continue
             lag, down, up, share = lag_with_errors(soft, soft_b, hard, hard_b, bin_width, realisations)
+            if share < MIN_PEAK_FRACTION:                     # passed the quick screen but not on its own resamples
+                tried.append(f"{1e3 * bin_width:.0f}ms:peak_in_{share:.3f}_of_{realisations}")
+                continue
             cut, cut_down, cut_up, cut_share = lag_with_errors(soft[inside], soft_b[inside], hard, hard_b, bin_width, realisations, cut=True)
             cut_ok = cut_share >= MIN_PEAK_FRACTION
             data_lag, data_real = ccf_peak(soft - soft_b, hard - hard_b, bin_width)
-            return dict(lag=name, status="measured" if np.isfinite(lag) else "unusable:no_reliable_peak", res_ms=1e3 * bin_width,
+            return dict(lag=name, status="measured", res_ms=1e3 * bin_width,
                         lag_ms=1e3 * lag, err_down_ms=1e3 * down, err_up_ms=1e3 * up, lag_data_ms=1e3 * data_lag, data_peak_real=data_real,
                         lag_cut_ms=1e3 * cut if cut_ok else np.nan, cut_down_ms=1e3 * cut_down if cut_ok else np.nan,
-                        cut_up_ms=1e3 * cut_up if cut_ok else np.nan, cut_status="measured" if cut_ok else f"unusable:peak_in_{cut_share:.2f}",
+                        cut_up_ms=1e3 * cut_up if cut_ok else np.nan, cut_status="measured" if cut_ok else f"unusable:peak_in_{cut_share:.3f}",
                         peak_fraction=fraction, resamples_with_peak=share, cut_resamples_with_peak=cut_share, soft_sigma=soft_sigma,
                         hard_sigma=hard_sigma, tried=" ".join(tried))
         last = tried[-1] if tried else "none"

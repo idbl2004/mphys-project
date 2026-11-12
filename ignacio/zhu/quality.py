@@ -13,6 +13,20 @@ import numpy as np
 
 STABLE_SHARE = 0.8
 
+
+def _finite(value):
+    try:
+        return value is not None and np.isfinite(float(value))
+    except (TypeError, ValueError):
+        return False
+
+
+def _episode_missing(row, label):
+    """True if the row says the burst has no such episode under its mode: its start time is there, and empty. (A row without the
+    column says nothing about it.)"""
+    key = f"{label.lower()}_start"
+    return key in row and not _finite(row[key])
+
 FLAGS = {
     # episodes (episodes.find_episodes)
     "no_significant_block": "no block of the light curve is 3 sigma above the background",
@@ -72,7 +86,12 @@ def timing_status(row, quantity):
 
 
 def epeak_status(row, label, way="ours"):
-    """The status of a spectrum's E_peak: measured, limit (our rule: not measured, with its 95% interval) or unusable."""
+    """The status of a spectrum's E_peak: measured, limit (our rule: not measured, with its 95% interval), unusable, unconstrained,
+    missing (no such episode) or not_fitted (their way isn't fitted on the project mode's windows)."""
+    if _episode_missing(row, label):
+        return "missing"
+    if way == "zhu" and row.get("mode") == "project":
+        return "not_fitted"
     value = row.get(f"Ep_{label}_{way}", np.nan)
     if way == "ours" and str(row.get(f"measured_{label}", "")) != "True":
         lo = row.get(f"Ep_{label}_cpl_limit_lo", np.nan)
@@ -85,9 +104,13 @@ def epeak_status(row, label, way="ours"):
     return "measured"
 
 
-def lag_status(row, name):
-    """A lag's status: measured if a lag was quoted, otherwise what the lag stage said."""
-    value = row.get(f"{name}_ms", np.nan)
-    if value is not None and np.isfinite(value):
+def lag_status(row, name, version="margin"):
+    """A lag's status (name like tau32_ME): measured if a value was quoted, otherwise what the lag stage said about it, or missing if
+    the episode isn't there. version "cut" is the lag with both bands cut at the window, which has its own test and status."""
+    cut = version == "cut"
+    if _finite(row.get(f"{name}_cut_ms" if cut else f"{name}_ms", np.nan)):
         return "measured"
-    return str(row.get(f"{name}_status", "unusable")) or "unusable"
+    if _episode_missing(row, name.split("_")[-1]):
+        return "missing"
+    said = row.get(f"{name}_cut_status" if cut else f"{name}_status")
+    return said if isinstance(said, str) and said and said != "measured" else "unusable"

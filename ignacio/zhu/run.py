@@ -41,7 +41,7 @@ from grbtool.windows import Window, cut_out
 from .background import clear_background, emission_span, light_curve
 from .catalogue import data_name
 from .episodes import MODES, P0, at_resolutions, blocks_of, find_episodes, mvt_readings, with_errors
-from .io import clear_stages, code_version, now, read_json, set_stage, set_status, state, states, write_csv, write_json
+from .io import HELD, clear_stages, code_version, now, read_json, set_stage, set_status, state, states, write_csv, write_json
 
 SAMPLE = SHARED / "zhu_sample.csv"
 GROUPS = ["z25", "type_I", "supernova", "near_line", "random"]
@@ -195,10 +195,13 @@ def claim(name, root=RESULTS):
     handle.truncate()
     handle.write(f"{os.getpid()}\n")
     handle.flush()
+    HELD.append(handle)
     return handle
 
 
 def release(handle):
+    if handle in HELD:
+        HELD.remove(handle)
     fcntl.flock(handle, fcntl.LOCK_UN)
     handle.close()
 
@@ -314,6 +317,10 @@ def measure(name, row, workers=3, realisations=REALISATIONS, redo=(), out_root=R
     setup_flags = list(burst.flags) + list(notes)
     bkg_flags = clear_background(burst)
     record = read_json(out / "episodes.json", {})
+    same = len(record.get("bkg_windows", [])) == len(burst.bkg_windows) and np.allclose(np.ravel(record.get("bkg_windows", [])), np.ravel(burst.bkg_windows))
+    if "modes" in record and "episodes" not in redo and not same:
+        raise RuntimeError(f"the background intervals are now {burst.bkg_windows}, not the {record['bkg_windows']} the episodes were found "
+                           "with; redo the episodes")
     lc = blocks = None
     if "episodes" in redo or "modes" not in record:
         # everything after the episodes depends on them, so their files and stage records go too
@@ -410,6 +417,27 @@ def batch(sample, workers=3, realisations=REALISATIONS, out_root=RESULTS, retry_
     return failed
 
 
+def measure_named(names, sample, workers=3, realisations=REALISATIONS, redo=(), out_root=RESULTS):
+    """measure() for the bursts named, one after another, each taken with claim(). A failure is recorded in the burst's state, as batch()
+    records it, and the next name is measured."""
+    for name in names:
+        handle = claim(name, out_root)
+        if handle is None:
+            log(f"{name} is being measured by another process; left alone")
+            continue
+        try:
+            measure(name, sample.loc[name], workers, realisations, tuple(redo), out_root=out_root)
+        except BurstError as error:
+            if state(name, out_root).get("status") != "not_measurable":
+                set_status(name, "failed", f"BurstError: {error}", out_root)
+            log(f"{name}: can't be measured: {error}")
+        except Exception as error:
+            set_status(name, "failed", f"{type(error).__name__}: {error}", out_root)
+            log(f"{name}: FAILED {type(error).__name__}: {error}\n{traceback.format_exc()}")
+        finally:
+            release(handle)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("task", choices=["prefetch", "burst", "batch", "status"])
@@ -425,16 +453,7 @@ def main(argv=None):
         failed = prefetch(sample, args.workers)
         log(f"finished; failed: {failed or 'none'}")
     elif args.task == "burst":
-        sample = read_sample()
-        for name in args.names:
-            handle = claim(name)
-            if handle is None:
-                log(f"{name} is being measured by another process; left alone")
-                continue
-            try:
-                measure(name, sample.loc[name], args.workers, args.realisations, tuple(args.redo))
-            finally:
-                release(handle)
+        measure_named(args.names, read_sample(), args.workers, args.realisations, args.redo)
     elif args.task == "status":
         table = states(read_sample(args.names).index)
         print(table.to_string())
