@@ -18,7 +18,7 @@ from sample_tools import ccf_lag
 from zhu import classify
 from zhu.catalogue import EPI_LINE, LITERATURE_Z, epi, read_table_2026, redshift_of
 from zhu.background import LightCurve
-from zhu.episodes import MODES, blocks_of, change_point_profile, find_episodes, mvt_of, summarise, with_errors
+from zhu.episodes import MODES, blocks_of, brightest_rise, change_point_profile, find_episodes, mvt_of, summarise, with_errors
 from zhu.lags import ccf_lag_fft, known_shift_check
 
 HAVE_211211A = (DATA_ROOT / "GRB211211A" / "current").is_dir()
@@ -65,9 +65,50 @@ def test_durations_are_whole_numbers_of_bins_and_mvts_whole_numbers_of_half_bins
 
 
 def test_the_mvt_is_half_the_shortest_step(burst_and_episodes):
-    _, _, found = burst_and_episodes
-    assert found.mvt_pe == pytest.approx(0.1, abs=2 * TRES)       # the precursor is one 0.2 s block
-    assert found.mvt_me == pytest.approx(0.35, abs=2 * TRES)      # the shortest step of the main emission is 0.7 s
+    lc, blocks, found = burst_and_episodes
+    # the project mode's T_MVT (and the 'certain' reading of the zhu modes' blocks)
+    assert mvt_of(lc, lc.counts, blocks, *found.pe_blocks)[0] == pytest.approx(0.1, abs=2 * TRES)     # the precursor is one 0.2 s block
+    assert mvt_of(lc, lc.counts, blocks, *found.me_blocks)[0] == pytest.approx(0.35, abs=2 * TRES)    # the main emission's shortest step is 0.7 s
+
+
+def test_their_mvt_is_the_rise_to_the_brightest_bin(burst_and_episodes):
+    lc, blocks, found = burst_and_episodes
+    # zhu modes: from the pulse's start to the centre of its brightest bin, an odd number of half-bins inside the precursor
+    assert found.mvt_pe_bins % 2 == 1 and 0 < found.mvt_pe < 0.2
+    counts = lc.counts.copy()
+    first_bin = int(np.searchsorted(lc.edges, 0.0))
+    counts[first_bin + 7] = counts[first_bin:first_bin + 50].max() + 20      # make the 8th bin of the precursor the brightest
+    assert brightest_rise(lc, counts, blocks, *found.pe_blocks) == (pytest.approx(7.5 * TRES), 15)
+
+
+def _two_pieces(pe, me, tail=None, seed=3):
+    """A made-up light curve: a PE (start, stop, rate), background, an ME (start, stop, rate), and optionally a tail after a gap."""
+    edges = np.round(np.arange(-2.0, 30.0 + TRES / 2, TRES), 9)
+    centres = 0.5 * (edges[1:] + edges[:-1])
+    rate = np.full(len(centres), 2000.0)
+    for a, b, r in [pe, me] + ([tail] if tail else []):
+        rate[(centres > a) & (centres < b)] += r
+    counts = np.random.default_rng(seed).poisson(rate * TRES).astype(float)
+    return LightCurve(edges, counts, np.full(len(counts), TRES), np.full(len(counts), 2000.0 * TRES), TRES)
+
+
+def test_a_precursor_brighter_than_the_main_emission_is_found():
+    # zhu2026: "the peak count of the PE may be comparable to that of the ME, though with lower flux" when the QE is at the background
+    lc = _two_pieces((0.0, 0.1, 30000.0), (0.5, 2.5, 24000.0))
+    found = find_episodes(lc, blocks_of(lc), mode="zhu2026")
+    assert found.pe is not None and abs(found.pe[0]) <= 3 * TRES and abs(found.pe[1] - 0.1) <= 3 * TRES
+    assert abs(found.me[0] - 0.5) <= 3 * TRES
+    assert "pe_peak_above_me_peak" in found.flags
+    # zhu2025 asks for a PE weaker than the ME, so it has none here
+    assert find_episodes(lc, blocks_of(lc), mode="zhu2025").pe is None
+
+
+def test_a_bright_spike_with_a_faint_long_tail_is_not_a_precursor():
+    # a short burst with extended emission: the tail has more counts but peaks far below the spike, so the spike stays the ME
+    lc = _two_pieces((0.0, 0.3, 40000.0), (1.0, 20.0, 3000.0))
+    found = find_episodes(lc, blocks_of(lc), mode="zhu2026")
+    assert found.pe is None
+    assert abs(found.me[0]) <= 3 * TRES
 
 
 def test_a_change_point_profile_peaks_at_the_step():

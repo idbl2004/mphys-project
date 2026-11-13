@@ -8,6 +8,7 @@ Tools; the choices here are the project's and are the same in every episode mode
 from dataclasses import dataclass
 
 import numpy as np
+import pandas as pd
 from gdt.core.binning.unbinned import bin_by_edges
 from gdt.missions.fermi.gbm.tte import GbmTte
 
@@ -16,6 +17,9 @@ from lightcurve_tools import aligned_bin_edges, background_in_band, fit_backgrou
 
 BAND = (8.0, 1000.0)            # keV, their light-curve band
 COARSE = 1.024                  # s, the bins used to find where the emission ends, for the background intervals
+FINE = 0.064                    # s, a second search before the burst for short precursors, which COARSE dilutes ...
+PRECURSOR_SIGMA = 4.0           # ... counted as emission from this significance: GRB 131216A's precursor, 106.6 s before its main
+                                #   emission, is 4.8 sigma; the next weakest isolated block before any of 94 bursts (180402A, -87 s) is 3.1
 EMISSION_SIGMA = 5.0            # a coarse block this significant (with the systematic) is emission, and the background intervals keep clear of it
 CLEAR_MARGIN = 10.0             # s between the emission and a background interval
 MIN_BACKGROUND = 20.0           # s, the background interval either side is made at least this long where the data allow ...
@@ -95,7 +99,10 @@ def clear_background(burst, rounds=5):
     grbtool's set_background starts the interval after the burst 30 s after T90 (or later if the fit improves), and ends the one before it
     5 s before T90 starts. T90 can miss a long weak tail: Zhu et al.'s whole-burst duration of GRB 090618 ends at about 195 s, and their
     230307A at about 133 s, both after grbtool's interval has begun. So the light curve is binned at COARSE over the whole TTE, split into
-    blocks, and any block EMISSION_SIGMA above the fitted background pushes the intervals back to CLEAR_MARGIN from it. The fit is then
+    blocks, and any block EMISSION_SIGMA above the fitted background pushes the intervals back to CLEAR_MARGIN from it. Before the
+    burst's first emission the search is made again at FINE, where a block PRECURSOR_SIGMA above the background counts too, because a
+    precursor of half a second is diluted in COARSE bins and can sit inside the interval before the burst (GRB 131216A's, 107 s before its
+    main emission, and 131209B's, 16 s before), where it would be fitted as background. The fit is then
     redone without the emission, which can show more of a tail, and this repeats until nothing moves. Where the data start or end close to
     the burst, an interval is kept as long as the data allow but never closer than EDGE_MARGIN to the emission, and the burst is flagged.
     (Short GRB 130804A's data start 8 s before it, and an interval stretched to 20 s would have covered the burst.) Where grbtool found no
@@ -108,6 +115,9 @@ def clear_background(burst, rounds=5):
         lc = light_curve(burst, COARSE, span=(tte_start, tte_stop))
         blocks = blocks_of(lc)
         loud = blocks[blocks.sigma >= EMISSION_SIGMA]
+        if not loud.empty and float(loud.start.min()) - tte_start > 10 * FINE:
+            early = blocks_of(light_curve(burst, FINE, span=(tte_start, float(loud.start.min()))))
+            loud = pd.concat([loud, early[early.sigma >= PRECURSOR_SIGMA]])
         if loud.empty:
             break
         before, after = sides(burst)

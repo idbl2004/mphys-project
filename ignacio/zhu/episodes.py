@@ -14,9 +14,11 @@ zhu2025  Zhu et al. 2025, section 2.1. A QE is one block at least 10 bins long, 
          has an SNR below 3 sigma. The PE "exhibits prominent pulse features" (a block at least 3 sigma above the background) and "has an
          intensity weaker than that of the main emission" (its peak rate below the ME's).
 zhu2026  Zhu et al. 2026, section 2.1. As above with a QE at least 8 bins long. The PE's peak is 3 sigma above the background, and "when
-         the QE is consistent with the background level" (read as below 1 sigma per bin) the PE only needs fewer counts than the ME;
-         "otherwise, the peak count of the ME must be significantly higher than that of the PE" (read as the ME's peak block 3 sigma above
-         the PE's).
+         the QE is consistent with the background level" (read as below 2 sigma per bin, the usual meaning of "consistent") the PE only
+         needs fewer counts than the ME; "otherwise, the peak count of the ME must be significantly higher than that of the PE" (read as the
+         ME's peak block 3 sigma above the PE's). Since "the peak count of the PE may be comparable to that of the ME" when the QE is at the background, the ME's peak
+         isn't simply the brightest block: if that block is in the first piece of emission, a QE candidate at the background follows, and
+         the next piece's peak is comparable (at least COMPARABLE_PEAK of it), the next piece holds the ME's peak (_bright_precursor_peak).
 project  This project's precursor rule (notebook 18's sample_tools.precursor_from_blocks), written again here (_project_runs) for the same
          blocks: a block is quiet if it is below 5 sigma and below a quarter of the highest rate so far, a gap can be several blocks, and
          the gap is the first run of quiet blocks unless a later one is more than twice as long. Here a run must also be at least 8 bins
@@ -29,8 +31,11 @@ Choices their words leave open, the same in every mode (notebook 23 shows how ea
     of their 2025 bursts within 0.2 dex; the nearest and the first did worse);
   - the QE2 is the first dip after the ME's peak at least 50 bins long, below 15% of that peak, with the rate at least doubling within 5
     blocks (their eye skips a 60 ms dip inside GRB 211211A's main emission);
-  - T_MVT is half the shortest block whose two edges are certain at 5 sigma (Xiao et al. 2023, which both papers cite), or half the
-    episode if no block in it is;
+  - T_MVT in the zhu modes is what their tables hold: "the rise time of the shortest pulse", from the pulse's start to the centre of its
+    brightest bin (brightest_rise; every T_MVT they print is a whole number of half-bins, mostly odd, and notebook 23 shows how often
+    this gives their value to the half-bin). The project mode keeps half the shortest block whose two edges are certain at 5 sigma
+    (Xiao et al. 2023, which both papers cite), or half the episode if no block in it is, since a brightest bin inside one block is set
+    by counting noise;
   - the first block of the light curve is never emission, since it starts where the background interval ends.
 No burst has a rule or an edge of its own.
 """
@@ -48,8 +53,11 @@ from .io import worker_start
 P0 = 0.05                       # false-alarm rate of a change point (both papers)
 EMISSION_BLOCK_SIGMA = 3.0      # a block is emission if it is this far above the background as a whole
 QUIET_SIGMA = 3.0               # a QE1 is below this per bin (both papers: "SNR below (around) 3 sigma")
-AT_BACKGROUND_SIGMA = 1.0       # zhu2026: "the QE is consistent with the background level", per bin
+AT_BACKGROUND_SIGMA = 2.0       # zhu2026: "the QE is consistent with the background level", per bin (1, 1.5 and 2 were compared in
+                                #   notebook 23: 2 finds two more of their precursors and loses none)
 ME_OVER_PE_SIGMA = 3.0          # zhu2026: "the peak count of the ME must be significantly higher than that of the PE"
+COMPARABLE_PEAK = 0.5           # zhu2026: "the peak count of the PE may be comparable to that of the ME", read as the ME's at least half
+                                #   the PE's (0.33 to 0.8 pick the same bursts among the first 76)
 QE2_BINS = 50                   # the QE before an EE is at least this many bins long ...
 EE_LULL_FRACTION = 0.15         # ... below this share of the ME's peak rate ...
 EE_RISE = 2.0                   # ... and the rate rises again by at least this factor ...
@@ -58,9 +66,9 @@ MVT_OVERLAP = 3e-7              # a block sets the MVT only if its two edges mee
 BKG_SYSTEMATIC = 0.01           # the fitted background is good to about 1% (notebook 16 found a 3% dip once)
 MAX_BINS = 120000               # beyond this the blocks take too long (about 80 s at 100,000 bins), so a resolution step that needs more is skipped
 MODES = {
-    "zhu2025": dict(qe_bins=10, pe_test="weaker"),
-    "zhu2026": dict(qe_bins=8, pe_test="two_branch"),
-    "project": dict(qe_bins=8, pe_test="project"),
+    "zhu2025": dict(qe_bins=10, pe_test="weaker", mvt="brightest"),
+    "zhu2026": dict(qe_bins=8, pe_test="two_branch", mvt="brightest"),
+    "project": dict(qe_bins=8, pe_test="project", mvt="certain"),
 }
 QE_BINS = MODES["zhu2026"]["qe_bins"]
 PROJECT_QUIET_SIGMA = 5.0       # project mode, as in notebook 18
@@ -240,6 +248,29 @@ def _quiet_dip_candidates(snr, long_dip, first, peak):
     return [i for i in np.flatnonzero(long_dip & (snr < QUIET_SIGMA)) if first < i < peak]
 
 
+def _bright_precursor_peak(emission, long_dip, snr, rate, peak):
+    """zhu2026: the ME's peak when a PE is as bright as the ME or brighter. The emission is cut at every dip that could be a QE; if the
+    brightest block is in the first piece, a cut at the background (below AT_BACKGROUND_SIGMA per bin) follows it, and the piece after
+    that cut peaks at least COMPARABLE_PEAK as high, that piece's brightest block is the ME's peak. A spike followed by a much fainter
+    tail (a short burst's extended emission) keeps the spike as the ME. Returns the block index of the ME's peak."""
+    loud = np.flatnonzero(emission)
+    first, last = loud[0], loud[-1]
+    cuts = [i for i in np.flatnonzero(long_dip & (snr < QUIET_SIGMA)) if first < i < last]
+    if not cuts or peak > cuts[0]:
+        return peak
+    at_background = [i for i in cuts if i > peak and snr[i] < AT_BACKGROUND_SIGMA]
+    if not at_background:
+        return peak
+    q = at_background[0]
+    later = [i for i in cuts if i > q]
+    piece = np.arange(q + 1, later[0] if later else last + 1)
+    piece = piece[emission[piece]]
+    if len(piece) == 0:
+        return peak
+    candidate = int(piece[np.argmax(rate[piece])])
+    return candidate if rate[candidate] >= COMPARABLE_PEAK * rate[peak] else peak
+
+
 def find_episodes(lc, blocks, counts=None, mode="zhu2026", burst="", qe1_choice="longest"):
     """The episodes of one burst under one mode (see the module's docstring). Returns an EpisodeResult."""
     if mode not in MODES:
@@ -263,8 +294,15 @@ def find_episodes(lc, blocks, counts=None, mode="zhu2026", burst="", qe1_choice=
     loud = np.flatnonzero(emission)
     peak = loud[np.argmax(rate[loud])]
     first, last = loud[0], loud[-1]
-    out.me_peak_rate, out.me_peak_sigma = float(rate[peak]), float(sigma[peak])
     long_dip = _dips(rate) & (nbins >= settings["qe_bins"])
+    if settings["pe_test"] == "two_branch":
+        moved = _bright_precursor_peak(emission, long_dip, snr, rate, peak)
+        if moved != peak:
+            out.reasons.append(f"me: the brightest block is in the first piece and a QE at the background follows; the next piece peaks at "
+                               f"{rate[moved] / rate[peak]:.2f} of it, so its brightest block is the ME's peak")
+            out.flags.append("pe_peak_above_me_peak")
+            peak = moved
+    out.me_peak_rate, out.me_peak_sigma = float(rate[peak]), float(sigma[peak])
 
     # QE2 and EE first: they depend only on the main peak, and the zhu2026 test below compares the PE with the ME alone
     me_last = last
@@ -337,17 +375,23 @@ def find_episodes(lc, blocks, counts=None, mode="zhu2026", burst="", qe1_choice=
         out.qe1_snr_bin = float(np.sum(blocks.net.values[q1_first:q1_last + 1]) / np.sqrt(max(np.sum(blocks.bkg.values[q1_first:q1_last + 1]), 1.0) * np.sum(nbins[q1_first:q1_last + 1])))
         out.qe1_dip = q1_rate / out.pe_peak_rate if out.pe_peak_rate > 0 else np.nan
         out.qe1_recovery = out.me_peak_rate / q1_rate if q1_rate > 0 else np.inf
-        out.mvt_pe, out.mvt_pe_bins, out.mvt_pe_err, _ = mvt_of(lc, counts, blocks, pe_first, q1_first - 1)
-        if not np.isfinite(out.mvt_pe):
-            out.mvt_pe, out.mvt_pe_bins = 0.5 * (out.pe[1] - out.pe[0]), int(blocks.i0.values[q1_first] - blocks.i0.values[pe_first])
-            out.flags.append("mvt_pe_is_half_the_precursor")
+        if settings["mvt"] == "brightest":
+            out.mvt_pe, out.mvt_pe_bins = brightest_rise(lc, counts, blocks, pe_first, q1_first - 1)
+        else:
+            out.mvt_pe, out.mvt_pe_bins, out.mvt_pe_err, _ = mvt_of(lc, counts, blocks, pe_first, q1_first - 1)
+            if not np.isfinite(out.mvt_pe):
+                out.mvt_pe, out.mvt_pe_bins = 0.5 * (out.pe[1] - out.pe[0]), int(blocks.i0.values[q1_first] - blocks.i0.values[pe_first])
+                out.flags.append("mvt_pe_is_half_the_precursor")
         me_first = q1_last + 1
 
     out.me, out.me_blocks = (float(start[me_first]), float(stop[me_last])), (int(me_first), int(me_last))
-    out.mvt_me, out.mvt_me_bins, out.mvt_me_err, _ = mvt_of(lc, counts, blocks, me_first, me_last)
-    if not np.isfinite(out.mvt_me):
-        out.mvt_me, out.mvt_me_bins = 0.5 * (out.me[1] - out.me[0]), int(blocks.i1.values[me_last] - blocks.i0.values[me_first])
-        out.flags.append("mvt_me_is_half_the_main_emission")
+    if settings["mvt"] == "brightest":
+        out.mvt_me, out.mvt_me_bins = brightest_rise(lc, counts, blocks, me_first, me_last)
+    else:
+        out.mvt_me, out.mvt_me_bins, out.mvt_me_err, _ = mvt_of(lc, counts, blocks, me_first, me_last)
+        if not np.isfinite(out.mvt_me):
+            out.mvt_me, out.mvt_me_bins = 0.5 * (out.me[1] - out.me[0]), int(blocks.i1.values[me_last] - blocks.i0.values[me_first])
+            out.flags.append("mvt_me_is_half_the_main_emission")
     out.we = (out.pe[0] if out.pe else out.me[0], float(stop[last]))
     return out
 
@@ -379,10 +423,33 @@ def pulses(blocks, first, last):
     return pd.DataFrame(rows, columns=["start", "stop", "peak", "rise", "half_width"])
 
 
-def mvt_readings(lc, counts, blocks, first, last):
-    """Four readings of "the rise time of the shortest pulse identified with Bayesian blocks", for comparing with their table.
+def brightest_rise(lc, counts, blocks, first, last):
+    """Zhu et al.'s T_MVT as their tables have it: "the rise time of the shortest pulse" among blocks first..last, from the pulse's start
+    (pulses) to the centre of its brightest bin, or from the start of the blocks if no block among them is a pulse.
 
-    certain: half the shortest block whose edges are certain at 5 sigma (mvt_of; Xiao et al. 2023's definition, and the one used here)
+    Every T_MVT they print is a whole number of half-bins and most are odd: a time from a bin edge to a bin centre. Inside one Bayesian
+    block the rate is constant within the noise, so there the brightest bin is wherever the counting noise puts it, and with_errors'
+    realisations show that spread. Returns (T_MVT, twice T_MVT in bins), so that T_MVT = bins x Tres / 2 as for the half-block readings.
+    """
+    p = pulses(blocks, first, last)
+    if len(p):
+        pulse = p.iloc[int(np.argmin((p.stop - p.start).values))]
+        t0, t1 = float(pulse.start), float(pulse.stop)
+    else:
+        t0, t1 = float(blocks.start.values[first]), float(blocks.stop.values[last])
+    inside = np.flatnonzero((lc.edges[:-1] >= t0 - 1e-9) & (lc.edges[1:] <= t1 + 1e-9))
+    if len(inside) == 0:
+        return np.nan, 0
+    k = inside[int(np.argmax(np.asarray(counts, float)[inside]))]
+    bins = 2 * int(k - inside[0]) + 1
+    return 0.5 * bins * lc.tres, bins
+
+
+def mvt_readings(lc, counts, blocks, first, last):
+    """Five readings of "the rise time of the shortest pulse identified with Bayesian blocks", for comparing with their table.
+
+    brightest: from the shortest pulse's start to the centre of its brightest bin (brightest_rise; the zhu modes' T_MVT)
+    certain: half the shortest block whose edges are certain at 5 sigma (mvt_of; Xiao et al. 2023's definition, the project mode's T_MVT)
     shortest: half the shortest block, with no test of its edges
     rise: the rise time of the shortest pulse (pulses), from its start to the middle of its peak block
     half_width: half the shortest run of blocks above half a pulse's peak rate
@@ -390,7 +457,8 @@ def mvt_readings(lc, counts, blocks, first, last):
     inside = blocks.iloc[first:last + 1]
     p = pulses(blocks, first, last)
     shortest_pulse = p.iloc[int(np.argmin((p.stop - p.start).values))] if len(p) else None
-    return dict(certain=mvt_of(lc, counts, blocks, first, last)[0], shortest=0.5 * float((inside.stop - inside.start).min()),
+    return dict(brightest=brightest_rise(lc, counts, blocks, first, last)[0], certain=mvt_of(lc, counts, blocks, first, last)[0],
+                shortest=0.5 * float((inside.stop - inside.start).min()),
                 rise=float(shortest_pulse.rise) if shortest_pulse is not None else np.nan,
                 half_width=0.5 * float(p.half_width.min()) if len(p) else np.nan)
 
