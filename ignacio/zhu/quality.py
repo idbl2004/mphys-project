@@ -31,6 +31,7 @@ FLAGS = {
     # episodes (episodes.find_episodes)
     "no_significant_block": "no block of the light curve is 3 sigma above the background",
     "excess_at_start_ignored": "the first block of the light curve was above 3 sigma; it is taken as a background misfit, not emission",
+    "pe_peak_above_me_peak": "zhu2026: the precursor peaks as high as the main emission or higher, which the 2026 paper allows when the gap is at the background; the main emission's peak is the brightest block after the gap",
     "emission_reaches_background": "the last emission block ends where the background interval starts: T100,WE and T100,EE (or T100,ME if there is no EE) are lower limits",
     "no_background_before_burst": "the data start too soon before the emission for an interval before it; the background is fitted after it only",
     "no_background_after_burst": "the data end too soon after the emission for an interval after it",

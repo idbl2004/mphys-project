@@ -116,8 +116,8 @@ def clear_background(burst, rounds=5):
         blocks = blocks_of(lc)
         loud = blocks[blocks.sigma >= EMISSION_SIGMA]
         if not loud.empty and float(loud.start.min()) - tte_start > 10 * FINE:
-            early = blocks_of(light_curve(burst, FINE, span=(tte_start, float(loud.start.min()))))
-            loud = pd.concat([loud, early[early.sigma >= PRECURSOR_SIGMA]])
+            early = blocks_of(light_curve(burst, FINE, span=(tte_start, float(loud.start.min())))).iloc[1:]   # the first block
+            loud = pd.concat([loud, early[early.sigma >= PRECURSOR_SIGMA]])            # sits on the edge of the fit, as in find_episodes
         if loud.empty:
             break
         before, after = sides(burst)

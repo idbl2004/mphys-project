@@ -16,9 +16,10 @@ zhu2025  Zhu et al. 2025, section 2.1. A QE is one block at least 10 bins long, 
 zhu2026  Zhu et al. 2026, section 2.1. As above with a QE at least 8 bins long. The PE's peak is 3 sigma above the background, and "when
          the QE is consistent with the background level" (read as below 2 sigma per bin, the usual meaning of "consistent") the PE only
          needs fewer counts than the ME; "otherwise, the peak count of the ME must be significantly higher than that of the PE" (read as the
-         ME's peak block 3 sigma above the PE's). Since "the peak count of the PE may be comparable to that of the ME" when the QE is at the background, the ME's peak
-         isn't simply the brightest block: if that block is in the first piece of emission, a QE candidate at the background follows, and
-         the next piece's peak is comparable (at least COMPARABLE_PEAK of it), the next piece holds the ME's peak (_bright_precursor_peak).
+         ME's peak block 3 sigma above the PE's). Since "the peak count of the PE may be comparable to that of the ME" when the QE is at the
+         background, the ME's peak isn't simply the brightest block: if that block is in the first piece of emission, a QE candidate at the
+         background follows, and the brightest emission after it is comparable (at least COMPARABLE_PEAK of it), that block is tried as the
+         ME's peak, and kept if the rule then accepts a PE (_bright_precursor_peak).
 project  This project's precursor rule (notebook 18's sample_tools.precursor_from_blocks), written again here (_project_runs) for the same
          blocks: a block is quiet if it is below 5 sigma and below a quarter of the highest rate so far, a gap can be several blocks, and
          the gap is the first run of quiet blocks unless a later one is more than twice as long. Here a run must also be at least 8 bins
@@ -249,10 +250,11 @@ def _quiet_dip_candidates(snr, long_dip, first, peak):
 
 
 def _bright_precursor_peak(emission, long_dip, snr, rate, peak):
-    """zhu2026: the ME's peak when a PE is as bright as the ME or brighter. The emission is cut at every dip that could be a QE; if the
-    brightest block is in the first piece, a cut at the background (below AT_BACKGROUND_SIGMA per bin) follows it, and the piece after
-    that cut peaks at least COMPARABLE_PEAK as high, that piece's brightest block is the ME's peak. A spike followed by a much fainter
-    tail (a short burst's extended emission) keeps the spike as the ME. Returns the block index of the ME's peak."""
+    """zhu2026: a candidate for the ME's peak when a PE is as bright as the ME or brighter. The emission is cut at every dip that could
+    be a QE; if the brightest block is in the first piece, a cut at the background (below AT_BACKGROUND_SIGMA per bin) follows it, and the
+    brightest emission block after that cut is at least COMPARABLE_PEAK as high, that block is the candidate. A spike followed by a much
+    fainter tail (a short burst's extended emission) keeps the spike as the ME. find_episodes keeps the candidate only if the rule then
+    accepts a PE. Returns a block index (peak itself when there is no candidate)."""
     loud = np.flatnonzero(emission)
     first, last = loud[0], loud[-1]
     cuts = [i for i in np.flatnonzero(long_dip & (snr < QUIET_SIGMA)) if first < i < last]
@@ -262,17 +264,17 @@ def _bright_precursor_peak(emission, long_dip, snr, rate, peak):
     if not at_background:
         return peak
     q = at_background[0]
-    later = [i for i in cuts if i > q]
-    piece = np.arange(q + 1, later[0] if later else last + 1)
-    piece = piece[emission[piece]]
-    if len(piece) == 0:
+    after = np.arange(q + 1, last + 1)
+    after = after[emission[after]]
+    if len(after) == 0:
         return peak
-    candidate = int(piece[np.argmax(rate[piece])])
+    candidate = int(after[np.argmax(rate[after])])
     return candidate if rate[candidate] >= COMPARABLE_PEAK * rate[peak] else peak
 
 
-def find_episodes(lc, blocks, counts=None, mode="zhu2026", burst="", qe1_choice="longest"):
-    """The episodes of one burst under one mode (see the module's docstring). Returns an EpisodeResult."""
+def find_episodes(lc, blocks, counts=None, mode="zhu2026", burst="", qe1_choice="longest", main_peak=None):
+    """The episodes of one burst under one mode (see the module's docstring). Returns an EpisodeResult. main_peak (a block index) is
+    used internally to try another block as the ME's peak (_bright_precursor_peak)."""
     if mode not in MODES:
         raise ValueError(f"mode {mode!r} is not one of {list(MODES)}")
     settings = MODES[mode]
@@ -292,16 +294,21 @@ def find_episodes(lc, blocks, counts=None, mode="zhu2026", burst="", qe1_choice=
     if emission[-1]:
         out.flags.append("emission_reaches_background")          # the whole burst and the extended emission are lower limits
     loud = np.flatnonzero(emission)
-    peak = loud[np.argmax(rate[loud])]
+    peak = loud[np.argmax(rate[loud])] if main_peak is None else int(main_peak)
     first, last = loud[0], loud[-1]
     long_dip = _dips(rate) & (nbins >= settings["qe_bins"])
-    if settings["pe_test"] == "two_branch":
+    if settings["pe_test"] == "two_branch" and main_peak is None:
         moved = _bright_precursor_peak(emission, long_dip, snr, rate, peak)
         if moved != peak:
-            out.reasons.append(f"me: the brightest block is in the first piece and a QE at the background follows; the next piece peaks at "
-                               f"{rate[moved] / rate[peak]:.2f} of it, so its brightest block is the ME's peak")
-            out.flags.append("pe_peak_above_me_peak")
-            peak = moved
+            trial = find_episodes(lc, blocks, counts, mode, burst, qe1_choice, main_peak=moved)
+            if trial.pe is not None:
+                trial.reasons.insert(0, f"me: the brightest block is in the first piece and a QE at the background follows; the brightest "
+                                        f"emission after it peaks at {rate[moved] / rate[peak]:.2f} of it, so it is the ME's peak and the "
+                                        f"first piece the PE")
+                trial.flags.append("pe_peak_above_me_peak")
+                return trial
+            out.reasons.append("me: a later block was tried as the ME's peak (the first piece being brighter), but no PE was accepted with "
+                               "it, so the brightest block stays the ME's peak")
     out.me_peak_rate, out.me_peak_sigma = float(rate[peak]), float(sigma[peak])
 
     # QE2 and EE first: they depend only on the main peak, and the zhu2026 test below compares the PE with the ME alone

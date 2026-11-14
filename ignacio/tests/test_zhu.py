@@ -732,3 +732,23 @@ def test_the_one_burst_command_records_a_failure_and_goes_on(tmp_path, monkeypat
     run.measure_named(["broken", "good"], sample, out_root=tmp_path)
     assert io.state("broken", tmp_path)["status"] == "failed" and "a bug" in io.state("broken", tmp_path)["reason"]
     assert done == ["good"]
+
+
+def test_a_rejected_bright_precursor_leaves_the_main_emission_as_it_was():
+    # a bright spike, background, then a fainter, shorter piece: moving the main peak to the second piece gives no acceptable PE (the
+    # spike has more counts), so the spike stays the ME and the second piece is the extended emission
+    lc = _two_pieces((0.0, 0.5, 40000.0), (3.5, 3.8, 24000.0))
+    found = find_episodes(lc, blocks_of(lc), mode="zhu2026")
+    assert found.pe is None
+    assert abs(found.me[0]) <= 3 * TRES and abs(found.me[1] - 0.5) <= 3 * TRES
+    assert found.ee is not None and abs(found.ee[0] - 3.5) <= 3 * TRES
+    assert found.me_peak_rate > 30000 and "pe_peak_above_me_peak" not in found.flags
+
+
+def test_the_main_peak_is_the_brightest_emission_after_the_gap():
+    # bright spike, background, then 24k, a short dip and 36k: the main emission's peak is the 36k block, not the 24k piece after the gap
+    lc = _two_pieces((0.0, 0.5, 40000.0), (2.0, 2.3, 24000.0), (2.5, 3.0, 36000.0))
+    found = find_episodes(lc, blocks_of(lc), mode="zhu2026")
+    assert found.pe is not None and abs(found.pe[1] - 0.5) <= 3 * TRES
+    assert abs(found.me[0] - 2.0) <= 3 * TRES and found.me[1] >= 3.0 - 3 * TRES
+    assert found.me_peak_rate > 30000
