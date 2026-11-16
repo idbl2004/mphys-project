@@ -72,6 +72,77 @@ To reproduce the whole analysis, from `ignacio/`:
 The literature table was built once from the arXiv source of the 2025 paper with `catalogue.build_literature_table`; the 2026 numbers come
 from the journal's machine-readable Table 1 (`shared/zhu2026_table1.csv`).
 
+## Swift/BAT and the instrument layer (`instruments/`, notebook 27)
+
+The same burst seen by two instruments: Fermi/GBM and Swift/BAT through the same verbs (`burst`, `light_curve`, `episodes`, `spectrum`),
+each with its own implementation, since the two record and calibrate photons differently (the table in `fermi_gbm.py` sets out how).
+
+| Module | What it does |
+|---|---|
+| `fermi_gbm.py` | GBM through those verbs, calling the validated code of `grbtool/` and `zhu/` exactly as the batch does (its test checks it gives the batch's episodes) |
+| `swift_bat.py` | the standard BAT chain with HEASoft's own tools (detector mask, hot pixels, mask weighting, spectra with responses, averaged over the slew when the burst moves across the field); chi-squared fits with profile errors; Bayesian blocks with the Gaussian fitness; the light-travel time between Swift and Fermi |
+| `bat_compare.py` | the chain against the BAT GRB catalogue, the episodes from BAT's light curve against GBM's, and BAT's spectrum of the precursor GBM defines, beside the index GBM's fit predicts in BAT's band |
+| `bat_data.py` | everything BAT needs from outside the repository (calibration files, catalogue tables, the event data of the bursts both instruments saw) |
+
+| Notebook | What it shows |
+|---|---|
+| `27_bat_check.ipynb` | the BAT chain against the catalogue; episode edges from BAT against GBM's; the precursors in BAT's band against what GBM's fits predict there |
+| `00_demonstration.ipynb` | the whole project once, in order, on one burst and then on the sample, every step calling the package or reading a saved table |
+
+## Reproducing the results
+
+Everything from the GBM and BAT photons to the tables and figures is code in this repository; nothing is edited by hand. The expensive
+part (the batch, hours) writes `results/zhu/` and `results/bat/`; the notebooks only read those and run in minutes, so their saved outputs
+can be read without running anything.
+
+**Environment.** `conda env create -f environment_MVTEnv.yml` (every package at its exact version). Swift/BAT needs HEASoft 6.37.1 with
+the BAT tools (the conda `heasoft` package, in a second environment, MVTEnvHEA) and the BAT calibration release of 7 June 2023
+(`python -m instruments.bat_data caldb`).
+
+**Data and where it comes from.**
+
+| What | Source | How it gets here |
+|---|---|---|
+| GBM TTE, responses and catalogue files of each burst | HEASARC Fermi GBM burst archive | `python -m zhu.run prefetch` (about 7 GB, into `data/fermiGBM/`) |
+| Zhu et al. (2026) Table 1 | the journal's machine-readable table | `shared/zhu2026_table1.csv` |
+| Zhu et al. (2025) printed values | the arXiv source of the paper | `shared/zhu_literature_values.csv` (`catalogue.build_literature_table`) |
+| Tan et al. (2025) Tables 1 and 2 | the paper, transcribed | `shared/tan2025_type_il_*.csv` |
+| Redshifts | J. Greiner's GRB table, with the project's own values first | `shared/redshifts_greiner.csv` |
+| BAT event, attitude and housekeeping files | HEASARC Swift archive, observation 00<trigger>000 | `python -m instruments.bat_data fetch` (into `~/swift_bat/data/`) |
+| BAT GRB catalogue (general table, 1-s peak and T100 power-law fits) | NASA GSFC BAT GRB catalogue | `python -m instruments.bat_data catalogue` |
+
+**Configuration.** The rules and thresholds are named constants at the top of each module (`zhu/episodes.py`, `zhu/background.py`,
+`zhu/spectra.py`, `zhu/lags.py`, `instruments/bat_compare.py`), each with the reason for its value. The sample of 111 bursts is
+`shared/zhu_sample.csv` (`catalogue.build_sample`).
+
+**Random seeds.** Fixed everywhere, so a rerun gives the same numbers: the sample's random controls 20261111; the 40 simulated light curves
+per burst 2026; E_p flux errors 1; lag resamples 20 and 32; EPI draws 11 and the input draws 13; cross-validation 5 (law search), 7
+(feature sets), 11 (permutation tests), bootstrap 3 and 9; t-SNE, UMAP and HDBSCAN seeds are listed in notebook 22.
+
+**Code versions.** Every row the batch writes carries `git:<commit> zhu:<hash of the package's files>` (the `code_version` column of
+each burst's tables, and its `state.json`); the final batch ran every burst on commit 4305eb5. The tables the notebooks write
+(`shared/zhu_remeasured.csv`, `shared/zhu_paper_vs_ours.csv`) are made from those results by the notebooks of the commit they are in.
+
+**Commands, from `ignacio/`, with the time each took on this laptop (i7-1255U, 12 threads, 7 GB in WSL):**
+
+1. `python -m zhu.run prefetch` (about 7 GB; the time depends on the connection).
+2. `OMP_NUM_THREADS=1 python -m zhu.run batch --workers 3`, six copies side by side. A burst takes a median of 7 minutes and at most
+   about 40, almost all of it in the spectral fits: about 17 hours of batch time for the 111 bursts, or about 3 hours with six batches.
+   A stopped batch picks up where it left off, and the laptop must not sleep while it runs. `python -m zhu.run status` shows each
+   burst's state. Each slow fitting step has 5 minutes; a window that needs more is recorded as such, and can be fitted again with
+   more time (`zhu.run.measure_named(..., redo=('spectra',))` with `SPECTRUM_MINUTES` and `zhu.spectra.MODEL_MINUTES` raised).
+3. Notebooks 22-27 and 00 in order (`jupyter execute --inplace <notebook>`): 23-27 and 00 take about 6 minutes together (26 about 4
+   of them), 22 a few minutes.
+4. BAT: `python -m instruments.bat_data caldb`, `catalogue`, `match` and `fetch` (once), then `python -m instruments.bat_compare validate
+   <BAT names>` (about 2 hours for 15 bursts, mostly the responses made every 5 s during slews), `episodes <names>` and
+   `precursors <names>` (about 20 minutes together for 19 bursts), and notebook 27.
+5. `python -m pytest tests -q`: 131 tests in about 11 minutes; `-m "not slow"` leaves out the six that refit real spectra or run the
+   BAT chain.
+
+**Rodrigo's MVT (Chandra).** The Haar-wavelet MVT is Rodrigo's code (MVTTools, branch haar-fix, commit 74b8ff2), run by him on Bath's
+Chandra cluster, with his own scripts, on the windows in `shared/`. Its outputs are his and are not in this repository until he has
+cleared them.
+
 ## Run times
 
 On my laptop (i7-1255U, 7 GB RAM in WSL), each notebook uses one core and under 1 GB: 08-10 take 2-3 min each,
