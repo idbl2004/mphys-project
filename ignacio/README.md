@@ -126,11 +126,12 @@ each burst's tables, and its `state.json`); the final batch ran every burst on c
 **Commands, from `ignacio/`, with the time each took on this laptop (i7-1255U, 12 threads, 7 GB in WSL):**
 
 1. `python -m zhu.run prefetch` (about 7 GB; the time depends on the connection).
-2. `OMP_NUM_THREADS=1 python -m zhu.run batch --workers 3`, six copies side by side. A burst takes a median of 7 minutes and at most
-   about 40, almost all of it in the spectral fits: about 17 hours of batch time for the 111 bursts, or about 3 hours with six batches.
+2. `OMP_NUM_THREADS=1 python -m zhu.run batch --workers 3`, six copies side by side. A burst takes a median of 8 minutes and at most
+   about 55, almost all of it in the spectral fits: about 19 hours of batch time for the 111 bursts, or about 3.2 hours with six batches.
    A stopped batch picks up where it left off, and the laptop must not sleep while it runs. `python -m zhu.run status` shows each
-   burst's state. Each slow fitting step has 5 minutes; a window that needs more is recorded as such, and can be fitted again with
-   more time (`zhu.run.measure_named(..., redo=('spectra',))` with `SPECTRUM_MINUTES` and `zhu.spectra.MODEL_MINUTES` raised).
+   burst's state. Each model fit has 5 minutes and the profile error of the chosen E_peak 10; a window that needs more is recorded as
+   such, keeps the best fit found, and can be fitted again with more time (`zhu.run.measure_named(..., redo=('spectra',))` with
+   `SPECTRUM_MINUTES` and `zhu.spectra.MODEL_MINUTES` raised).
 3. Notebooks 22-27 and 00 in order (`jupyter execute --inplace <notebook>`): 23-27 and 00 take about 6 minutes together (26 about 4
    of them), 22 a few minutes.
 4. BAT: `python -m instruments.bat_data caldb`, `catalogue`, `match` and `fetch` (once), then `python -m instruments.bat_compare validate
