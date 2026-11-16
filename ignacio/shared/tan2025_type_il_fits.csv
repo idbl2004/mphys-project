@@ -1,0 +1,12 @@
+# Tan et al. (2025, arXiv 2504.06616v2), "Search for Type IL Gamma-ray Bursts". Table 2: spectral fits (PyXspec, best model by BIC) of the
+# precursor (pre) and main emission (main) of their three new Type IL candidates; times in s from the GBM trigger. Cutoff power law: alpha
+# and E_cut, so E_peak = (2 + alpha) E_cut; kT from their blackbody fit of the precursor. Errors as printed (+/-). Their whole-burst (Tot)
+# rows and the CPL+BB fit of 170228A's precursor (BIC 82.84, worse than the CPL) are not entered. Table 1 durations in
+# tan2025_type_il_durations.csv. Tabulated values, not read from figures; checked against the arXiv source (v2) on 15 Nov 2026.
+burst,episode,t_start,t_stop,alpha,alpha_plus,alpha_minus,Ecut_keV,Ecut_plus,Ecut_minus,Epeak_keV,kT_keV,kT_plus,kT_minus,BIC_cpl,BIC_bb
+GRB170228A,pre,-0.5,0.3,-1.05,0.20,0.32,1160.0,1770.0,643.0,1102.0,57.10,7.75,5.94,74.61,89.88
+GRB170228A,main,1.4,20.0,-0.64,0.05,0.04,606.0,71.1,59.3,824.16,,,,101.07,
+GRB200311A,pre,-0.3,0.1,-1.46,0.14,0.10,2340.0,1660.0,1470.0,1263.6,25.50,3.76,3.07,81.15,89.24
+GRB200311A,main,0.3,18.0,-0.66,0.03,0.03,856.0,69.7,65.7,1147.04,,,,124.63,
+GRB200914A,pre,-0.3,0.1,-0.74,0.42,0.26,835.0,1630.0,549.0,1052.1,69.9,11.2,9.8,115.07,113.75
+GRB200914A,main,0.3,19.0,-0.78,0.04,0.03,930.0,120.0,106.0,1134.6,,,,239.17,

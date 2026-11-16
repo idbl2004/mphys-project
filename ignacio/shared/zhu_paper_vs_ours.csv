@@ -1,0 +1,1101 @@
+burst,number,paper,ours,difference,ours_low,ours_high,agrees,our_status,reason
+081216A,T100_PE,0.152,0.144,-0.023481,0.12,0.152,True,measured,
+081216A,T100_QE1,0.48,0.488,0.0071786,0.48,0.51049,True,measured,
+081216A,TMVT_PE,0.012,0.14,1.0669,0.021514,0.116,False,measured,MVT reading (their pulse choice)
+081216A,T100_ME,0.464,0.488,0.021902,0.48,0.496,True,measured,
+081216A,TMVT_ME,0.116,0.116,0,0.052,0.15449,True,measured,
+081216A,T100_WE,1.096,1.12,0.0094075,1.112,1.128,True,measured,
+081216A,Ep_ME,1179.2,1037.5,-0.055582,933.38,1157.8,False,measured,model or window (ours: cpl)
+081216A,tau32_ME_ms,19.05,,,,,False,unusable:peak_in_0.898,unusable:peak_in_0.898
+081216A,tau32_WE_ms,19.34,14.853,-4.487,3.8808,26.61,True,measured,
+081216A,EPI,9.0415,7.8833,-1.1582,7.4519,8.2049,False,measured,"same gap, other start"
+090131A,T100_PE,0.592,0.592,9.6433e-17,0.55351,0.70746,True,measured,
+090131A,T100_QE1,1.78,1.78,0,1.6683,1.8145,True,measured,
+090131A,TMVT_PE,0.102,0.102,9.6433e-17,0.073029,0.4407,True,measured,
+090131A,T100_ME,7.684,7.684,-4.8216e-17,7.6175,7.7152,True,measured,
+090131A,TMVT_ME,0.974,0.71,-0.1373,0.34351,1.1322,True,measured,
+090131A,T100_WE,84.316,42.624,-0.29626,42.499,42.699,False,measured,extended-emission split or faint tail
+090131A,Ep_ME,68.15,64.968,-0.020765,,69.877,True,measured,
+090131A,tau32_ME_ms,80.99,3.9545,-77.035,-0.36575,78.166,False,measured,lag resolution or window
+090131A,tau32_WE_ms,70.66,47.594,-23.066,34.571,60.584,False,measured,lag resolution or window
+090131A,EPI,4.7608,4.7193,-0.041531,4.3333,5.1955,True,measured,
+090510A,T100_PE,0.024,0.04,0.22185,0.04,0.04,False,measured,"same gap, other start"
+090510A,T100_QE1,0.4,0.392,-0.0087739,0.392,0.392,True,measured,
+090510A,TMVT_PE,0.012,0.004,-0.47712,0.0055144,0.036,True,measured,
+090510A,T100_ME,5.664,0.896,-0.80082,0.85903,3.0998,False,measured,extended-emission split or faint tail
+090510A,TMVT_ME,0.012,0.004,-0.47712,0.004,0.02,True,measured,
+090510A,T100_WE,6.088,1.328,-0.66128,1.3055,6.1094,True,measured,
+090510A,Ep_ME,5852.9,4232.7,-0.14076,3831.7,4656.3,False,measured,model or window (ours: band)
+090510A,tau32_ME_ms,-4.18,-5.0833,-0.90328,-9.5511,-0.36665,True,measured,
+090510A,tau32_WE_ms,-6.48,-3.8753,2.6047,-7.8344,0.34264,True,measured,
+090510A,EPI,11.274,11.252,-0.021853,11.014,11.828,True,measured,
+090602A,T100_PE,0.688,0.624,-0.042404,0.4934,0.67252,True,unstable,
+090602A,T100_QE1,0.56,0.56,0,0.51044,0.67304,True,unstable,
+090602A,TMVT_PE,0.344,0.056,-0.78837,0.05548,0.504,True,unstable,
+090602A,T100_ME,9.92,9.904,-0.00070104,9.795,11.419,True,measured,
+090602A,TMVT_ME,0.856,3.416,0.60104,0.50446,5.4491,True,measured,
+090602A,T100_WE,11.168,11.088,-0.0031222,10.651,11.836,True,measured,
+090602A,Ep_ME,572.1,563.46,-0.0066095,465.65,707.18,True,measured,
+090602A,tau32_ME_ms,2331.1,,,,,False,unusable:peak_in_0.893,unusable:peak_in_0.893
+090602A,tau32_WE_ms,2446.8,,,,,False,unusable:no_reliable_peak,unusable:no_reliable_peak
+090602A,EPI,6.2667,7.0843,0.81756,6.6817,7.782,False,measured,"same gap, other start"
+090618A,T100_PE,39.136,34.72,-0.051997,34.611,34.908,False,measured,edge
+090618A,T100_QE1,11.488,15.328,0.12524,15.132,15.926,False,measured,edge
+090618A,TMVT_PE,1.644,20.228,1.0901,3.9601,13.057,False,measured,edge
+090618A,T100_ME,49.152,49.728,0.0050598,49.13,49.811,True,measured,
+090618A,TMVT_ME,4.284,0.892,-0.68148,0.32854,1.3138,False,measured,MVT reading (their pulse choice)
+090618A,T100_WE,195.28,158.09,-0.091759,158.06,158.12,False,lower_limit,extended-emission split or faint tail (tail runs into the background interval)
+090618A,Ep_ME,170.16,184.26,0.03457,175.72,193.24,True,measured,
+090618A,tau32_ME_ms,428.1,201.81,-226.29,127.77,280.11,False,measured,lag resolution or window
+090618A,tau32_WE_ms,405.16,216.91,-188.25,140.1,303.67,False,measured,lag resolution or window
+090618A,EPI,2.1231,1.0916,-1.0315,0.85037,1.4383,False,measured,edge
+090828A,T100_PE,49.248,14.912,-0.51885,13.88,16.546,False,measured,other
+090828A,T100_QE1,1.504,13.92,0.96639,10.072,15.368,False,measured,other
+090828A,TMVT_PE,8.496,3.632,-0.36907,1.3721,9.4186,True,measured,
+090828A,T100_ME,74.176,42.592,-0.24094,40.376,44.544,False,measured,extended-emission split or faint tail
+090828A,TMVT_ME,0.352,1.808,0.71066,1.3782,2.8519,False,measured,MVT reading (their pulse choice)
+090828A,T100_WE,124.93,71.424,-0.24282,70.703,72.436,False,measured,extended-emission split or faint tail
+090828A,Ep_ME,165.82,142.72,-0.065155,115.59,177.47,True,measured,
+090828A,tau32_ME_ms,-156.48,-114.1,42.385,-278.22,3.5687,True,measured,
+090828A,tau32_WE_ms,-179.11,-14.268,164.84,-39.001,2.5491,False,measured,lag resolution or window
+090828A,EPI,1.729,2.0035,0.27442,1.7193,2.7217,True,measured,
+090831A,T100_PE,0.032,0.032,-3.8573e-16,0.032,0.036,True,measured,
+090831A,T100_QE1,0.24,0.24,9.6433e-17,0.24,0.24,True,measured,
+090831A,TMVT_PE,0.014,0.014,0,0.01,0.029243,True,measured,
+090831A,T100_ME,0.276,0.276,0,0.268,0.28,True,measured,
+090831A,TMVT_ME,0.062,0.062,0,0.046,0.062,True,measured,
+090831A,T100_WE,80,69.72,-0.059733,69.72,69.72,False,lower_limit,extended-emission split or faint tail (tail runs into the background interval)
+090831A,Ep_ME,334.16,330.3,-0.0050467,289.61,383.29,True,measured,
+090831A,tau32_ME_ms,24.27,12.83,-11.44,4.9734,25.009,True,measured,
+090831A,tau32_WE_ms,21.34,1.1473,-20.193,-0.75817,3.9755,False,measured,lag resolution or window
+090831A,EPI,8.7065,8.6964,-0.010093,8.4092,9.0927,True,measured,
+090907B,T100_PE,0.176,,,,,False,missing,missing
+090907B,T100_QE1,0.12,,,,,False,missing,missing
+090907B,TMVT_PE,0.088,,,,,False,missing,missing
+090907B,T100_ME,0.68,0.968,0.15337,0.93751,1.016,False,measured,extended-emission split or faint tail
+090907B,TMVT_ME,0.296,0.66,0.34825,0.37351,0.74649,False,measured,MVT reading (their pulse choice)
+090907B,T100_WE,0.976,29.808,1.4849,0.968,29.837,True,measured,
+090907B,Ep_ME,439.15,400.15,-0.040391,357.21,453.93,True,measured,
+090907B,tau32_ME_ms,64.14,2.5376,-61.602,-26.562,32.639,False,measured,lag resolution or window
+090907B,tau32_WE_ms,29.45,,,,,False,unusable:faint,unusable:faint
+090907B,EPI,7.5556,,,,,False,missing,missing
+091010A,T100_PE,2.012,2.012,0,1.8461,2.036,True,measured,
+091010A,T100_QE1,0.536,0.504,-0.026734,0.48876,0.536,True,measured,
+091010A,TMVT_PE,0.198,0.75,0.5784,0.59336,0.83,False,measured,MVT reading (their pulse choice)
+091010A,T100_ME,1.732,1.764,0.0079507,1.44,1.7752,True,measured,
+091010A,TMVT_ME,0.318,0.35,0.041641,0.314,0.48124,True,measured,
+091010A,T100_WE,14.336,41.012,0.45648,40.847,41.511,False,measured,extended-emission split or faint tail
+091010A,Ep_ME,143.63,142.98,-0.0019769,138.05,148.31,True,measured,
+091010A,tau32_ME_ms,68.35,39.48,-28.87,28.895,56.761,False,measured,lag resolution or window
+091010A,tau32_WE_ms,39.94,30.187,-9.7531,2.8964,48.053,True,measured,
+091010A,EPI,4.8496,4.2806,-0.56898,4.224,4.4202,False,measured,"same gap, other start"
+091030A,T100_PE,11.104,8.528,-0.11463,8.448,8.655,False,measured,other
+091030A,T100_QE1,5.648,8.096,0.15638,8.016,8.2225,False,measured,other
+091030A,TMVT_PE,0.168,3.928,1.3689,1.3365,4.4875,False,measured,other
+091030A,T100_ME,25.056,24.224,-0.014666,23.328,24.582,True,measured,
+091030A,TMVT_ME,1.784,0.984,-0.2584,0.15503,1.3658,False,measured,MVT reading (their pulse choice)
+091030A,T100_WE,197.36,105.87,-0.27048,105.77,106.01,False,measured,extended-emission split or faint tail
+091030A,Ep_ME,1567.5,896.25,-0.24278,780.5,1041.2,False,measured,model or window (ours: cpl)
+091030A,tau32_ME_ms,114.99,-72.436,-187.43,-222.65,53.192,False,measured,lag resolution or window
+091030A,tau32_WE_ms,69.31,-68.647,-137.96,-184.7,33.614,False,measured,lag resolution or window
+091030A,EPI,5.7437,3.9257,-1.818,3.8218,4.4548,False,measured,other
+100116A,T100_PE,7.44,6.64,-0.049405,6.3991,8.7459,True,measured,
+100116A,T100_QE1,75.856,73.808,-0.011887,73.414,74.337,True,measured,
+100116A,TMVT_PE,1.336,2.44,0.26158,1.627,4.469,False,measured,MVT reading (their pulse choice)
+100116A,T100_ME,39.104,29.296,-0.12541,28.91,29.833,False,measured,extended-emission split or faint tail
+100116A,TMVT_ME,0.168,0.168,0,0.059029,0.43697,True,measured,
+100116A,T100_WE,122.4,109.74,-0.047401,109.65,112.43,True,measured,
+100116A,Ep_ME,1256.4,1331.9,0.02534,1173.7,1514,True,measured,
+100116A,tau32_ME_ms,481.4,175.16,-306.24,100.45,259.92,False,measured,lag resolution or window
+100116A,tau32_WE_ms,384.65,148.05,-236.6,63.154,241.86,False,measured,lag resolution or window
+100116A,EPI,4.2609,4.1053,-0.15556,3.7747,4.3996,True,measured,
+100223A,T100_PE,0.016,0.016,0,0.016,0.016,True,measured,
+100223A,T100_QE1,0.064,0.064,0,0.064,0.064,True,measured,
+100223A,TMVT_PE,0.012,0.012,0,0.004,0.012,True,measured,
+100223A,T100_ME,0.144,0.144,0,0.144,0.144,True,measured,
+100223A,TMVT_ME,0.068,0.068,0,0.012,0.1,True,measured,
+100223A,T100_WE,0.224,0.224,-4.8216e-17,0.224,0.224,True,measured,
+100223A,Ep_ME,1138.8,1178.3,0.014795,1043.3,1334.8,True,measured,
+100223A,tau32_ME_ms,-4.59,,,,,False,unusable:faint,unusable:faint
+100223A,tau32_WE_ms,25.65,,,,,False,unusable:faint,unusable:faint
+100223A,EPI,10.427,10.456,0.02959,10.386,10.963,True,measured,
+110825A,T100_PE,0.808,3.2,0.59774,0.844,3.3638,False,measured,other
+110825A,T100_QE1,7.056,3.88,-0.25973,3.6848,6.4299,False,measured,other
+110825A,TMVT_PE,0.062,0.074,0.07684,0.062757,0.25,False,measured,other
+110825A,T100_ME,19.668,40.732,0.31618,19.639,47.04,True,measured,
+110825A,TMVT_ME,0.022,0.054,0.38997,0.01,0.077243,True,measured,
+110825A,T100_WE,92.24,92.892,0.003059,91.987,93.131,True,measured,
+110825A,Ep_ME,304.98,227.53,-0.12723,218.8,237.06,False,measured,model or window (ours: cpl)
+110825A,tau32_ME_ms,3.31,6.5746,3.2646,-2.8962,15.865,True,measured,
+110825A,tau32_WE_ms,2.88,1.3572,-1.5228,-4.382,8.3467,True,measured,
+110825A,EPI,5.8445,5.0453,-0.79918,4.8645,5.5573,False,measured,other
+110903B,T100_PE,3.088,0.096,-1.5074,0.096,33.114,True,measured,
+110903B,T100_QE1,3.248,52.4,1.2077,46.615,126.79,False,measured,other
+110903B,TMVT_PE,0.072,0.024,-0.47712,0.008,0.088,True,measured,
+110903B,T100_ME,12.8,93.552,0.86384,19.11,96.966,False,measured,extended-emission split or faint tail
+110903B,TMVT_ME,0.584,0.584,0,0.065086,0.86594,True,measured,
+110903B,T100_WE,35.392,170.13,0.68187,168.9,170.71,False,measured,extended-emission split or faint tail
+110903B,Ep_ME,24.02,18.366,-0.11656,6.7649,23.074,False,measured,model or window (ours: cpl)
+110903B,tau32_ME_ms,122.96,73.582,-49.378,50.729,102.71,False,measured,lag resolution or window
+110903B,tau32_WE_ms,121.81,59.75,-62.06,35.329,90.581,False,measured,lag resolution or window
+110903B,EPI,3.1583,4.3059,1.1476,1.8042,4.4861,True,measured,
+111117A,T100_PE,0.216,,,0.031618,0.10019,False,missing,missing
+111117A,T100_QE1,0.192,,,0.272,5.1353,False,missing,missing
+111117A,TMVT_PE,0.108,,,0.012,0.024191,False,missing,missing
+111117A,T100_ME,0.328,0.44,0.12758,0.44,0.44,False,measured,extended-emission split or faint tail
+111117A,TMVT_ME,0.012,0.012,0,0.004,0.028,True,measured,
+111117A,T100_WE,0.736,0.44,-0.22343,0.44,0.44649,False,measured,extended-emission split or faint tail
+111117A,Ep_ME,346.2,633.72,0.26257,486.99,875.41,False,measured,model or window (ours: cpl)
+111117A,tau32_ME_ms,9.26,9.9184,0.65839,0.93732,18.961,True,measured,
+111117A,tau32_WE_ms,14.43,9.9184,-4.5116,0.93732,18.961,True,measured,
+111117A,EPI,7.0691,,,,,False,missing,missing
+120504B,T100_PE,0.768,0.768,-1.4465e-16,0.704,0.832,True,measured,
+120504B,T100_QE1,0.8,0.8,0,0.72174,0.896,True,measured,
+120504B,TMVT_PE,0.384,0.688,0.25326,0.08,0.592,True,measured,
+120504B,T100_ME,5.824,3.168,-0.26444,2.9821,3.4759,False,measured,extended-emission split or faint tail
+120504B,TMVT_ME,0.848,1.552,0.2625,0.30229,2.544,True,measured,
+120504B,T100_WE,7.392,4.736,-0.19335,4.5881,4.9479,False,measured,extended-emission split or faint tail
+120504B,Ep_ME,398.35,360.73,-0.043081,305.3,435.85,True,measured,
+120504B,tau32_ME_ms,456.07,,,,,False,unusable:faint,unusable:faint
+120504B,tau32_WE_ms,507.78,,,,,False,unusable:faint,unusable:faint
+120504B,EPI,5.7793,5.4399,-0.33942,5.1742,6.121,True,measured,
+130206B,T100_PE,1.872,0.096,-1.29,0.096,0.096,False,measured,other gap
+130206B,T100_QE1,10.48,52.016,0.69578,42.903,54.521,False,measured,other gap
+130206B,TMVT_PE,0.936,0.008,-2.0682,0.011029,0.088,False,measured,other gap
+130206B,T100_ME,18.976,56.288,0.47221,45.878,60.326,False,measured,extended-emission split or faint tail
+130206B,TMVT_ME,2.712,1.96,-0.14103,1.656,2.101,False,measured,MVT reading (their pulse choice)
+130206B,T100_WE,31.328,108.4,0.5391,108.34,108.65,False,measured,extended-emission split or faint tail
+130206B,Ep_ME,186.77,118.76,-0.19662,108.21,132.38,False,measured,model or window (ours: cpl)
+130206B,tau32_ME_ms,214.67,52.16,-162.51,16.791,88.907,False,measured,lag resolution or window
+130206B,tau32_WE_ms,198.72,52.717,-146,16.615,96.764,False,measured,lag resolution or window
+130206B,EPI,3.7889,6.4059,2.6171,5.989,7.0033,False,measured,other gap
+130310A,T100_PE,1.104,1.088,-0.0063402,1.056,1.152,True,measured,
+130310A,T100_QE1,3.52,3.52,0,3.4781,3.536,True,measured,
+130310A,TMVT_PE,0.552,0.056,-0.99375,0.104,1,True,measured,
+130310A,T100_ME,4.448,17.456,0.59378,16.96,17.488,False,measured,extended-emission split or faint tail
+130310A,TMVT_ME,0.072,0.168,0.36798,0.024,0.11697,True,measured,
+130310A,T100_WE,9.072,22.064,0.38598,21.584,22.157,False,measured,extended-emission split or faint tail
+130310A,Ep_ME,3429.1,4023.8,0.06945,3364.8,4784.5,True,measured,
+130310A,tau32_ME_ms,-5.34,-7.1857,-1.8457,-8.8056,-5.8051,False,measured,lag resolution or window
+130310A,tau32_WE_ms,-5.21,-7.2824,-2.0724,-8.7363,-5.8027,False,measured,lag resolution or window
+130310A,EPI,7.0122,8.1512,1.139,7.8234,8.8482,False,measured,"same gap, other start"
+130804A,T100_PE,0.04,0.04,0,0.04,0.04,True,measured,
+130804A,T100_QE1,0.08,0.08,-9.6433e-17,0.08,0.088,True,measured,
+130804A,TMVT_PE,0.004,0.036,0.95424,0.036,0.036,False,measured,MVT reading (their pulse choice)
+130804A,T100_ME,0.112,0.272,0.38535,0.1386,28.84,False,measured,extended-emission split or faint tail (tail runs into the background interval)
+130804A,TMVT_ME,0.02,0.02,0,0.012,0.02,True,measured,
+130804A,T100_WE,1.008,28.96,1.4583,28.96,28.96,False,lower_limit,extended-emission split or faint tail (tail runs into the background interval)
+130804A,Ep_ME,479.2,,,,,False,unusable,unusable
+130804A,tau32_ME_ms,-0.39,-0.87289,-0.48289,-3.3214,1.4193,True,measured,
+130804A,tau32_WE_ms,0.01,,,,,False,unusable:faint,unusable:faint
+130804A,EPI,9.7054,,,,,False,missing,missing
+131209B,T100_PE,0.192,0.192,3.8573e-16,0.16,0.192,True,measured,
+131209B,T100_QE1,15.424,15.424,0,15.36,15.456,True,measured,
+131209B,TMVT_PE,0.096,0.144,0.17609,0.048,0.176,True,measured,
+131209B,T100_ME,1.6,1.6,-4.8216e-17,1.5741,1.696,True,measured,
+131209B,TMVT_ME,0.496,0.496,0,0.304,1.1178,True,measured,
+131209B,T100_WE,17.216,17.216,0,17.184,17.248,True,measured,
+131209B,Ep_ME,569.27,618.83,0.036254,411.63,1132.1,True,measured,
+131209B,tau32_ME_ms,-41.17,,,,,False,unusable:too_few_bins,unusable:too_few_bins
+131209B,tau32_WE_ms,-46.48,,,,,False,unusable:faint,unusable:faint
+131209B,EPI,6.651,6.5474,-0.10358,6.1326,7.3271,True,measured,
+131215B,T100_PE,0.16,0.16,-9.6433e-17,0.16,0.18594,True,measured,
+131215B,T100_QE1,2.528,2.048,-0.091447,1.984,2.4614,False,measured,other
+131215B,TMVT_PE,0.112,0.112,0,0.048,0.144,True,measured,
+131215B,T100_ME,28.512,5.024,-0.75398,4.992,28.892,True,measured,
+131215B,TMVT_ME,0.08,1.072,1.1271,0.15006,1.5537,False,measured,MVT reading (their pulse choice)
+131215B,T100_WE,31.2,31.2,0,30.688,31.552,True,measured,
+131215B,Ep_ME,542.34,527.9,-0.011722,479.23,586.93,True,measured,
+131215B,tau32_ME_ms,52.6,-5.6609,-58.261,-116.92,105.99,True,measured,
+131215B,tau32_WE_ms,43.2,26.877,-16.323,-7.8471,67.033,True,measured,
+131215B,EPI,7.0138,7.0361,0.022279,6.7065,7.407,True,measured,
+131216A,T100_PE,0.512,0.736,0.15761,0.608,1.152,False,unstable,other
+131216A,T100_QE1,106.56,49.664,-0.33155,45.242,52.4,False,unstable,other
+131216A,TMVT_PE,0.256,0.336,0.1181,0.035274,0.60473,True,unstable,
+131216A,T100_ME,22.944,65.472,0.45539,8.8061,69.141,True,measured,
+131216A,TMVT_ME,0.976,57.232,1.7682,1.0902,59.338,False,measured,MVT reading (their pulse choice)
+131216A,T100_WE,130.02,115.87,-0.050018,9.0941,116,False,measured,extended-emission split or faint tail
+131216A,Ep_ME,689.82,258.06,-0.42702,210.65,317.8,False,measured,model or window (ours: cpl)
+131216A,tau32_ME_ms,62.38,,,,,False,unusable:faint,unusable:faint
+131216A,tau32_WE_ms,67.78,,,,,False,unusable:faint,unusable:faint
+131216A,EPI,5.5462,4.5822,-0.96396,4.1383,5.504,False,measured,other
+131217B,T100_PE,6.336,,,9.264,9.9005,False,missing,missing
+131217B,T100_QE1,2,,,3.0397,4.6649,False,missing,missing
+131217B,TMVT_PE,0.152,,,9.0533,9.3129,False,missing,missing
+131217B,T100_ME,20.752,17.152,-0.082745,8.3595,17.572,False,measured,extended-emission split or faint tail
+131217B,TMVT_ME,0.296,0.072,-0.61396,0.41406,2.085,False,measured,MVT reading (their pulse choice)
+131217B,T100_WE,29.088,17.152,-0.2294,16.386,17.973,False,measured,extended-emission split or faint tail
+131217B,Ep_ME,643.81,320.79,-0.30254,285.12,365.93,False,measured,model or window (ours: cpl)
+131217B,tau32_ME_ms,-50.53,-107,-56.469,-275.01,14.313,True,measured,
+131217B,tau32_WE_ms,24.07,-107,-131.07,-275.01,14.313,False,measured,lag resolution or window
+131217B,EPI,5.4833,,,,,False,missing,missing
+140206B,T100_PE,1.736,1.68,-0.01424,1.6255,1.696,True,measured,
+140206B,T100_QE1,4.552,4.592,0.0037996,4.568,4.6305,True,measured,
+140206B,TMVT_PE,0.804,0.564,-0.15398,0.54951,0.81546,True,measured,
+140206B,T100_ME,59.344,56.6,-0.02056,55.835,56.953,True,measured,
+140206B,TMVT_ME,2.812,7.972,0.45255,7.5415,8.6585,False,measured,MVT reading (their pulse choice)
+140206B,T100_WE,344.64,283.88,-0.084231,283.81,283.9,False,lower_limit,extended-emission split or faint tail (tail runs into the background interval)
+140206B,Ep_ME,218.29,208.38,-0.020169,198.32,219.34,True,measured,
+140206B,tau32_ME_ms,475.4,324.25,-151.15,207.16,422.7,False,measured,lag resolution or window
+140206B,tau32_WE_ms,387.84,3.8182,-384.02,-0.11614,9.687,False,measured,lag resolution or window
+140206B,EPI,4.2042,4.3301,0.12598,4.2416,4.4555,False,measured,"same gap, other start"
+140304B,T100_PE,30.624,165.7,0.73325,35,165.9,False,measured,other gap
+140304B,T100_QE1,134.94,0.384,-2.5458,0.352,131.49,False,measured,other gap
+140304B,TMVT_PE,4.08,3.728,-0.039184,3.3596,6.0648,True,measured,
+140304B,T100_ME,75.68,75.264,-0.0023938,46.246,75.328,True,measured,
+140304B,TMVT_ME,10.16,1.328,-0.8837,3.8033,36.007,True,measured,
+140304B,T100_WE,241.25,241.34,0.00017278,241.06,241.87,True,measured,
+140304B,Ep_ME,118.77,112.11,-0.025054,93.545,143.08,True,measured,
+140304B,tau32_ME_ms,91.58,,,,,False,unusable:no_reliable_peak,unusable:no_reliable_peak
+140304B,tau32_WE_ms,182.58,,,,,False,unusable:no_reliable_peak,unusable:no_reliable_peak
+140304B,EPI,0.98761,1.5164,0.52874,0.81154,1.7404,True,measured,
+140308B,T100_PE,1.04,0.688,-0.17944,0.61433,0.77767,False,measured,other
+140308B,T100_QE1,0.88,1.28,0.16273,1.2127,1.3537,False,measured,other
+140308B,TMVT_PE,0.52,0.6,0.062148,0.056,0.552,True,measured,
+140308B,T100_ME,14.56,4.064,-0.55421,4.003,6.1029,False,measured,extended-emission split or faint tail
+140308B,TMVT_ME,0.168,0.216,0.10914,0.088,0.312,True,measured,
+140308B,T100_WE,16.48,16.384,-0.0025373,16.32,16.525,True,measured,
+140308B,Ep_ME,273.7,194.1,-0.14925,175.59,215.13,False,measured,model or window (ours: band)
+140308B,tau32_ME_ms,26.48,17.685,-8.7949,-1.2124,40.886,True,measured,
+140308B,tau32_WE_ms,23.1,17.695,-5.4051,-0.78688,42.429,True,measured,
+140308B,EPI,5.1693,4.9067,-0.26257,4.6133,5.6084,True,measured,
+140323A,T100_PE,3.36,7.184,0.33003,6.864,7.6649,False,measured,other gap
+140323A,T100_QE1,10.128,6.736,-0.17712,6.32,7.5178,False,measured,other gap
+140323A,TMVT_PE,1.68,0.232,-0.85982,1.3671,5.7554,True,measured,
+140323A,T100_ME,51.92,39.696,-0.11659,35.794,39.953,False,measured,extended-emission split or faint tail
+140323A,TMVT_ME,0.776,0.952,0.088775,0.11006,1.493,True,measured,
+140323A,T100_WE,130.96,138.22,0.023445,137.13,138.81,True,measured,
+140323A,Ep_ME,182.41,178.05,-0.010497,170.86,185.92,True,measured,
+140323A,tau32_ME_ms,111.22,108.6,-2.6211,53.306,156.3,True,measured,
+140323A,tau32_WE_ms,87.83,71.425,-16.405,26.543,119.12,True,measured,
+140323A,EPI,3.2677,3.865,0.59736,3.5947,4.3713,False,measured,other gap
+140329A,T100_PE,1,,,8.9132,9.7824,False,missing,missing
+140329A,T100_QE1,18.624,,,9.7436,10.615,False,missing,missing
+140329A,TMVT_PE,0.236,,,0.17593,0.31803,False,missing,missing
+140329A,T100_ME,20.864,35.536,0.23127,16.041,35.557,True,measured,
+140329A,TMVT_ME,0.028,0.036,0.10914,0.028,0.076,True,measured,
+140329A,T100_WE,40.488,35.536,-0.056658,35.251,35.68,False,measured,extended-emission split or faint tail
+140329A,Ep_ME,491.79,205.88,-0.37817,197.63,214.39,False,measured,model or window (ours: band)
+140329A,tau32_ME_ms,31.94,5.4922,-26.448,-0.58781,14.23,False,measured,lag resolution or window
+140329A,tau32_WE_ms,27.98,5.4922,-22.488,-0.58781,14.23,False,measured,lag resolution or window
+140329A,EPI,5.3756,,,,,False,missing,missing
+140810A,T100_PE,26.536,20.064,-0.12142,19.516,20.457,False,measured,"same gap, other start"
+140810A,T100_QE1,5.144,5.144,1.9287e-16,4.7961,5.2225,True,measured,
+140810A,TMVT_PE,0.172,0.212,0.090807,0.06,0.43146,True,measured,
+140810A,T100_ME,35.072,35.072,0,34.922,35.477,True,measured,
+140810A,TMVT_ME,0.308,0.22,-0.14613,0.044,0.35643,True,measured,
+140810A,T100_WE,124.27,106.53,-0.06691,105.11,106.98,False,measured,extended-emission split or faint tail
+140810A,Ep_ME,481.2,290.46,-0.21924,280.58,300.38,False,measured,model or window (ours: band)
+140810A,tau32_ME_ms,100.72,84.288,-16.432,54.153,115.99,True,measured,
+140810A,tau32_WE_ms,86.1,73.202,-12.898,46.444,101.64,True,measured,
+140810A,EPI,4.3496,3.9418,-0.40787,3.5062,4.4049,True,measured,
+140818A,T100_PE,9.504,9.472,-0.0014647,9.344,9.536,True,measured,
+140818A,T100_QE1,57.664,56.848,-0.0061896,56.232,57.154,True,measured,
+140818A,TMVT_PE,1.88,4.648,0.39311,0.3384,7.3014,True,measured,
+140818A,T100_ME,58.016,59.04,0.0075986,58.713,59.602,True,measured,
+140818A,TMVT_ME,1.192,6.968,0.76683,1.9613,6.8339,False,measured,MVT reading (their pulse choice)
+140818A,T100_WE,125.18,125.36,0.00061016,125.25,125.51,True,measured,
+140818A,Ep_ME,144.86,173.49,0.078313,165.3,182.56,False,measured,model or window (ours: band)
+140818A,tau32_ME_ms,221.69,57.194,-164.5,-60.115,179.38,False,measured,lag resolution or window
+140818A,tau32_WE_ms,265.49,80.516,-184.97,-20.274,191.93,False,measured,lag resolution or window
+140818A,EPI,2.1894,1.9575,-0.23192,1.4094,2.7948,True,measured,
+141102A,T100_PE,0.072,0.072,9.6433e-17,0.072,0.072,True,measured,
+141102A,T100_QE1,1.2,1.2,0,1.2,1.2078,True,measured,
+141102A,TMVT_PE,0.036,0.036,9.6433e-17,0.012,0.06,True,measured,
+141102A,T100_ME,2.112,2.112,0,0.66703,2.2469,True,measured,
+141102A,TMVT_ME,0.048,0.188,0.59292,0.061514,0.204,False,measured,MVT reading (their pulse choice)
+141102A,T100_WE,3.384,3.384,0,1.944,3.5189,True,measured,
+141102A,Ep_ME,1588.6,874.19,-0.25942,635.52,1276.5,False,measured,model or window (ours: cpl)
+141102A,tau32_ME_ms,10.9,-0.64921,-11.549,-14.649,12.29,True,measured,
+141102A,tau32_WE_ms,9.05,3.8553,-5.1947,-6.8929,14.167,True,measured,
+141102A,EPI,8.9488,8.43,-0.51883,8.1107,9.0265,True,measured,
+141121B,T100_PE,0.608,1.04,0.23313,0.97395,1.088,False,measured,other
+141121B,T100_QE1,1.792,1.344,-0.12494,1.28,1.4121,False,measured,other
+141121B,TMVT_PE,0.304,0.568,0.27147,0.06995,0.856,True,measured,
+141121B,T100_ME,1.52,1.776,0.067599,1.715,1.8819,False,measured,extended-emission split or faint tail
+141121B,TMVT_ME,0.2,1.496,0.8739,0.104,1.416,True,measured,
+141121B,T100_WE,3.92,4.16,0.025807,4.115,4.7299,True,measured,
+141121B,Ep_ME,212.22,179.42,-0.072905,154.89,212.84,True,measured,
+141121B,tau32_ME_ms,-300.27,,,,,False,unusable:peak_in_0.869,unusable:peak_in_0.869
+141121B,tau32_WE_ms,-233.01,-31.874,201.14,-135.65,55.705,False,measured,lag resolution or window
+141121B,EPI,5.2601,4.6722,-0.58795,4.3693,5.5856,True,measured,
+150228A,T100_PE,0.448,0.448,0,0.448,0.448,True,measured,
+150228A,T100_QE1,0.52,0.44,-0.072551,0.42551,0.448,False,measured,"same gap, other start"
+150228A,TMVT_PE,0.044,0.02,-0.34242,0.0055144,0.052,True,measured,
+150228A,T100_ME,1.912,2.016,0.023003,1.9775,2.0969,True,measured,
+150228A,TMVT_ME,0.108,0.116,0.031034,0.028,0.11449,True,measured,
+150228A,T100_WE,2.88,2.904,0.0036041,2.896,10.394,True,measured,
+150228A,Ep_ME,1397.3,1317.6,-0.025496,1181.7,1471.7,True,measured,
+150228A,tau32_ME_ms,19.37,19.075,-0.29495,4.4477,37.028,True,measured,
+150228A,tau32_WE_ms,16.77,9.7276,-7.0424,-0.72735,20.111,True,measured,
+150228A,EPI,8.1378,8.4655,0.32771,8.1683,9.214,False,measured,"same gap, other start"
+150228B,T100_PE,11.312,11.312,0,11.225,11.476,True,measured,
+150228B,T100_QE1,8.656,8.656,0,8.4921,8.7459,True,measured,
+150228B,TMVT_PE,1.896,1.896,9.6433e-17,2.9421,4.2428,True,measured,
+150228B,T100_ME,22.848,22.576,-0.0052012,18.901,23.258,True,measured,
+150228B,TMVT_ME,0.92,0.92,0,0.62812,1.6469,True,measured,
+150228B,T100_WE,42.816,42.544,-0.0027678,39.748,43.31,True,measured,
+150228B,Ep_ME,156.41,103.35,-0.17995,96.795,111.01,False,measured,model or window (ours: cpl_bb)
+150228B,tau32_ME_ms,100.4,72.958,-27.442,-32.605,180.48,True,measured,
+150228B,tau32_WE_ms,264.44,170.96,-93.476,71.401,283.96,True,measured,
+150228B,EPI,2.5885,2.2286,-0.3599,2.1381,2.3848,False,measured,"same gap, other start"
+150604B,T100_PE,0.192,0.176,-0.037789,0.16,0.176,True,measured,
+150604B,T100_QE1,0.624,0.56,-0.046997,0.56,0.56,True,measured,
+150604B,TMVT_PE,0.168,0.136,-0.09177,0.104,0.168,True,measured,
+150604B,T100_ME,0.272,0.336,0.09177,0.32,0.34897,False,measured,extended-emission split or faint tail
+150604B,TMVT_ME,0.104,0.168,0.20828,0.136,0.22897,False,measured,MVT reading (their pulse choice)
+150604B,T100_WE,1.088,1.072,-0.0064341,1.056,1.072,True,measured,
+150604B,Ep_ME,686.7,681.89,-0.003053,551.06,867.78,True,measured,
+150604B,tau32_ME_ms,25.34,,,,,False,unusable:peak_in_0.838,unusable:peak_in_0.838
+150604B,tau32_WE_ms,-0.23,-19.282,-19.052,-37.681,0.82114,True,measured,
+150604B,EPI,7.2673,7.4143,0.14695,7.1934,7.6675,True,measured,
+150702A,T100_PE,0.56,0.512,-0.038918,0.48303,2.5379,True,measured,
+150702A,T100_QE1,0.912,1.008,0.043466,0.96303,3.7089,True,measured,
+150702A,TMVT_PE,0.28,0.056,-0.69897,0.078058,0.424,True,measured,
+150702A,T100_ME,1.024,1.04,0.0067334,1.011,16.485,True,measured,
+150702A,TMVT_ME,0.232,0.216,-0.031034,0.072,0.552,True,measured,
+150702A,T100_WE,75.824,48.672,-0.19253,47.507,50.973,False,measured,extended-emission split or faint tail
+150702A,Ep_ME,1302.6,1092.7,-0.0763,855.13,1420.1,True,measured,
+150702A,tau32_ME_ms,-71.22,-18.933,52.287,-66.88,56.957,False,measured,lag resolution or window
+150702A,tau32_WE_ms,13.51,16.199,2.6887,-60.307,103.87,True,measured,
+150702A,EPI,7.0543,7.6178,0.56356,6.8956,8.0635,True,measured,
+150804A,T100_PE,1.808,1.696,-0.027773,1.4216,2.0527,True,unstable,
+150804A,T100_QE1,5.232,5.824,0.046554,5.2807,6.2151,True,unstable,
+150804A,TMVT_PE,1.336,1.608,0.08048,0.30047,1.4861,True,unstable,
+150804A,T100_ME,49.264,55.984,0.055534,48.663,63.504,True,measured,
+150804A,TMVT_ME,9.288,0.008,-3.0648,0.008,11.977,True,measured,
+150804A,T100_WE,56.304,63.504,0.052262,56.211,63.552,True,measured,
+150804A,Ep_ME,333.34,160.62,-0.3171,139.01,191.95,False,measured,model or window (ours: cpl)
+150804A,tau32_ME_ms,-49.12,138.86,187.98,-6.2749,347.47,False,measured,lag resolution or window
+150804A,tau32_WE_ms,40.48,234.99,194.51,53.227,514.07,False,measured,lag resolution or window
+150804A,EPI,4.3034,3.5933,-0.71018,3.2295,4.3319,True,measured,
+150922A,T100_PE,0.032,0.036,0.051153,0.036,0.036,False,measured,other
+150922A,T100_QE1,0.052,0.04,-0.11394,0.04,0.052,True,measured,
+150922A,TMVT_PE,0.014,0.01,-0.14613,0.014,0.03,True,measured,
+150922A,T100_ME,0.116,0.128,0.042752,0.094272,0.14324,True,measured,
+150922A,TMVT_ME,0.006,0.014,0.36798,0.002,0.018,True,measured,
+150922A,T100_WE,0.2,0.204,0.0086002,0.16876,0.212,True,measured,
+150922A,Ep_ME,581.57,557.02,-0.018735,492.33,640.26,True,measured,
+150922A,tau32_ME_ms,8.74,7.7907,-0.94934,-0.96107,14.662,True,measured,
+150922A,tau32_WE_ms,4.65,1.8047,-2.8453,-1.7035,6.4546,True,measured,
+150922A,EPI,9.5199,9.6344,0.11448,9.4752,9.9328,True,measured,
+151222A,T100_PE,0.312,0.248,-0.099703,0.21498,0.27302,False,measured,other
+151222A,T100_QE1,0.088,0.128,0.16273,0.12,0.12902,False,measured,other
+151222A,TMVT_PE,0.204,0.228,0.048305,0.13385,0.244,True,measured,
+151222A,T100_ME,0.96,0.384,-0.39794,0.29751,0.39697,False,measured,extended-emission split or faint tail
+151222A,TMVT_ME,0.044,0.26,0.77152,0.029514,0.236,True,measured,
+151222A,T100_WE,1.36,0.76,-0.25273,0.65751,0.776,False,measured,extended-emission split or faint tail
+151222A,Ep_ME,1575.5,1502.9,-0.02049,1323,1714,True,measured,
+151222A,tau32_ME_ms,1.36,,,,,False,unusable:faint,unusable:faint
+151222A,tau32_WE_ms,18.27,,,,,False,unusable:faint,unusable:faint
+151222A,EPI,8.1188,8.0478,-0.070946,7.8967,8.4905,True,measured,
+160201A,T100_PE,0.976,,,3.6566,6.0239,False,missing,missing
+160201A,T100_QE1,0.624,,,0.38957,0.85537,False,missing,missing
+160201A,TMVT_PE,0.488,,,0.51018,3.2781,False,missing,missing
+160201A,T100_ME,4.976,6.576,0.12108,6.531,11.034,False,measured,extended-emission split or faint tail
+160201A,TMVT_ME,0.152,0.088,-0.23736,0.024,0.24497,True,measured,
+160201A,T100_WE,32.48,35.472,0.03827,32.272,35.533,True,measured,
+160201A,Ep_ME,461.65,432.2,-0.028633,393.98,477.78,True,measured,
+160201A,tau32_ME_ms,14.9,-9.6637,-24.564,-70.347,88.427,True,measured,
+160201A,tau32_WE_ms,182.57,167.31,-15.259,-17.354,403.3,True,measured,
+160201A,EPI,5.7532,,,,,False,missing,missing
+160509A,T100_PE,40.2,5.208,-0.88756,5.152,5.24,False,measured,"same gap, other start"
+160509A,T100_QE1,3.064,3.128,0.008978,3.0765,3.221,True,measured,
+160509A,TMVT_PE,3.404,1.276,-0.42614,0.20012,1.2635,False,measured,MVT reading (their pulse choice)
+160509A,T100_ME,185.75,36.664,-0.70469,36.482,37.074,False,measured,extended-emission split or faint tail
+160509A,TMVT_ME,0.612,0.556,-0.041677,0.412,0.532,True,measured,
+160509A,T100_WE,457.82,385.73,-0.074417,385.59,385.89,False,measured,extended-emission split or faint tail
+160509A,Ep_ME,1083.4,349.36,-0.49151,339.55,359.17,False,measured,model or window (ours: band)
+160509A,tau32_ME_ms,85.56,37.205,-48.355,22.392,54.489,False,measured,lag resolution or window
+160509A,tau32_WE_ms,77.68,5.7633,-71.917,1.4466,13.04,False,measured,lag resolution or window
+160509A,EPI,3.6902,4.0164,0.32618,3.6421,4.513,True,measured,
+160726A,T100_PE,0.064,0.064,0,0.064,0.064,True,measured,
+160726A,T100_QE1,0.432,0.48,0.045757,0.48,0.48,True,measured,
+160726A,TMVT_PE,0.024,0.024,0,0.008,0.052971,True,measured,
+160726A,T100_ME,0.272,0.384,0.14976,0.208,0.4,True,measured,
+160726A,TMVT_ME,0.168,0.088,-0.28083,0.027029,0.11697,False,measured,MVT reading (their pulse choice)
+160726A,T100_WE,0.768,0.928,0.082187,0.752,0.944,True,measured,
+160726A,Ep_ME,319.36,375.42,0.07024,317.62,456.23,True,measured,
+160726A,tau32_ME_ms,-3.46,0.86572,4.3257,-5.8003,7.2613,True,measured,
+160726A,tau32_WE_ms,0.74,1.1287,0.38867,-3.3112,5.154,True,measured,
+160726A,EPI,8.0044,8.122,0.1176,7.7986,8.5278,True,measured,
+160804B,T100_PE,0.12,0.16,0.12494,0.16,0.16,False,measured,other
+160804B,T100_QE1,0.224,0.184,-0.08543,0.184,0.184,False,measured,other
+160804B,TMVT_PE,0.012,0.004,-0.47712,0.012,0.044,True,measured,
+160804B,T100_ME,0.352,0.344,-0.0099842,0.336,0.344,True,measured,
+160804B,TMVT_ME,0.012,0.012,0,0.004,0.034486,True,measured,
+160804B,T100_WE,0.696,0.688,-0.0050208,0.68,0.688,True,measured,
+160804B,Ep_ME,576.55,632.84,0.04046,545.19,751.24,True,measured,
+160804B,tau32_ME_ms,-11.14,-8.2994,2.8406,-21.63,3.1522,True,measured,
+160804B,tau32_WE_ms,-2.25,-0.47084,1.7792,-5.3023,6.2521,True,measured,
+160804B,EPI,8.6882,9.164,0.47582,8.7703,9.555,False,measured,other
+160825A,T100_PE,0.576,0.368,-0.19457,0.336,0.384,False,measured,other
+160825A,T100_QE1,0.832,1.056,0.10354,1.04,1.088,False,measured,other
+160825A,TMVT_PE,0.288,0.024,-1.0792,0.056,0.26097,False,measured,other
+160825A,T100_ME,0.832,1.072,0.11007,1.027,1.085,False,measured,extended-emission split or faint tail
+160825A,TMVT_ME,0.088,0.088,0,0.04,0.152,True,measured,
+160825A,T100_WE,7.184,7.472,0.017071,7.411,7.52,True,measured,
+160825A,Ep_ME,171.77,150.09,-0.058601,125.17,190.14,True,measured,
+160825A,tau32_ME_ms,40.02,18.937,-21.083,8.3985,29.364,False,measured,lag resolution or window
+160825A,tau32_WE_ms,31.35,18.734,-12.616,2.8562,34.818,True,measured,
+160825A,EPI,5.29,6.3948,1.1048,6.0549,6.9117,False,measured,other
+161001A,T100_PE,1.144,1.16,0.006032,1.12,1.2238,True,measured,
+161001A,T100_QE1,0.576,0.488,-0.072003,0.448,0.54351,False,measured,"same gap, other start"
+161001A,TMVT_PE,0.196,0.884,0.6542,0.18024,0.9698,True,measured,
+161001A,T100_ME,0.744,0.784,0.022743,0.75351,0.792,True,measured,
+161001A,TMVT_ME,0.06,0.116,0.28631,0.077514,0.188,False,measured,MVT reading (their pulse choice)
+161001A,T100_WE,2.464,2.432,-0.0056771,2.416,2.461,True,measured,
+161001A,Ep_ME,461.46,451.26,-0.0097088,392.3,527.96,True,measured,
+161001A,tau32_ME_ms,44.72,55.165,10.445,23.055,89.524,True,measured,
+161001A,tau32_WE_ms,57.68,57.091,-0.58915,19.514,94.256,True,measured,
+161001A,EPI,6.0974,5.4537,-0.64364,5.1439,5.9533,False,measured,"same gap, other start"
+161105B,T100_PE,13.584,14.352,0.023885,12.869,15.818,True,measured,
+161105B,T100_QE1,17.472,16.672,-0.020355,16.369,16.927,True,measured,
+161105B,TMVT_PE,0.152,8.328,1.7387,5.8684,8.5515,False,measured,MVT reading (their pulse choice)
+161105B,T100_ME,19.44,20.096,0.014413,18.989,20.167,True,measured,
+161105B,TMVT_ME,0.264,0.664,0.40056,0.184,0.808,True,measured,
+161105B,T100_WE,50.496,51.12,0.0053339,49.028,51.432,True,measured,
+161105B,Ep_ME,210.86,405.45,0.28394,342.51,497.1,False,measured,model or window (ours: cpl)
+161105B,tau32_ME_ms,413.85,-3.1332,-416.98,-35.097,26.968,False,measured,lag resolution or window
+161105B,tau32_WE_ms,452.94,19.66,-433.28,-47.764,83.794,False,measured,lag resolution or window
+161105B,EPI,3.7119,2.5274,-1.1845,2.3835,2.8212,False,measured,"same gap, other start"
+170121A,T100_PE,0.112,0.112,-4.8216e-17,0.112,0.112,True,measured,
+170121A,T100_QE1,0.832,0.832,0,0.832,0.832,True,measured,
+170121A,TMVT_PE,0.06,0.06,0,0.02,0.1,True,measured,
+170121A,T100_ME,1.72,1.792,0.01781,1.3375,1.909,True,measured,
+170121A,TMVT_ME,0.02,0.02,0,0.012,0.06,True,measured,
+170121A,T100_WE,2.664,2.736,0.011582,2.2815,2.853,True,measured,
+170121A,Ep_ME,1828.4,1808.2,-0.0048287,1572.5,2073.8,True,measured,
+170121A,tau32_ME_ms,2.13,4.3591,2.2291,-27.897,170.52,True,measured,
+170121A,tau32_WE_ms,-2.18,-14.677,-12.497,-27.188,0.26969,True,measured,
+170121A,EPI,8.7367,8.727,-0.0096573,8.4332,9.2134,True,measured,
+170228A,T100_PE,0.32,0.704,0.34242,0.288,0.768,True,measured,
+170228A,T100_QE1,1.312,1.216,-0.033,1.216,1.216,True,measured,
+170228A,TMVT_PE,0.016,0.432,1.4314,0.144,0.656,False,measured,MVT reading (their pulse choice)
+170228A,T100_ME,28.512,7.776,-0.56427,7.7501,15.552,False,measured,extended-emission split or faint tail
+170228A,TMVT_ME,0.144,0.464,0.50816,0.11806,0.432,True,measured,
+170228A,T100_WE,111.87,69.504,-0.20671,60.649,71.083,False,measured,extended-emission split or faint tail
+170228A,Ep_ME,777.57,821.68,0.023965,768.7,881.11,True,measured,
+170228A,tau32_ME_ms,156.72,20.941,-135.78,-31.234,75.313,False,measured,lag resolution or window
+170228A,tau32_WE_ms,41.81,86.437,44.627,-0.061086,184.85,True,measured,
+170228A,EPI,8.0132,6.3039,-1.7094,6.1066,7.2262,False,measured,"same gap, other start"
+170306B,T100_PE,1.408,0.432,-0.51312,0.4,0.496,False,measured,"same gap, other start"
+170306B,T100_QE1,2.992,3.584,0.078406,3.536,3.616,False,measured,"same gap, other start"
+170306B,TMVT_PE,0.296,0.216,-0.13684,0.072,0.40194,True,measured,
+170306B,T100_ME,22.992,37.568,0.21324,36.92,49.616,False,measured,extended-emission split or faint tail
+170306B,TMVT_ME,0.248,0.152,-0.21261,0.17103,0.872,True,measured,
+170306B,T100_WE,27.392,41.584,0.1813,41.16,53.632,False,measured,extended-emission split or faint tail
+170306B,Ep_ME,329.68,267.75,-0.090357,256.6,280.25,False,measured,model or window (ours: cpl_bb)
+170306B,tau32_ME_ms,87.67,26.075,-61.595,-8.6667,59.675,False,measured,lag resolution or window
+170306B,tau32_WE_ms,61.8,27.268,-34.532,-8.7911,59.367,False,measured,lag resolution or window
+170306B,EPI,5.1783,5.6083,0.43004,5.3257,6.1381,False,measured,"same gap, other start"
+170310A,T100_PE,1.504,1.504,-1.4465e-16,1.376,1.6305,True,measured,
+170310A,T100_QE1,6.336,6.32,-0.0010981,6.1285,6.527,True,measured,
+170310A,TMVT_PE,0.264,1.08,0.61182,0.15445,1.2225,True,measured,
+170310A,T100_ME,3.936,5.712,0.16173,3.411,6.0597,True,measured,
+170310A,TMVT_ME,0.328,2.248,0.83592,2.088,2.5369,False,measured,MVT reading (their pulse choice)
+170310A,T100_WE,11.776,13.536,0.060493,11.232,13.681,True,measured,
+170310A,Ep_ME,95.95,6538.6,1.8334,575.67,,False,measured,model or window (ours: cpl)
+170310A,tau32_ME_ms,285.25,166.05,-119.2,20.161,341.94,True,measured,
+170310A,tau32_WE_ms,274.43,268.03,-6.4023,32.895,509.99,True,measured,
+170310A,EPI,3.9643,7.0199,3.0556,4.3196,7.3849,False,measured,"same gap, other start"
+170409A,T100_PE,2.416,4.416,0.26193,4.352,4.48,False,measured,"same gap, other start"
+170409A,T100_QE1,14.864,15.12,0.0074161,14.595,15.575,True,measured,
+170409A,TMVT_PE,1.208,2.024,0.22414,0.97623,4.088,True,measured,
+170409A,T100_ME,60.448,58.448,-0.014612,31.957,58.762,True,measured,
+170409A,TMVT_ME,0.072,0.008,-0.95424,0.04,0.216,True,measured,
+170409A,T100_WE,168.1,136.5,-0.090437,136.21,136.51,False,lower_limit,extended-emission split or faint tail (tail runs into the background interval)
+170409A,Ep_ME,1211.4,864.89,-0.14633,850.34,879.48,False,measured,model or window (ours: band)
+170409A,tau32_ME_ms,61.92,12.69,-49.23,-2.6185,30.245,False,measured,lag resolution or window
+170409A,tau32_WE_ms,70.47,9.6249,-60.845,-3.5217,24.559,False,measured,lag resolution or window
+170409A,EPI,5.1154,4.3329,-0.78245,4.1149,4.7452,False,measured,"same gap, other start"
+170412B,T100_PE,0.336,0.624,0.26885,0.43833,0.66567,False,measured,other
+170412B,T100_QE1,1.824,0.912,-0.30103,0.88,0.99533,False,measured,other
+170412B,TMVT_PE,0.168,0.312,0.26885,0.15833,0.296,True,measured,
+170412B,T100_ME,33.312,33.712,0.0051838,14.208,34.337,True,measured,
+170412B,TMVT_ME,0.104,0.728,0.8451,0.8292,1.573,False,measured,MVT reading (their pulse choice)
+170412B,T100_WE,35.472,35.248,-0.0027512,34.473,35.882,True,measured,
+170412B,Ep_ME,439.12,385.02,-0.057102,351.14,424.84,False,measured,model or window (ours: cpl)
+170412B,tau32_ME_ms,143.38,,,,,False,unusable:no_reliable_peak,unusable:no_reliable_peak
+170412B,tau32_WE_ms,14.76,-47.63,-62.39,-474.87,197.1,True,measured,
+170412B,EPI,6.403,5.9016,-0.50138,5.7801,6.2782,False,measured,other
+170709A,T100_PE,0.304,0.32,0.022276,0.288,0.33551,True,measured,
+170709A,T100_QE1,0.512,0.496,-0.013788,0.496,0.512,True,measured,
+170709A,TMVT_PE,0.136,0.104,-0.11651,0.04,0.248,True,measured,
+170709A,T100_ME,0.096,0.704,0.8653,0.688,0.71697,False,measured,extended-emission split or faint tail
+170709A,TMVT_ME,0.048,0.088,0.26324,0.024,0.104,True,measured,
+170709A,T100_WE,0.912,1.52,0.22185,1.504,1.533,False,measured,extended-emission split or faint tail
+170709A,Ep_ME,462.64,461.51,-0.0010577,329.04,752.01,True,measured,
+170709A,tau32_ME_ms,-6.59,,,,,False,unusable:faint,unusable:faint
+170709A,tau32_WE_ms,-35.49,,,,,False,unusable:faint,unusable:faint
+170709A,EPI,6.8594,6.9584,0.099008,6.7275,7.9035,True,measured,
+170802A,T100_PE,0.144,0.16,0.045757,0.16,0.16,True,measured,
+170802A,T100_QE1,1.68,1.584,-0.025554,1.568,1.645,True,measured,
+170802A,TMVT_PE,0.072,0.152,0.32451,0.04,0.152,True,measured,
+170802A,T100_ME,0.512,0.784,0.18505,0.68412,0.82897,False,measured,extended-emission split or faint tail
+170802A,TMVT_ME,0.072,0.072,9.6433e-17,0.027029,0.19177,True,measured,
+170802A,T100_WE,2.336,2.528,0.034304,2.512,2.56,True,measured,
+170802A,Ep_ME,1469.4,708.84,-0.31659,569.62,896.65,False,measured,model or window (ours: band)
+170802A,tau32_ME_ms,2.92,2.5746,-0.34545,-4.0086,9.4368,True,measured,
+170802A,tau32_WE_ms,4.12,2.5771,-1.5429,-3.5437,9.6812,True,measured,
+170802A,EPI,8.2059,7.2153,-0.99068,7.0022,7.8492,False,measured,"same gap, other start"
+170923B,T100_PE,1.056,0.992,-0.027152,0.928,1.056,True,measured,
+170923B,T100_QE1,8.992,9.056,0.0030801,9.024,9.088,True,measured,
+170923B,TMVT_PE,0.336,0.336,0,0.208,0.68194,True,measured,
+170923B,T100_ME,26.656,3.2,-0.92065,3.1741,28.113,True,measured,
+170923B,TMVT_ME,0.112,0.112,0,0.016,0.112,True,measured,
+170923B,T100_WE,59.008,59.008,-4.8216e-17,58.47,59.342,True,measured,
+170923B,Ep_ME,1002.2,4466.2,0.649,3397.9,5834.9,False,measured,model or window (ours: cpl)
+170923B,tau32_ME_ms,-96.68,-28.349,68.331,-74.512,32.494,False,measured,lag resolution or window
+170923B,tau32_WE_ms,-27.64,,,,,False,unusable:peak_in_0.857,unusable:peak_in_0.857
+170923B,EPI,5.975,7.2986,1.3236,6.9857,7.6805,False,measured,"same gap, other start"
+180402A,T100_PE,0.032,0.032,-3.8573e-16,0.032,0.032,True,measured,
+180402A,T100_QE1,0.24,0.224,-0.029963,0.224,0.224,True,measured,
+180402A,TMVT_PE,0.024,0.008,-0.47712,0.008,0.024,True,measured,
+180402A,T100_ME,0.192,0.208,0.034762,0.192,0.208,True,measured,
+180402A,TMVT_ME,0.04,0.008,-0.69897,0.008,0.184,True,measured,
+180402A,T100_WE,0.464,15.04,1.5107,14.819,15.056,False,measured,extended-emission split or faint tail
+180402A,Ep_ME,1151.7,1238.5,0.031544,1088.6,1409.4,True,measured,
+180402A,tau32_ME_ms,25.25,,,,,False,unusable:faint,unusable:faint
+180402A,tau32_WE_ms,12.12,,,,,False,unusable:faint,unusable:faint
+180402A,EPI,9.5472,10.102,0.55519,9.5635,10.171,False,measured,"same gap, other start"
+180605A,T100_PE,0.472,0.016,-1.4698,0.016,0.022486,False,measured,other
+180605A,T100_QE1,0.288,2.912,1.0048,2.904,2.912,False,measured,other
+180605A,TMVT_PE,0.108,0.004,-1.4314,0.004,0.012,False,measured,other
+180605A,T100_ME,0.464,1.032,0.34716,1.016,1.032,False,measured,extended-emission split or faint tail
+180605A,TMVT_ME,0.068,0.22,0.50991,0.069514,0.24249,False,measured,MVT reading (their pulse choice)
+180605A,T100_WE,30.432,32.296,0.025818,30.798,32.296,True,measured,
+180605A,Ep_ME,967.33,894.86,-0.033817,768.12,1055.3,True,measured,
+180605A,tau32_ME_ms,-12.5,-9.575,2.925,-32.016,7.7817,True,measured,
+180605A,tau32_WE_ms,-2.51,-5.7473,-3.2373,-23.631,9.8012,True,measured,
+180605A,EPI,7.5341,9.8652,2.3312,9.6589,10.321,False,measured,other
+180703B,T100_PE,0.6,0.648,0.033424,0.64076,0.652,True,measured,
+180703B,T100_QE1,0.232,0.216,-0.031034,0.19427,0.34377,True,measured,
+180703B,TMVT_PE,0.366,0.414,0.053519,0.29,0.41,True,measured,
+180703B,T100_ME,2.444,1.76,-0.14259,1.6293,1.9867,False,measured,extended-emission split or faint tail
+180703B,TMVT_ME,0.534,0.55,0.012821,0.44676,0.59324,True,measured,
+180703B,T100_WE,3.276,5.876,0.25374,2.644,5.884,True,measured,
+180703B,Ep_ME,148.49,148.72,0.00068566,144.83,152.81,True,measured,
+180703B,tau32_ME_ms,24.22,30.392,6.1722,22.517,37.912,True,measured,
+180703B,tau32_WE_ms,29.37,33.584,4.2142,27.315,39.643,True,measured,
+180703B,EPI,5.319,5.249,-0.070055,5.1496,5.3508,True,measured,
+180728A,T100_PE,10.056,9.568,-0.021604,5.5578,9.753,True,measured,
+180728A,T100_QE1,5.176,5.488,0.02542,5.344,5.544,True,measured,
+180728A,TMVT_PE,0.932,5.228,0.74892,1.1687,5.5601,False,measured,MVT reading (their pulse choice)
+180728A,T100_ME,21.248,21.96,0.014314,21.696,22.382,True,measured,
+180728A,TMVT_ME,2.252,2.188,-0.012521,2.223,2.449,True,measured,
+180728A,T100_WE,36.48,37.016,0.0063347,33.149,37.162,True,measured,
+180728A,Ep_ME,99.45,104.85,0.022956,102.26,107.27,True,measured,
+180728A,tau32_ME_ms,-102.99,-78.643,24.347,-96.648,-57.964,False,measured,lag resolution or window
+180728A,tau32_WE_ms,-105.98,-77.351,28.629,-96.381,-56.117,False,measured,lag resolution or window
+180728A,EPI,2.6664,1.9723,-0.69411,1.8962,2.8254,True,measured,
+180728B,T100_PE,0.08,0.08,0,0.072,0.08,True,measured,
+180728B,T100_QE1,0.088,0.088,0,0.088,0.096,True,measured,
+180728B,TMVT_PE,0.036,0.036,9.6433e-17,0.020245,0.06,True,measured,
+180728B,T100_ME,0.28,1.368,0.68893,0.24,1.3745,True,measured,
+180728B,TMVT_ME,0.076,0.076,0,0.029514,0.19449,True,measured,
+180728B,T100_WE,0.448,1.536,0.53511,0.408,1.557,True,measured,
+180728B,Ep_ME,409.33,700.41,0.23328,498.51,1150.2,False,measured,model or window (ours: cpl)
+180728B,tau32_ME_ms,55.45,,,,,False,unusable:faint,unusable:faint
+180728B,tau32_WE_ms,7.94,,,,,False,unusable:faint,unusable:faint
+180728B,EPI,8.2925,8.7591,0.46655,8.4285,9.3214,False,measured,"same gap, other start"
+180731A,T100_PE,4.736,5.296,0.048536,5.0612,5.373,True,measured,
+180731A,T100_QE1,3.904,3.792,-0.012641,3.664,3.904,True,measured,
+180731A,TMVT_PE,1.848,2.296,0.09427,2.264,2.536,False,measured,MVT reading (their pulse choice)
+180731A,T100_ME,11.488,11.488,0,11.382,11.648,True,measured,
+180731A,TMVT_ME,0.28,0.424,0.18021,0.22509,0.62897,True,measured,
+180731A,T100_WE,67.696,31.888,-0.32694,31.651,32.119,False,measured,extended-emission split or faint tail
+180731A,Ep_ME,124.65,116.96,-0.027662,109.55,125.95,True,measured,
+180731A,tau32_ME_ms,-20.88,-30.351,-9.4711,-61.568,-6.8307,True,measured,
+180731A,tau32_WE_ms,-3.4,-36.327,-32.927,-64.032,-13.022,False,measured,lag resolution or window
+180731A,EPI,2.9535,2.7617,-0.19181,2.6969,2.8481,False,measured,"same gap, other start"
+180801B,T100_PE,0.72,0.72,0,0.608,0.77259,True,measured,
+180801B,T100_QE1,2.464,2.32,-0.026153,2.2674,2.432,True,measured,
+180801B,TMVT_PE,0.552,0.552,0,0.099411,0.51318,True,measured,
+180801B,T100_ME,4.96,5.104,0.012429,5.027,5.293,True,measured,
+180801B,TMVT_ME,0.488,0.632,0.1123,0.29514,1.46,True,measured,
+180801B,T100_WE,8.144,8.144,0,8.064,8.221,True,measured,
+180801B,Ep_ME,58.09,56.13,-0.01491,51.074,62.568,True,measured,
+180801B,tau32_ME_ms,362.47,63.882,-298.59,-45.557,155.39,False,measured,lag resolution or window
+180801B,tau32_WE_ms,216.87,107.09,-109.78,19.53,205.39,False,measured,lag resolution or window
+180801B,EPI,3.7331,3.7164,-0.016743,3.4807,4.2503,True,measured,
+181117A,T100_PE,43.568,32.304,-0.12991,31.155,35.049,False,measured,other gap
+181117A,T100_QE1,8.624,6.608,-0.11564,4.6955,7.5297,False,measured,other gap
+181117A,TMVT_PE,26.68,28.808,0.033327,7.0778,30.006,True,measured,
+181117A,T100_ME,28.848,31.008,0.031358,30.115,69.86,True,measured,
+181117A,TMVT_ME,0.52,0.504,-0.013573,0.056,0.7548,True,measured,
+181117A,T100_WE,126.7,115.58,-0.039893,115.27,116.23,True,measured,
+181117A,Ep_ME,188.73,169.91,-0.045612,159.74,181.44,True,measured,
+181117A,tau32_ME_ms,171.49,62.778,-108.71,0.62081,132.35,False,measured,lag resolution or window
+181117A,tau32_WE_ms,512.3,-19.601,-531.9,-71.17,44.01,False,measured,lag resolution or window
+181117A,EPI,1.0185,1.0817,0.063179,0.8516,1.4981,True,measured,
+181126A,T100_PE,0.304,0.304,9.6433e-17,0.24,0.35176,True,measured,
+181126A,T100_QE1,1.528,1.528,0,1.4882,1.5918,True,measured,
+181126A,TMVT_PE,0.152,0.18,0.073429,0.028245,0.23527,True,measured,
+181126A,T100_ME,0.464,0.512,0.042752,0.40951,0.536,True,measured,
+181126A,TMVT_ME,0.144,0.34,0.37312,0.028,0.29049,True,measured,
+181126A,T100_WE,2.296,2.344,0.0089857,2.232,2.381,True,measured,
+181126A,Ep_ME,135.31,165.37,0.087126,133.53,215.81,True,measured,
+181126A,tau32_ME_ms,20.7,36.104,15.404,8.4475,60.953,True,measured,
+181126A,tau32_WE_ms,10.58,11.363,0.7831,-24.777,49.577,True,measured,
+181126A,EPI,5.5059,5.6067,0.10082,5.2342,6.4739,True,measured,
+181126B,T100_PE,0.544,0.592,0.036723,0.46525,0.68549,True,measured,
+181126B,T100_QE1,0.896,0.88,-0.0078253,0.81725,0.91075,True,measured,
+181126B,TMVT_PE,0.272,0.312,0.059586,0.057254,0.49898,True,measured,
+181126B,T100_ME,0.304,0.336,0.043466,0.32303,0.352,True,measured,
+181126B,TMVT_ME,0.152,0.216,0.15261,0.056,0.248,True,measured,
+181126B,T100_WE,1.744,1.808,0.015652,1.7081,1.856,True,measured,
+181126B,Ep_ME,1241.8,1142.5,-0.036211,870.28,1537.3,True,measured,
+181126B,tau32_ME_ms,61.67,,,,,False,unusable:faint,unusable:faint
+181126B,tau32_WE_ms,38.87,,,,,False,unusable:faint,unusable:faint
+181126B,EPI,7.0418,6.877,-0.16482,6.4717,7.6827,True,measured,
+181216A,T100_PE,0.736,0.96,0.11539,0.8919,1.1561,False,measured,"same gap, other start"
+181216A,T100_QE1,7.008,6.56,-0.02869,6.3959,6.6281,True,measured,
+181216A,TMVT_PE,0.368,0.656,0.25106,0.144,0.944,True,measured,
+181216A,T100_ME,9.024,9.312,0.013644,9.216,9.472,True,measured,
+181216A,TMVT_ME,1.616,0.656,-0.39154,0.816,5.0823,True,measured,
+181216A,T100_WE,16.768,16.832,0.0016545,16.71,16.992,True,measured,
+181216A,Ep_ME,273.79,218.08,-0.098796,173.95,289.81,True,measured,
+181216A,tau32_ME_ms,437.21,-66.945,-504.15,-278.41,270.01,False,measured,lag resolution or window
+181216A,tau32_WE_ms,412.07,65.185,-346.88,-194.54,414.83,True,measured,
+181216A,EPI,5.0193,4.4696,-0.5497,4.1485,5.0933,True,measured,
+190114C,T100_PE,2.88,4.256,0.16961,3.9671,4.333,False,measured,other gap
+190114C,T100_QE1,2.016,1.312,-0.18656,1.2061,1.36,False,measured,other gap
+190114C,TMVT_PE,0.352,0.792,0.35218,0.18703,1.048,True,measured,
+190114C,T100_ME,13.84,12.896,-0.030681,12.832,13.005,True,measured,
+190114C,TMVT_ME,0.024,0.008,-0.47712,0.008,0.024,True,measured,
+190114C,T100_WE,177.42,142.8,-0.094284,142.64,152.76,False,measured,extended-emission split or faint tail
+190114C,Ep_ME,677.84,672.51,-0.0034275,665.62,678.75,True,measured,
+190114C,tau32_ME_ms,44.55,25.052,-19.498,20.351,29.585,False,measured,lag resolution or window
+190114C,tau32_WE_ms,51.55,24.817,-26.733,20.093,29.848,False,measured,lag resolution or window
+190114C,EPI,5.5041,5.0687,-0.43537,4.865,5.6359,True,measured,
+190525A,T100_PE,0.096,,,,,False,missing,missing
+190525A,T100_QE1,0.432,,,,,False,missing,missing
+190525A,TMVT_PE,0.06,,,,,False,missing,missing
+190525A,T100_ME,1.032,1.016,-0.006786,1,1.04,True,measured,
+190525A,TMVT_ME,0.02,0.188,0.97313,0.02,0.25049,True,measured,
+190525A,T100_WE,1.56,1.016,-0.18623,1,1.04,False,measured,extended-emission split or faint tail
+190525A,Ep_ME,1300.7,2069.4,0.20166,1391,2934.1,False,measured,model or window (ours: cpl)
+190525A,tau32_ME_ms,43.52,-0.14755,-43.668,-36.592,32.977,False,measured,lag resolution or window
+190525A,tau32_WE_ms,45.94,-0.14755,-46.088,-36.592,32.977,False,measured,lag resolution or window
+190525A,EPI,8.6502,,,,,False,missing,missing
+190727B,T100_PE,7.488,12.272,0.21455,9.5675,12.288,False,measured,other gap
+190727B,T100_QE1,11.472,0.144,-1.9013,0.144,7.487,False,measured,other gap
+190727B,TMVT_PE,1.368,1.368,0,1.4,2.168,True,measured,
+190727B,T100_ME,47.552,17.728,-0.42851,11.337,17.815,False,measured,extended-emission split or faint tail (tail runs into the background interval)
+190727B,TMVT_ME,0.424,0.392,-0.03408,0.2,0.408,True,measured,
+190727B,T100_WE,66.512,68.944,0.015596,51.103,68.957,True,lower_limit,
+190727B,Ep_ME,583.4,712.7,0.086943,676.67,752.3,False,measured,model or window (ours: cpl)
+190727B,tau32_ME_ms,-23.34,,,,,False,unusable:peak_in_0.891,unusable:peak_in_0.891
+190727B,tau32_WE_ms,-26.83,5.7067,32.537,-6.2526,18.929,False,measured,lag resolution or window
+190727B,EPI,3.9917,4.9016,0.90998,4.1137,5.0424,False,measured,other gap
+190806A,T100_PE,1.216,1.184,-0.011582,1.184,1.215,True,measured,
+190806A,T100_QE1,0.448,0.448,-4.8216e-17,0.448,0.448,True,measured,
+190806A,TMVT_PE,0.528,0.528,0,0.14498,0.976,True,measured,
+190806A,T100_ME,10.144,10.048,-0.0041296,9.952,10.176,True,measured,
+190806A,TMVT_ME,0.144,0.304,0.32451,0.08,0.48994,True,measured,
+190806A,T100_WE,16.896,17.248,0.0089548,17.184,17.364,True,measured,
+190806A,Ep_ME,621.36,552.75,-0.050811,469.89,663.91,True,measured,
+190806A,tau32_ME_ms,307.19,67.731,-239.46,8.6881,174.27,False,measured,lag resolution or window
+190806A,tau32_WE_ms,75.08,96.556,21.476,24.973,186.32,True,measured,
+190806A,EPI,5.9535,5.8634,-0.090041,5.5992,6.5471,True,measured,
+190810A,T100_PE,0.012,,,,,False,missing,missing
+190810A,T100_QE1,0.04,,,,,False,missing,missing
+190810A,TMVT_PE,0.01,,,,,False,missing,missing
+190810A,T100_ME,0.136,0.188,0.14062,0.188,0.192,False,measured,extended-emission split or faint tail
+190810A,TMVT_ME,0.006,0.082,1.1357,0.018,0.15,False,measured,MVT reading (their pulse choice)
+190810A,T100_WE,0.188,0.188,0,0.188,0.192,True,measured,
+190810A,Ep_ME,588.9,651.9,0.044141,562.72,774.15,True,measured,
+190810A,tau32_ME_ms,36.59,,,,,False,unusable:faint,unusable:faint
+190810A,tau32_WE_ms,64.7,,,,,False,unusable:faint,unusable:faint
+190810A,EPI,10.16,,,,,False,missing,missing
+190829A,T100_PE,9.352,11.808,0.10127,11.705,12.007,False,measured,"same gap, other start"
+190829A,T100_QE1,38.592,36.144,-0.028461,35.96,36.24,True,measured,
+190829A,TMVT_PE,1.3,1.324,0.0079446,0.94898,3.5066,True,measured,
+190829A,T100_ME,22.056,13.064,-0.22745,12.983,20.858,False,measured,extended-emission split or faint tail
+190829A,TMVT_ME,3.516,3.948,0.050328,2.9761,4.6124,True,measured,
+190829A,T100_WE,70,68.824,-0.0073581,68.537,68.955,True,measured,
+190829A,Ep_ME,39.28,7.7875,-0.70277,6.1424,7.8657,False,measured,model or window (ours: pl_bb)
+190829A,tau32_ME_ms,253.58,103.71,-149.87,9.5557,196.73,False,measured,lag resolution or window
+190829A,tau32_WE_ms,299.74,142.31,-157.43,58.665,225.43,False,measured,lag resolution or window
+190829A,EPI,1.3102,-0.19028,-1.5005,-0.60391,-0.018136,False,measured,"same gap, other start"
+190905A,T100_PE,0.032,0.032,0,0.028436,0.04,True,measured,
+190905A,T100_QE1,0.24,0.24,0,0.23644,0.24,True,measured,
+190905A,TMVT_PE,0.02,0.02,0,0.004,0.028,True,measured,
+190905A,T100_ME,0.136,0.136,0,0.12951,0.15849,True,measured,
+190905A,TMVT_ME,0.036,0.036,9.6433e-17,0.037514,0.132,True,measured,
+190905A,T100_WE,0.408,0.408,9.6433e-17,0.408,0.416,True,measured,
+190905A,Ep_ME,470.17,353.92,-0.12336,273.87,492.16,True,measured,
+190905A,tau32_ME_ms,-3.58,,,,,False,unusable:faint,unusable:faint
+190905A,tau32_WE_ms,-5.81,16.572,22.382,2.7541,36.488,False,measured,lag resolution or window
+190905A,EPI,8.8482,8.6015,-0.24671,8.1995,9.156,True,measured,
+200101A,T100_PE,13.472,12.312,-0.039103,12.169,12.452,True,measured,
+200101A,T100_QE1,1.476,1.48,0.0011754,1.4438,1.5577,True,measured,
+200101A,TMVT_PE,0.022,0.15,0.83367,0.10676,0.35821,False,measured,MVT reading (their pulse choice)
+200101A,T100_ME,15.204,15.256,0.0014828,15.164,15.749,True,measured,
+200101A,TMVT_ME,0.082,0.066,-0.09427,0.018757,0.10924,True,measured,
+200101A,T100_WE,92.204,102.43,0.045686,90.925,102.44,True,lower_limit,
+200101A,Ep_ME,727.97,597.94,-0.085455,581.46,614.98,False,measured,model or window (ours: band)
+200101A,tau32_ME_ms,61.75,18.021,-43.729,10.048,27.33,False,measured,lag resolution or window
+200101A,tau32_WE_ms,63.8,14.437,-49.363,7.3453,23.637,False,measured,lag resolution or window
+200101A,EPI,6.1678,5.2018,-0.96606,5.0506,5.6044,False,measured,"same gap, other start"
+200311A,T100_PE,0.208,2.032,0.98986,0.88,2.032,False,measured,"same gap, other start"
+200311A,T100_QE1,0.304,0.336,0.043466,0.32303,0.336,True,measured,
+200311A,TMVT_PE,0.072,0.072,9.6433e-17,0.056,0.184,True,measured,
+200311A,T100_ME,17.136,15.28,-0.049786,10.032,16.423,True,measured,
+200311A,TMVT_ME,0.056,0.232,0.6173,0.027029,0.27697,True,measured,
+200311A,T100_WE,69.216,69.184,-0.00020083,69.123,70.211,True,measured,
+200311A,Ep_ME,1136.9,1213.7,0.028407,1141.4,1292.4,True,measured,
+200311A,tau32_ME_ms,18.88,71.105,52.225,0.80908,140.29,True,measured,
+200311A,tau32_WE_ms,16.69,10.743,-5.9468,-16.039,35.052,True,measured,
+200311A,EPI,8.1946,7.2398,-0.95478,7.0916,8.1822,False,measured,"same gap, other start"
+200714E,T100_PE,0.544,0.544,0,0.51503,0.592,True,measured,
+200714E,T100_QE1,3.184,3.184,0,3.152,3.2,True,measured,
+200714E,TMVT_PE,0.272,0.04,-0.83251,0.043029,0.45297,True,measured,
+200714E,T100_ME,15.84,15.84,0,15.371,16.196,True,measured,
+200714E,TMVT_ME,0.424,1.24,0.46606,0.33103,1.4839,True,measured,
+200714E,T100_WE,19.568,19.568,0,19.222,19.946,True,measured,
+200714E,Ep_ME,249.57,211.94,-0.070984,193.28,234.62,False,measured,model or window (ours: cpl)
+200714E,tau32_ME_ms,513.41,178.99,-334.42,82.896,283.49,False,measured,lag resolution or window
+200714E,tau32_WE_ms,356.56,188.81,-167.75,96.272,292.9,False,measured,lag resolution or window
+200714E,EPI,5.3727,6.0633,0.69054,5.6843,6.6645,False,measured,"same gap, other start"
+200914A,T100_PE,0.544,0.544,0,0.096,0.544,True,measured,
+200914A,T100_QE1,1.232,1.232,0,0.336,1.504,True,measured,
+200914A,TMVT_PE,0.04,0.056,0.14613,0.024,0.056,True,measured,
+200914A,T100_ME,21.248,17.872,-0.075145,0.128,17.936,False,measured,extended-emission split or faint tail (tail runs into the background interval)
+200914A,TMVT_ME,0.248,0.312,0.099703,0.056,1.576,True,measured,
+200914A,T100_WE,62.144,97.328,0.19484,97.328,97.328,False,lower_limit,extended-emission split or faint tail (tail runs into the background interval)
+200914A,Ep_ME,1062.8,1579.9,0.17219,791.4,1629.3,True,measured,
+200914A,tau32_ME_ms,226.7,190.35,-36.349,64.381,286.39,True,measured,
+200914A,tau32_WE_ms,107.57,125.96,18.39,14.806,233.01,True,measured,
+200914A,EPI,7.6699,7.8682,0.19826,7.0918,8.4758,True,measured,
+201008A,T100_PE,0.648,,,,,False,missing,missing
+201008A,T100_QE1,0.36,,,,,False,missing,missing
+201008A,TMVT_PE,0.324,,,,,False,missing,missing
+201008A,T100_ME,1.608,2.632,0.214,2.608,2.6465,False,measured,extended-emission split or faint tail
+201008A,TMVT_ME,0.484,1.596,0.51819,1.1655,1.5705,False,measured,MVT reading (their pulse choice)
+201008A,T100_WE,2.616,2.632,0.0026481,2.608,2.6465,True,measured,
+201008A,Ep_ME,163.02,161.2,-0.0048706,142.28,185.39,True,measured,
+201008A,tau32_ME_ms,1071.3,4.5374,-1066.7,-71.361,69.101,False,measured,lag resolution or window
+201008A,tau32_WE_ms,451.23,4.5374,-446.69,-71.361,69.101,False,measured,lag resolution or window
+201008A,EPI,5.3242,,,,,False,missing,missing
+201016A,T100_PE,5.24,2.36,-0.34642,2.3215,4.0465,False,measured,other gap
+201016A,T100_QE1,0.536,0.744,0.14241,0.704,0.888,False,measured,other gap
+201016A,TMVT_PE,0.112,0.164,0.16563,0.10151,0.28249,True,measured,
+201016A,T100_ME,10.584,13.256,0.097763,10.665,13.346,False,measured,extended-emission split or faint tail
+201016A,TMVT_ME,1.42,1.42,0,0.25157,1.441,True,measured,
+201016A,T100_WE,16.36,16.36,0,16.186,16.437,True,measured,
+201016A,Ep_ME,271.67,184.34,-0.16843,181.92,186.79,False,measured,model or window (ours: band)
+201016A,tau32_ME_ms,136.51,108.81,-27.697,96.429,119.79,False,measured,lag resolution or window
+201016A,tau32_WE_ms,130.64,108.16,-22.48,95.636,119.56,False,measured,lag resolution or window
+201016A,EPI,5.235,5.0077,-0.22727,4.6846,5.2853,True,measured,
+201218A,T100_PE,3.408,3.52,0.014043,3.44,3.5939,True,measured,
+201218A,T100_QE1,10.416,10.304,-0.0046951,10.227,10.349,True,measured,
+201218A,TMVT_PE,0.264,0.568,0.33274,0.14509,0.64497,True,measured,
+201218A,T100_ME,15.2,18.448,0.084106,15.264,18.496,False,measured,extended-emission split or faint tail
+201218A,TMVT_ME,0.216,0.024,-0.95424,0.008,0.056,False,measured,MVT reading (their pulse choice)
+201218A,T100_WE,40.912,40.896,-0.00016988,40.691,41.412,True,measured,
+201218A,Ep_ME,554.1,545.2,-0.0070361,535.75,554.81,True,measured,
+201218A,tau32_ME_ms,60.19,19.454,-40.736,10.487,32.99,False,measured,lag resolution or window
+201218A,tau32_WE_ms,72.28,19.464,-52.816,10.599,32.74,False,measured,lag resolution or window
+201218A,EPI,5.0242,4.6657,-0.35851,4.4176,5.1243,True,measured,
+210201A,T100_PE,14.112,10.432,-0.13122,10.044,10.948,False,measured,"same gap, other start"
+210201A,T100_QE1,6.88,6.496,-0.024942,6.3639,6.752,True,measured,
+210201A,TMVT_PE,1.616,6.864,0.62814,1.7949,8.7323,False,measured,MVT reading (their pulse choice)
+210201A,T100_ME,20.928,9.952,-0.32282,9.6441,10.586,False,measured,extended-emission split or faint tail
+210201A,TMVT_ME,2.768,5.168,0.27116,0.85406,4.9258,True,measured,
+210201A,T100_WE,41.92,26.88,-0.19299,25.845,27.766,False,measured,extended-emission split or faint tail
+210201A,Ep_ME,120.71,111.43,-0.034759,93.348,141.45,True,measured,
+210201A,tau32_ME_ms,1189.8,,,,,False,unusable:no_reliable_peak,unusable:no_reliable_peak
+210201A,tau32_WE_ms,829.42,,,,,False,unusable:no_reliable_peak,unusable:no_reliable_peak
+210201A,EPI,2.3867,1.8327,-0.55396,1.628,2.4159,True,measured,
+210324B,T100_PE,0.384,,,0.56202,0.736,False,missing,missing
+210324B,T100_QE1,1.632,,,1.33,1.453,False,missing,missing
+210324B,TMVT_PE,0.192,,,0.07301,0.45297,False,missing,missing
+210324B,T100_ME,0.528,2.48,0.67182,0.4,2.496,True,measured,
+210324B,TMVT_ME,0.264,0.312,0.072551,0.10703,0.30897,True,measured,
+210324B,T100_WE,2.544,2.48,-0.011065,2.448,2.512,True,measured,
+210324B,Ep_ME,139,211.73,0.18277,166.55,288.89,False,measured,model or window (ours: cpl)
+210324B,tau32_ME_ms,164.32,24.159,-140.16,-30.799,79.999,False,measured,lag resolution or window
+210324B,tau32_WE_ms,91.01,24.159,-66.851,-30.799,79.999,False,measured,lag resolution or window
+210324B,EPI,5.312,,,,,False,missing,missing
+210424C,T100_PE,0.24,,,,,False,missing,missing
+210424C,T100_QE1,1.744,,,,,False,missing,missing
+210424C,TMVT_PE,0.12,,,,,False,missing,missing
+210424C,T100_ME,3.192,4.616,0.1602,4.5615,4.677,False,measured,extended-emission split or faint tail
+210424C,TMVT_ME,0.412,3.492,0.92818,2.3015,2.865,False,measured,MVT reading (their pulse choice)
+210424C,T100_WE,5.176,4.616,-0.049728,4.5615,4.677,True,measured,
+210424C,Ep_ME,63.79,65.285,0.010064,60.552,70.97,True,measured,
+210424C,tau32_ME_ms,110.68,48.556,-62.124,-2.1645,91.695,False,measured,lag resolution or window
+210424C,tau32_WE_ms,94.35,48.556,-45.794,-2.1645,91.695,False,measured,lag resolution or window
+210424C,EPI,5.0293,,,,,False,missing,missing
+210606B,T100_PE,36.328,31.072,-0.067872,30.571,31.408,False,measured,other gap
+210606B,T100_QE1,8.664,13.92,0.20592,13.64,14.357,False,measured,other gap
+210606B,TMVT_PE,1.372,0.012,-2.0582,0.57957,4.5934,True,measured,
+210606B,T100_ME,47.904,16.296,-0.46829,12.008,16.326,False,measured,extended-emission split or faint tail
+210606B,TMVT_ME,0.052,0.06,0.062148,0.02,0.10649,True,measured,
+210606B,T100_WE,314.75,302.46,-0.017295,301.96,302.88,True,measured,
+210606B,Ep_ME,433.85,378.52,-0.059247,362.58,395.99,False,measured,model or window (ours: cpl)
+210606B,tau32_ME_ms,14.6,0.6144,-13.986,-13.975,13.367,False,measured,lag resolution or window
+210606B,tau32_WE_ms,8.42,-1.5,-9.92,-7.5542,3.8476,False,measured,lag resolution or window
+210606B,EPI,3.1082,5.0128,1.9046,4.8556,5.8202,False,measured,other gap
+210927B,T100_PE,5.984,9.6,0.20528,9.107,9.9948,False,measured,"same gap, other start"
+210927B,T100_QE1,74.8,71.488,-0.019668,71.347,71.726,True,measured,
+210927B,TMVT_PE,2.992,3.288,0.04097,0.76349,7.8839,True,measured,
+210927B,T100_ME,33.968,23.888,-0.15289,23.872,24.032,False,measured,extended-emission split or faint tail
+210927B,TMVT_ME,0.2,0.04,-0.69897,0.024,0.088,False,measured,MVT reading (their pulse choice)
+210927B,T100_WE,114.75,124.85,0.036621,124.39,125.6,True,measured,
+210927B,Ep_ME,553.99,723.6,0.116,689.69,760.47,False,measured,model or window (ours: cpl)
+210927B,tau32_ME_ms,115.08,,,,,False,unusable:peak_in_0.898,unusable:peak_in_0.898
+210927B,tau32_WE_ms,63.04,15.474,-47.566,-10.64,53.124,False,measured,lag resolution or window
+210927B,EPI,3.2971,3.2927,-0.0044207,3.0059,4.0968,True,measured,
+211019A,T100_PE,0.76,0.624,-0.085629,0.18232,0.68043,False,measured,"same gap, other start"
+211019A,T100_QE1,1.208,1.4,0.064061,1.347,1.8538,False,measured,"same gap, other start"
+211019A,TMVT_PE,0.02,0.028,0.14613,0.02,0.084,True,measured,
+211019A,T100_ME,13.592,78.992,0.7643,68.751,79.006,False,lower_limit,extended-emission split or faint tail (tail runs into the background interval)
+211019A,TMVT_ME,0.076,0.068,-0.048305,0.045514,0.204,True,measured,
+211019A,T100_WE,70.536,81.016,0.06016,81.016,81.016,False,lower_limit,extended-emission split or faint tail (tail runs into the background interval)
+211019A,Ep_ME,1364.1,1644.7,0.081227,1574.9,1717.2,False,measured,model or window (ours: cpl)
+211019A,tau32_ME_ms,43.02,-0.09478,-43.115,-7.6508,9.759,False,measured,lag resolution or window
+211019A,tau32_WE_ms,64.02,-0.066328,-64.086,-5.4369,6.5976,False,measured,lag resolution or window
+211019A,EPI,8.0468,8.1168,0.069924,7.9094,8.8973,True,measured,
+211023A,T100_PE,53.664,48.816,-0.041121,41.043,48.832,True,measured,
+211023A,T100_QE1,15.488,15.376,-0.003152,15.141,15.575,True,measured,
+211023A,TMVT_PE,27.256,40.616,0.17324,6.8829,32.943,True,measured,
+211023A,T100_ME,70.016,68.992,-0.0063986,68.88,69.264,True,measured,
+211023A,TMVT_ME,0.28,0.152,-0.26531,0.078058,0.696,True,measured,
+211023A,T100_WE,202.43,170.93,-0.073466,163.24,172.98,False,measured,extended-emission split or faint tail
+211023A,Ep_ME,191.69,147.24,-0.11458,,151.59,False,measured,model or window (ours: cpl_bb)
+211023A,tau32_ME_ms,560.11,207.9,-352.21,155.74,270.2,False,measured,lag resolution or window
+211023A,tau32_WE_ms,412.42,,,,,False,unusable:peak_in_0.874,unusable:peak_in_0.874
+211023A,EPI,0.80506,0.44535,-0.3597,0.096268,0.81974,True,measured,
+211211A,T100_PE,0.424,0.424,0,0.2,0.45849,True,measured,
+211211A,T100_QE1,0.692,0.692,9.6433e-17,0.6373,0.91524,True,measured,
+211211A,TMVT_PE,0.014,0.014,0,0.018,0.045243,True,measured,
+211211A,T100_ME,11.236,11.236,0,11.221,11.28,True,measured,
+211211A,TMVT_ME,0.006,0.002,-0.47712,0.006,0.038,True,measured,
+211211A,T100_WE,87.564,81.912,-0.028978,81.84,96.896,True,measured,
+211211A,Ep_ME,1177,678.78,-0.23905,667.96,688.8,False,measured,model or window (ours: band)
+211211A,tau32_ME_ms,1.9,2.6434,0.74343,1.222,3.9668,True,measured,
+211211A,tau32_WE_ms,4.33,1.8796,-2.4504,0.74812,2.8739,False,measured,lag resolution or window
+211211A,EPI,8.448,7.9699,-0.47809,7.7941,8.313,False,measured,"same gap, other start"
+220305A,T100_PE,5.888,10.496,0.25106,2.901,10.93,True,measured,
+220305A,T100_QE1,35.664,33.008,-0.033611,32.142,40.376,True,measured,
+220305A,TMVT_PE,2.944,0.184,-1.2041,0.4958,6.4194,True,measured,
+220305A,T100_ME,19.76,21.152,0.029564,16.038,22.379,True,measured,
+220305A,TMVT_ME,1.8,8.712,0.68485,8.1451,8.885,False,measured,MVT reading (their pulse choice)
+220305A,T100_WE,191.49,189.55,-0.0044132,189.37,189.7,True,measured,
+220305A,Ep_ME,377.29,491.44,0.11479,444.56,547.78,False,measured,model or window (ours: cpl)
+220305A,tau32_ME_ms,76.12,103.5,27.379,53.855,149.63,True,measured,
+220305A,tau32_WE_ms,91.62,68.034,-23.586,18.827,122.46,True,measured,
+220305A,EPI,3.1383,4.3378,1.1995,3.716,5.2262,False,measured,"same gap, other start"
+220315A,T100_PE,0.376,0.376,0,0.352,0.384,True,unstable,
+220315A,T100_QE1,0.072,0.072,-9.6433e-17,0.072,0.090799,True,unstable,
+220315A,TMVT_PE,0.316,0.316,0,0.033201,0.2924,True,unstable,
+220315A,T100_ME,0.32,0.32,9.6433e-17,0.32,0.768,True,measured,
+220315A,TMVT_ME,0.036,0.036,9.6433e-17,0.044,0.30346,True,measured,
+220315A,T100_WE,0.768,0.768,0,0.74551,0.78249,True,measured,
+220315A,Ep_ME,363.05,347.46,-0.01906,287.58,438.99,True,measured,
+220315A,tau32_ME_ms,101.18,,,,,False,unusable:faint,unusable:faint
+220315A,tau32_WE_ms,13.58,18.939,5.3594,-7.0776,57.35,True,measured,
+220315A,EPI,6.6164,6.5783,-0.038121,6.3699,7.3963,True,measured,
+220507A,T100_PE,0.544,0.32,-0.23045,0.304,0.34897,False,measured,other
+220507A,T100_QE1,0.72,0.944,0.11764,0.91503,0.96,False,measured,other
+220507A,TMVT_PE,0.04,0.056,0.14613,0.04,0.24497,True,measured,
+220507A,T100_ME,0.848,0.848,9.6433e-17,0.848,3.7379,True,measured,
+220507A,TMVT_ME,0.68,0.68,0,0.15503,0.6,True,measured,
+220507A,T100_WE,5.92,4.976,-0.075441,4.96,5.0979,False,measured,extended-emission split or faint tail
+220507A,Ep_ME,1460.3,1450,-0.0030713,1193.9,1765.7,True,measured,
+220507A,tau32_ME_ms,96.78,76.441,-20.339,37.113,119.17,True,measured,
+220507A,tau32_WE_ms,96.52,31.696,-64.824,-25.744,88.009,False,measured,lag resolution or window
+220507A,EPI,8.0626,8.0819,0.019359,7.7093,8.514,True,measured,
+220617A,T100_PE,0.04,0.04,9.6433e-17,0.032,0.04,True,measured,
+220617A,T100_QE1,0.128,0.12,-0.028029,0.112,0.128,True,measured,
+220617A,TMVT_PE,0.012,0.02,0.22185,0.004,0.036,True,measured,
+220617A,T100_ME,0.584,0.736,0.10046,0.61103,0.76649,False,measured,extended-emission split or faint tail
+220617A,TMVT_ME,0.036,0.22,0.78612,0.22151,0.28249,False,measured,MVT reading (their pulse choice)
+220617A,T100_WE,0.752,0.896,0.07609,0.768,0.92,False,measured,extended-emission split or faint tail
+220617A,Ep_ME,2217.1,2270.9,0.0104,1955.6,2610.2,True,measured,
+220617A,tau32_ME_ms,41.71,16.121,-25.589,-6.7036,40.431,False,measured,lag resolution or window
+220617A,tau32_WE_ms,20.66,19.855,-0.80465,-4.3024,55.264,True,measured,
+220617A,EPI,10.457,10.27,-0.18703,10,10.941,True,measured,
+220624A,T100_PE,1.996,2.128,0.027811,2.0061,2.1715,True,measured,
+220624A,T100_QE1,1.148,1.112,-0.013837,1.104,1.1232,True,measured,
+220624A,TMVT_PE,0.494,2.034,0.61462,1.565,2.011,False,measured,MVT reading (their pulse choice)
+220624A,T100_ME,68.216,14.196,-0.68172,14.17,14.232,False,measured,extended-emission split or faint tail (tail runs into the background interval)
+220624A,TMVT_ME,0.102,0.158,0.19006,0.034,0.50373,True,measured,
+220624A,T100_WE,383.93,343.97,-0.047727,333.91,343.97,True,lower_limit,
+220624A,Ep_ME,488.1,545.01,0.047899,531.9,558.1,True,measured,
+220624A,tau32_ME_ms,146.51,21.007,-125.5,4.1914,49.101,False,measured,lag resolution or window
+220624A,tau32_WE_ms,88.9,1.0147,-87.885,-0.27738,2.3062,False,measured,lag resolution or window
+220624A,EPI,5.3532,4.8134,-0.53972,4.7575,4.8977,False,measured,"same gap, other start"
+220627A,T100_PE,18.496,17.92,-0.01374,17.6,18.484,True,measured,
+220627A,T100_QE1,17.536,18.816,0.030597,18.188,18.944,True,measured,
+220627A,TMVT_PE,2.592,1.12,-0.36442,1.0681,4.32,True,measured,
+220627A,T100_ME,194.3,193.66,-0.0014328,192.59,195.25,True,measured,
+220627A,TMVT_ME,0.512,0.608,0.074634,0.096,0.65988,True,measured,
+220627A,T100_WE,286.78,286.85,9.6908e-05,286.53,286.96,True,measured,
+220627A,Ep_ME,459.36,406.3,-0.053305,374.22,444,False,measured,model or window (ours: cpl)
+220627A,tau32_ME_ms,262.89,53.304,-209.59,-24.222,147.66,False,measured,lag resolution or window
+220627A,tau32_WE_ms,235.46,4.8471,-230.61,-48.659,74.217,False,measured,lag resolution or window
+220627A,EPI,3.0216,3.2779,0.25625,3.0411,3.7351,False,measured,"same gap, other start"
+221203A,T100_PE,0.32,0.32,-9.6433e-17,0.256,0.384,True,measured,
+221203A,T100_QE1,0.704,0.704,0,0.672,1.0906,True,measured,
+221203A,TMVT_PE,0.112,0.112,0,0.048,0.21057,True,measured,
+221203A,T100_ME,2.464,2.464,9.6433e-17,2.112,3.4335,True,measured,
+221203A,TMVT_ME,1.008,1.008,0,0.50812,2.2058,True,measured,
+221203A,T100_WE,3.488,3.488,0,3.488,3.5779,True,measured,
+221203A,Ep_ME,267.08,259.91,-0.011817,236.78,287.67,True,measured,
+221203A,tau32_ME_ms,112.95,-154.34,-267.29,-270.59,-18.541,False,measured,lag resolution or window
+221203A,tau32_WE_ms,15.59,-93.786,-109.38,-193.82,6.7159,False,measured,lag resolution or window
+221203A,EPI,6.3751,6.3515,-0.023635,6.0263,6.8363,True,measured,
+230117A,T100_PE,6.144,5.44,-0.052852,5.248,5.632,False,measured,"same gap, other start"
+230117A,T100_QE1,16.512,19.584,0.074102,19.456,19.764,False,measured,"same gap, other start"
+230117A,TMVT_PE,3.072,2.72,-0.052852,0.90035,4.1435,True,measured,
+230117A,T100_ME,24.832,22.208,-0.048502,21.952,22.44,True,measured,
+230117A,TMVT_ME,7.488,8.736,0.066947,4.493,13.408,True,measured,
+230117A,T100_WE,47.488,47.232,-0.0023475,47.04,47.464,True,measured,
+230117A,Ep_ME,42.78,51.379,0.079548,47.307,56.334,False,measured,model or window (ours: cpl)
+230117A,tau32_ME_ms,5919.6,,,,,False,unusable:no_reliable_peak,unusable:no_reliable_peak
+230117A,tau32_WE_ms,3736.5,,,,,False,unusable:no_reliable_peak,unusable:no_reliable_peak
+230117A,EPI,1.3777,1.6055,0.22775,1.3463,2.0248,True,measured,
+230307A,T100_PE,0.576,,,0.396,0.4,False,missing,missing
+230307A,T100_QE1,0.152,,,0.042157,0.044,False,missing,missing
+230307A,TMVT_PE,0.014,,,0.048157,0.075843,False,missing,missing
+230307A,T100_ME,17.372,18.1,0.017829,17.66,18.104,True,measured,
+230307A,TMVT_ME,0.006,0.006,0,0.006,0.018,True,measured,
+230307A,T100_WE,132.58,131.65,-0.0030506,131.18,131.9,True,measured,
+230307A,Ep_ME,962.46,898.92,-0.029664,895.72,902.08,True,measured,
+230307A,tau32_ME_ms,4.22,2.7884,-1.4316,0.48474,5.18,True,measured,
+230307A,tau32_WE_ms,4.15,1.5441,-2.6059,-0.12089,3.4673,False,measured,lag resolution or window
+230307A,EPI,8.4693,,,,,False,missing,missing
+230818A,T100_PE,1.04,1.136,0.038345,1.088,1.152,True,measured,
+230818A,T100_QE1,0.384,0.288,-0.12494,0.272,0.336,False,measured,other
+230818A,TMVT_PE,0.136,0.456,0.52543,0.091029,0.43697,True,measured,
+230818A,T100_ME,13.312,13.312,0,12.469,14.297,True,measured,
+230818A,TMVT_ME,0.168,0.168,0,0.15503,0.264,True,measured,
+230818A,T100_WE,14.736,14.736,0,13.996,15.721,True,measured,
+230818A,Ep_ME,249.74,261.49,0.019973,235.22,293.41,True,measured,
+230818A,tau32_ME_ms,12.19,15.92,3.7302,-3.2775,34.609,True,measured,
+230818A,tau32_WE_ms,-2.22,16.563,18.783,0.87472,34.762,False,measured,lag resolution or window
+230818A,EPI,5.8522,5.3909,-0.46136,5.1996,5.9608,True,measured,
+230906A,T100_PE,0.076,0.076,0,0.072757,0.076,True,measured,
+230906A,T100_QE1,0.38,0.376,-0.0045958,0.376,0.38,True,measured,
+230906A,TMVT_PE,0.01,0.006,-0.22185,0.002,0.026,True,measured,
+230906A,T100_ME,1.036,1.028,-0.0033666,1,1.0955,True,measured,
+230906A,TMVT_ME,0.01,0.07,0.8451,0.015514,0.097243,False,measured,MVT reading (their pulse choice)
+230906A,T100_WE,1.492,1.48,-0.0035071,1.452,1.5475,True,measured,
+230906A,Ep_ME,609.67,493.12,-0.092139,431.8,571.53,False,measured,model or window (ours: cpl)
+230906A,tau32_ME_ms,0.71,1.0869,0.37692,-1.7566,4.5182,True,measured,
+230906A,tau32_WE_ms,1.68,2.2639,0.58393,-0.26408,4.9744,True,measured,
+230906A,EPI,8.8995,8.9394,0.039868,8.8246,9.8558,True,measured,
+231018A,T100_PE,10.896,10.752,-0.0057778,10.691,10.813,True,measured,
+231018A,T100_QE1,13.632,13.632,0,13.523,13.741,True,measured,
+231018A,TMVT_PE,0.616,8.712,1.1505,2.2749,9.8272,False,measured,MVT reading (their pulse choice)
+231018A,T100_ME,67.792,49.504,-0.13654,49.392,49.629,False,measured,extended-emission split or faint tail
+231018A,TMVT_ME,0.056,0.056,0,0.04,0.072,True,measured,
+231018A,T100_WE,92.32,92.176,-0.00067794,88.665,93.172,True,measured,
+231018A,Ep_ME,120.1,125.33,0.018511,121.77,129.99,True,measured,
+231018A,tau32_ME_ms,43.86,22.368,-21.492,13.379,33.99,False,measured,lag resolution or window
+231018A,tau32_WE_ms,37.77,22.592,-15.178,14.126,34.349,False,measured,lag resolution or window
+231018A,EPI,2.765,1.6572,-1.1077,1.5215,2.178,False,measured,"same gap, other start"
+231104A,T100_PE,1.296,,,,,False,missing,missing
+231104A,T100_QE1,8.064,,,,,False,missing,missing
+231104A,TMVT_PE,0.648,,,,,False,missing,missing
+231104A,T100_ME,12.624,22.888,0.25841,22.63,23.143,False,measured,extended-emission split or faint tail
+231104A,TMVT_ME,0.028,0.34,1.0843,0.292,0.364,False,measured,MVT reading (their pulse choice)
+231104A,T100_WE,77.272,60.112,-0.10906,60.066,78.062,True,measured,
+231104A,Ep_ME,778.57,611.71,-0.10475,582.67,642.44,False,measured,model or window (ours: band)
+231104A,tau32_ME_ms,7.44,6.5041,-0.93588,0.19955,14.778,True,measured,
+231104A,tau32_WE_ms,1.54,7.0123,5.4723,0.84745,13.962,True,measured,
+231104A,EPI,5.4051,,,,,False,missing,missing
+231214A,T100_PE,11.552,11.872,0.011867,11.79,12.038,True,measured,
+231214A,T100_QE1,5.904,3.952,-0.17433,3.712,4.066,False,measured,other
+231214A,TMVT_PE,6.488,5.288,-0.088819,4.326,5.5801,False,measured,other
+231214A,T100_ME,18.64,14.816,-0.099715,14.665,15.389,False,measured,extended-emission split or faint tail
+231214A,TMVT_ME,1,1.704,0.23147,1.403,1.8099,False,measured,MVT reading (their pulse choice)
+231214A,T100_WE,36.096,30.64,-0.07117,30.467,31.204,False,measured,extended-emission split or faint tail
+231214A,Ep_ME,142.24,153.15,0.032104,148.95,157.6,True,measured,
+231214A,tau32_ME_ms,237.77,60.239,-177.53,10.077,109.86,False,measured,lag resolution or window
+231214A,tau32_WE_ms,219.86,56.298,-163.56,4.1503,106.57,False,measured,lag resolution or window
+231214A,EPI,2.0457,2.274,0.22833,2.2183,2.3399,False,measured,other
+240403A,T100_PE,7.816,4.68,-0.22274,4.623,4.697,False,measured,other
+240403A,T100_QE1,8.912,13.944,0.19441,13.462,14.336,False,measured,other
+240403A,TMVT_PE,0.084,0.572,0.83312,0.65448,2.3373,False,measured,other
+240403A,T100_ME,29.792,27.984,-0.02719,27.555,28.746,True,measured,
+240403A,TMVT_ME,0.084,0.028,-0.47712,0.048543,0.90994,True,measured,
+240403A,T100_WE,83.384,84.016,0.0032793,79.333,84.667,True,measured,
+240403A,Ep_ME,541.12,383.29,-0.14977,366.4,402.2,False,measured,model or window (ours: cpl)
+240403A,tau32_ME_ms,51.12,30.152,-20.968,6.998,55.737,True,measured,
+240403A,tau32_WE_ms,58.76,35.58,-23.18,14.251,61.038,True,measured,
+240403A,EPI,5.1743,4.1672,-1.0071,3.9457,4.5883,False,measured,other
+240411A,T100_PE,0.32,0.28,-0.057992,0.272,0.312,False,measured,"same gap, other start"
+240411A,T100_QE1,1.336,1.376,0.012812,1.344,1.392,True,measured,
+240411A,TMVT_PE,0.02,0.02,0,0.004,0.036,True,measured,
+240411A,T100_ME,2.04,2.04,0,1.9725,2.0705,True,measured,
+240411A,TMVT_ME,0.196,0.22,0.050167,0.19751,0.23449,False,measured,MVT reading (their pulse choice)
+240411A,T100_WE,3.696,3.696,0,3.64,3.7265,True,measured,
+240411A,Ep_ME,980.66,918.54,-0.028422,712.45,1221,True,measured,
+240411A,tau32_ME_ms,38.79,51.404,12.614,14.189,92.17,True,measured,
+240411A,tau32_WE_ms,52.2,19.01,-33.19,7.2942,41.539,False,measured,lag resolution or window
+240411A,EPI,8.114,8.1087,-0.0052588,7.6448,8.6019,True,measured,
+240513A,T100_PE,0.368,0.352,-0.019305,0.304,0.368,True,measured,
+240513A,T100_QE1,3.008,3.552,0.072195,3.536,3.6259,False,measured,"same gap, other start"
+240513A,TMVT_PE,0.136,0.168,0.09177,0.168,0.248,False,measured,MVT reading (their pulse choice)
+240513A,T100_ME,4.464,0.4,-1.0477,0.4,4.013,False,measured,extended-emission split or faint tail
+240513A,TMVT_ME,0.584,0.056,-1.0182,0.024,0.2,False,measured,MVT reading (their pulse choice)
+240513A,T100_WE,7.84,7.84,0,7.779,7.997,True,measured,
+240513A,Ep_ME,1773.8,5244.1,0.47076,3541.2,7883.7,False,measured,model or window (ours: cpl)
+240513A,tau32_ME_ms,81.76,12.849,-68.911,-4.2508,28.898,False,measured,lag resolution or window
+240513A,tau32_WE_ms,51.16,24.116,-27.044,-5.3742,48.063,False,measured,lag resolution or window
+240513A,EPI,7.5593,8.3923,0.83295,8.0567,8.7842,False,measured,"same gap, other start"
+240710A,T100_PE,0.64,,,6.496,6.496,False,missing,missing
+240710A,T100_QE1,7.744,,,0.56,0.56,False,missing,missing
+240710A,TMVT_PE,0.536,,,1.304,1.304,False,missing,missing
+240710A,T100_ME,13.248,14.064,0.025959,9.315,14.519,True,measured,
+240710A,TMVT_ME,1.544,1.144,-0.13022,0.45903,1.6339,True,measured,
+240710A,T100_WE,21.632,14.064,-0.18699,9.3661,14.519,False,measured,extended-emission split or faint tail
+240710A,Ep_ME,473.8,131.39,-0.55704,83.135,439.45,False,measured,model or window (ours: cpl)
+240710A,tau32_ME_ms,49.66,47.977,-1.6831,-32.634,134.94,True,measured,
+240710A,tau32_WE_ms,26.5,47.977,21.477,-32.634,134.94,True,measured,
+240710A,EPI,5.3714,,,,,False,missing,missing
+241025C,T100_PE,0.448,,,,,False,missing,missing
+241025C,T100_QE1,3.904,,,,,False,missing,missing
+241025C,TMVT_PE,0.416,,,,,False,missing,missing
+241025C,T100_ME,2.304,7.104,0.48902,7.04,7.7319,False,measured,extended-emission split or faint tail
+241025C,TMVT_ME,0.864,5.728,0.82149,5.664,5.856,False,measured,MVT reading (their pulse choice)
+241025C,T100_WE,6.656,7.104,0.02829,7.04,7.7319,True,measured,
+241025C,Ep_ME,135.41,97.328,-0.14341,90.129,106.08,False,measured,model or window (ours: cpl)
+241025C,tau32_ME_ms,111.34,-2.1867,-113.53,-40.704,36.52,False,measured,lag resolution or window
+241025C,tau32_WE_ms,107.81,-2.1867,-110,-40.704,36.52,False,measured,lag resolution or window
+241025C,EPI,4.6972,,,,,False,missing,missing
+241029A,T100_PE,1.2,1.312,0.038753,1.232,5.6795,True,measured,
+241029A,T100_QE1,1.232,1.184,-0.017259,1.12,1.728,True,measured,
+241029A,TMVT_PE,0.328,0.28,-0.068716,0.08849,1.031,True,measured,
+241029A,T100_ME,3.184,3.232,0.0064983,3.232,9.1619,True,measured,
+241029A,TMVT_ME,0.024,0.104,0.63682,0.024,0.168,True,measured,
+241029A,T100_WE,22.208,16.624,-0.12577,16.611,16.72,False,measured,extended-emission split or faint tail
+241029A,Ep_ME,179.1,149.05,-0.07977,136.95,163.68,False,measured,model or window (ours: cpl)
+241029A,tau32_ME_ms,73.87,37.365,-36.505,19.571,57.353,False,measured,lag resolution or window
+241029A,tau32_WE_ms,93.43,30.631,-62.799,13.059,52.762,False,measured,lag resolution or window
+241029A,EPI,4.8658,4.7449,-0.12095,4.4764,5.1149,True,measured,
+241030A,T100_PE,41.904,41.824,-0.00082992,41.64,42.048,True,measured,
+241030A,T100_QE1,42.48,42.48,0,42.124,42.943,True,measured,
+241030A,TMVT_PE,2.556,2.676,0.019925,0.25654,2.4939,True,measured,
+241030A,T100_ME,88.976,66.392,-0.12716,66.24,69.59,False,measured,extended-emission split or faint tail
+241030A,TMVT_ME,0.044,0.044,0,0.028,0.18994,True,measured,
+241030A,T100_WE,228.27,226.22,-0.0039293,225.77,226.37,True,measured,
+241030A,Ep_ME,166.21,205.25,0.091631,188.59,224.08,False,measured,model or window (ours: band)
+241030A,tau32_ME_ms,26.01,15.593,-10.417,-2.4586,41.022,True,measured,
+241030A,tau32_WE_ms,26.54,2.085,-24.455,-2.1458,7.5332,False,measured,lag resolution or window
+241030A,EPI,1.5974,1.7616,0.16417,1.4268,2.4971,True,measured,
+241204A,T100_PE,0.056,0.056,0,0.056,0.056,True,measured,
+241204A,T100_QE1,0.552,0.552,0,0.552,0.56,True,measured,
+241204A,TMVT_PE,0.004,0.004,0,0.012,0.044,True,measured,
+241204A,T100_ME,0.24,0.208,-0.062148,0.2,0.208,False,measured,extended-emission split or faint tail
+241204A,TMVT_ME,0.052,0.068,0.11651,0.052,0.068,True,measured,
+241204A,T100_WE,0.848,0.816,-0.016706,0.816,0.816,True,measured,
+241204A,Ep_ME,2466.1,2801.1,0.055325,2402.2,3288.6,True,measured,
+241204A,tau32_ME_ms,-1.45,-1.7588,-0.30879,-3.1622,-0.63894,True,measured,
+241204A,tau32_WE_ms,-1.73,-1.5817,0.14828,-2.7162,-0.33557,True,measured,
+241204A,EPI,10.563,10.673,0.11065,10.44,11.232,True,measured,

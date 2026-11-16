@@ -117,6 +117,12 @@ Written by `16_grb211211a_checks.ipynb`. One row per window, kept apart from `ep
 
 Written by `19_energetics.ipynb`: k-correction, L_iso and E_iso for every window of both known bursts.
 
+## Tan et al. (2025): `tan2025_type_il_fits.csv`, `tan2025_type_il_durations.csv`
+
+Their Table 2 (spectral fits of the precursor and main emission of GRB 170228A, 200311A and 200914A: cutoff power law alpha and E_cut with
+errors as printed, E_peak = (2 + alpha) E_cut, blackbody kT, BIC of both models) and Table 1 (T90, Tpre, Twt, TEE of their five Type IL
+GRBs). The fits are read by notebook 24; notebook 18 compares its windows with the same durations.
+
 ## The sample: `windows_sample.csv`, `sample_fits.csv`, `sample_precursors.csv`, `sample_snr.csv`, `sample_budget.csv`, `sample_lags.csv`
 
 Written by `18_sample_precursors.ipynb`, except `sample_lags.csv` from `20_spectral_lags.ipynb`.
@@ -136,6 +142,8 @@ Read and written by the package `zhu/` (see the main README). Lines starting wit
 - `zhu_sample.csv`: the 111 bursts measured again, with the GBM `trigger`, their `Type`, `Tres` and `EPI`, why each is in the sample (`reason`: `z25`, `type_I`, `supernova`, `near_line`, `random`) and the redshift `z` where one is known.
 - `redshifts_greiner.csv`: J. Greiner's table of GRB redshifts as read on 11 Nov 2026, with a note and whether the redshift is photometric.
 - `zhu_literature_values.csv`: every published number the re-analysis uses, one per row: `paper`, `where` (table, text or figure), `burst`, `quantity`, `value` with `minus` and `plus` errors where given, `units`, `definition`, and `source` (`tabulated`, `text`, `read from figure`, or `named in figure` for a burst whose name is only in a figure label).
+- `zhu_remeasured.csv`: written by `25_zhu_epi_and_physics.ipynb`. The 111 bursts measured again under the zhu2026 rule, one row per burst: the durations and MVTs with their 16th and 84th percentiles over 40 simulated light curves, E_peak of the precursor and the main emission their way and by our rule with their errors (or the precursor's 95% interval where our rule doesn't count it as measured), the lags, EPI with its interval and its chance of lying above 6.2, and a status for each number (`zhu/quality.py`). The header lines give the units.
+- `zhu_paper_vs_ours.csv`: written by the same notebook. Every number of their Table 1 against ours, one row per burst and number: `paper`, `ours`, `difference` (log10 of ours over theirs), our 68% interval (`ours_low`, `ours_high`), whether the two agree (their value inside our interval, or within 0.05 dex), our number's status and, where they don't agree, the likely `reason`.
 
 ## MVT file (format to agree)
 

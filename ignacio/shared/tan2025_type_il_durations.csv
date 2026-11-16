@@ -1,0 +1,9 @@
+# Tan et al. (2025, arXiv 2504.06616v2), Table 1: T90, precursor duration Tpre, waiting time Twt (quiescent period) and extended-emission
+# duration TEE, in s, for their five Type IL GRBs. GRB 230307A fails their light-curve criterion (its quiescent period is above the
+# background) and is added by their rescaling argument. Tabulated values.
+burst,T90,Tpre,Twt,TEE
+GRB230307A,41.52,0.40,0.30,50.80
+GRB211211A,43.18,0.20,0.93,50.80
+GRB200914A,65.28,0.40,1.20,49.50
+GRB200311A,52.48,0.40,0.20,39.50
+GRB170228A,60.20,0.80,1.20,44.20

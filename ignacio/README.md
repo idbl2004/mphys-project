@@ -31,7 +31,7 @@ the order given under Run times. Figures go to `ignacio/figures/` (01 and 02 wri
 `lightcurve_tools.py` holds the light-curve functions; `spectral_fit_tools.py` the spectral-fit ones (including
 the `BandLowBreak` model used in 12 and 14); `pileup_tools.py` the simulation of GBM's electronics used in 15 and 16; `sample_tools.py` the set-up of a new burst, the precursor rule and the lag code, used in 18 and 20. Tests of these are in `tests/` (`python -m pytest tests -q`, from `ignacio/`; pytest is in the environment file), and `environment_MVTEnv.yml` has the environment with exact versions. Notebook 17, the spectral half of the join with the MVT, goes in with the MVT table.
 
-## Zhu et al. 2025 and 2026 measured again (`zhu/`, notebook 22)
+## Zhu et al. 2025 and 2026 measured again (`zhu/`, notebooks 22-26)
 
 The bursts of Zhu et al. (2025, MNRAS 541, 3236; 2026, ApJ 1003, 142) measured again from the GBM photons with their episode rules written
 as code, so every number has an error bar and a stated rule. All of it is in the package `zhu/`; the notebooks only read its results and
@@ -41,7 +41,7 @@ show, check and interpret them.
 |---|---|
 | `catalogue.py` | their Table 1, the sample of 111 bursts, EPI, redshifts, and the literature table (`shared/zhu_literature_values.csv`: every published number used, with paper, table or figure, units, definition and whether it was tabulated, printed in the text or read from a figure) |
 | `background.py` | the 8-1000 keV light curve of the catalogue's NaI detectors, and background intervals kept clear of all the emission |
-| `episodes.py` | Bayesian blocks (p0 = 0.05) and the episodes under three rules kept apart: `zhu2025`, `zhu2026` and `project` (notebook 18's rule); the MVT with its error; the rules again on 40 simulated light curves and at half and twice their time bin |
+| `episodes.py` | Bayesian blocks (p0 = 0.05) and the episodes under three rules kept apart: `zhu2025`, `zhu2026` and `project` (notebook 18's rule); T_MVT as their tables have it (the rise of the shortest pulse to its brightest bin) in the zhu modes, half the shortest certain block in the project mode, and three more readings for comparison; the rules again on 40 simulated light curves and at half and twice their time bin |
 | `lags.py` | tau32 and tau42 in their bands, at a resolution chosen by a written rule, with a stored status when a lag isn't quoted and a check on light curves with a known shift |
 | `spectra.py` | their way (five models, BIC, PGSTAT, their energy ranges) and our rule (notebook 14) on the same spectra, every row with its detectors, ranges, statistic and code version |
 | `run.py` | one burst from the data to its tables, and batches that share the sample (each burst taken with a lock the system releases if a process stops) and can be stopped and restarted; `state.json` in each burst's folder says what each stage did, when, with which code version and, if it stopped, why |
@@ -53,6 +53,10 @@ show, check and interpret them.
 | Notebook | What it shows |
 |---|---|
 | `22_zhu_table_and_classification.ipynb` | their table alone: EPI and its line, their t-SNE/UMAP/HDBSCAN repeated, then tested over seeds and settings, without a map and with each number left out |
+| `23_zhu_episodes.ipynb` | their bursts measured again: the checks on every burst, the episodes and durations under the three rules against their printed edges and Table 1, what the rule changes of 13 Nov did, which quiet gap follows a precursor, what their T_MVT is and what that means for EPI, the detector choice, the error bars, every disagreement with its cause, and the threshold of a quiet episode (why GRB 230307A has no precursor under the rule as written) |
+| `24_zhu_spectra_and_lags.ipynb` | E_p of the main emission fitted their way and by our rule, against their table and the GBM catalogue's own fits; the precursor's E_p (measured, or a 95% interval); Tan et al.'s three Type IL candidates; the lags |
+| `25_zhu_epi_and_physics.ipynb` | EPI from our own numbers with its uncertainty and what it is made of; the precursor's E_p against EPI; the delay from precursor to main emission as an inspiral time; the size of the emitting region; energetics and the Amati plane |
+| `26_zhu_classification_laws.ipynb` | confirmed labels kept apart from candidates; the three populations (kilonova mergers, merger candidates, supernova collapsars); whether E_p,PE or E_p,PE/E_p,ME adds to EPI (nested cross-validation, permutation tests, bootstrap, limits at both ends) and whether it adds anything once E_p,ME is known; which of EPI's terms matter; the compact-law search, with its sensitivity to the least certain labels and to GBM's energy scale; how many confirmed mergers a test would need |
 
 To reproduce the whole analysis, from `ignacio/`:
 
@@ -61,7 +65,8 @@ To reproduce the whole analysis, from `ignacio/`:
 3. `OMP_NUM_THREADS=1 python -m zhu.run batch --workers 3`, as several copies side by side if there are cores to spare; `python -m zhu.run status`
    shows each burst's state. A stopped batch picks up where it left off; a burst whose code failed is left alone until a batch is run with
    `--retry-failed`. The laptop must not sleep while it runs.
-4. Run notebook 22 (`jupyter execute --inplace 22_zhu_table_and_classification.ipynb`); it needs only their table.
+4. Run notebooks 22 to 26 in order (`jupyter execute --inplace 2X_*.ipynb`). 22 needs only their table; 23-26 read `results/zhu/`
+   (23's before/after section also reads `results/zhu_12Nov_rules/`, the batch under the rules of 12 Nov, and skips it if absent).
 5. `python -m pytest tests/test_zhu.py -q` runs the tests (`-m "not slow"` leaves out the two that refit real spectra, a few minutes each).
 
 The literature table was built once from the arXiv source of the 2025 paper with `catalogue.build_literature_table`; the 2026 numbers come
