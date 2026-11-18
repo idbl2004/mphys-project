@@ -1,3 +1,15 @@
+# GRB precursors: my MPhys project
+
+This repository holds my MPhys project (2026-27) on the precursors of gamma-ray bursts in Fermi/GBM and Swift/BAT data: their
+spectra, their timing, and whether they can tell a merger of two compact stars from the collapse of a massive star. All of the
+project is in [`ignacio/`](ignacio/). Start with [`ignacio/README.md`](ignacio/README.md), and `ignacio/00_demonstration.ipynb` goes
+through the whole analysis in one notebook.
+
+The rest of the repository is MVTTools ([Dezray961/MVTTools](https://github.com/Dezray961/MVTTools), MIT License), the code for the
+minimum variability timescale (MVT) that the project started from. The MVT values the project uses are measured by Rodrigo, my
+project partner, with his fork of it ([rodrigogleon/MVTTools](https://github.com/rodrigogleon/MVTTools), branch `haar-fix`). The
+installation guide below is MVTTools' own.
+
 # Installation Guide
 1. Set up a virtual environment using `conda` or `pyenv`
 2. Download NASA's High Energy Astrophysics software (HEASoft) package [here](https://heasarc.gsfc.nasa.gov/docs/software/lheasoft/).
