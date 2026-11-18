@@ -27,11 +27,10 @@ def test_times_from_trigger():
 def test_precursor_starts_agree():
     """Converted to the trigger, their first precursor starts within 0.2 s of our zhu2026 precursor for most of the bursts in both."""
     t = S.from_trigger(S.read_table(), S.read_catalogue()).sort_values("pre_start_s").groupby("trigger").first()
-    ours = pd.read_csv(S.SHARED / "windows_zhu_sample.csv", comment="#")
-    ours = ours[ours.label == "pre"].set_index("trigger")
+    ours = pd.read_csv(S.SHARED / "zhu_remeasured.csv", comment="#").set_index("trigger").PE_start_s.dropna()
     both = t.join(ours, how="inner")
     assert len(both) >= 15
-    assert np.mean(np.abs(both.pre_start_s - both.t_start) < 0.2) >= 0.7
+    assert np.mean(np.abs(both.pre_start_s - both.PE_start_s) < 0.2) >= 0.7
 
 
 def test_bin_rule():

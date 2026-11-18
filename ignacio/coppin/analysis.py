@@ -75,8 +75,9 @@ def trigger_met(name, trigger):
 
 
 def windows(root=RESULTS, mode="zhu2026"):
-    """The precursor and main-emission windows of every Coppin burst in which our rule finds a precursor, in the format of
-    shared/windows_zhu_sample.csv, so that the MVT can be measured on exactly the windows of our E_peak."""
+    """The precursor and main-emission windows of every Coppin burst in which our rule finds a precursor, one row per window: the burst,
+    its trigger and trigger time (MET), the label, the edges from the trigger, the light-curve bin, the NaI summed and any flags. With these
+    the MVT can be measured on exactly the windows of our E_peak."""
     import json
     from zhu.io import states
     sample = pd.read_csv(SHARED / "coppin_sample.csv", comment="#", index_col=0)
