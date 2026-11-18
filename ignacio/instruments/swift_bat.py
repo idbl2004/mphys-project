@@ -121,7 +121,7 @@ def light_travel(bat, gbm_trigdat, gbm_trigger_met, gbm_offset=0.0, at=0.0):
 
     Both positions are taken at that one moment. Fermi's comes from GBM's trigdat file (EVNTRATE: EIC, J2000, km) at gbm_trigger_met + at, and
     Swift's from its orbit file (auxil/sao: POSITION, J2000, km, every second) at bat.trigger_met - gbm_offset + at, with gbm_offset from
-    gbm_offset(). The two satellites can be about 14,000 km apart, so this reaches about 45 ms, and it drifts by up to about 0.04 ms a second as
+    gbm_offset(). The two satellites can be about 14,000 km apart, so this reaches about 47 ms, and it drifts by up to about 0.04 ms a second as
     they move, which is why I work it out at the time being compared. Add it, together with gbm_offset, to a time from the BAT trigger to put
     it on GBM's axis for the same light. It's good to about 0.1 ms, since trigdat only gives Fermi's position once per time bin of up to a few
     seconds."""
@@ -338,7 +338,7 @@ def spectrum_during_slew(bat, start, stop, label, slice_s=5.0):
 # (Scargle et al. 2013, section 3.3). The rates per detector are scaled by the number of good detectors to whole-array counts; a common
 # scale changes nothing in the blocks or the significances, it only makes the numbers comparable in size with GBM's. One difference stays:
 # BAT's errors include the burst's own counting noise, while GBM's significances use the background's alone, so a BAT block of the same
-# brightness is a little less significant. Fermi and Swift are up to about 14,000 km apart, so a burst's photons reach them up to about 45 ms
+# brightness is a little less significant. Fermi and Swift are up to about 14,000 km apart, so a burst's photons reach them up to about 47 ms
 # apart depending on its direction; bat_compare adds that light-travel time (light_travel) to the offset between the two time axes.
 
 def blocks_gaussian(edges, counts, noise, p0=0.05):

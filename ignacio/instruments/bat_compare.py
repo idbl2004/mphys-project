@@ -6,7 +6,7 @@ curve against ours from GBM's, and BAT's spectrum of the precursor that GBM defi
     python -m instruments.bat_compare precursors 211211A 190114C ...
 
 Times are put on GBM's axis using the difference of the two trigger times and the light-travel time between Swift and Fermi (up to about
-45 ms, see swift_bat.light_travel). I work that out at the time being compared, which matters for precursors that only last tens of ms.
+47 ms, see swift_bat.light_travel). I work that out at the time being compared, which matters for precursors that only last tens of ms.
 Every burst is handled on its own. A burst that can't be compared (no GBM episodes, no BAT data, or a tool that fails) keeps its rows with
 the reason, so one burst never costs the rest of the table.
 
