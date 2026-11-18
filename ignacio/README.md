@@ -92,7 +92,7 @@ each with its own implementation, since the two record and calibrate photons dif
 | `27_bat_check.ipynb` | the BAT chain against the catalogue; episode edges from BAT against GBM's; the precursors in BAT's band against what GBM's fits predict there |
 | `00_demonstration.ipynb` | the whole project once, in order, on one burst and then on the sample, every step calling the package or reading a saved table |
 
-## More samples and checks (`coppin/`, notebooks 29-33)
+## More samples and checks (`coppin/`, notebooks 29-34)
 
 | Module | What it does |
 |---|---|
@@ -108,9 +108,11 @@ each with its own implementation, since the two record and calibrate photons dif
 | `31_which_nai.ipynb` | Zhu et al.'s 110 bursts with four choices of NaI, and why the choice decides GRB 230307A's quiet gap |
 | `32_swift_li_mao.ipynb` | Li & Mao's 52 Swift bursts through the same BAT chain |
 | `33_checks_on_epeak.ipynb` | the fits' time limit, GRB 160625B against the papers that measured it, our fits against the GBM catalogue's, and the confirmed bursts whose precursor E_peak is only bounded |
+| `34_grb211211a_gompertz_slices.ipynb` | GRB 211211A's two slices that don't match Gompertz et al. (2-4 and 8-10 s): not the response files or their energy ranges, and about half of the gap is the peak trading off against the high-energy tail |
 
 29 needs `python -m coppin sample`, `prefetch` and `batch` first; 30 and 32 need `python -m instruments.bat_sample fetch`, `measure`
 and `limao`; 33 reads `python -m zhu.refit late --run` and `python -m zhu.refit catalogue` (the first about 14 hours on three cores).
+34 reads GRB 211211A's GBM data, like 14 and 16, and takes about a minute.
 
 ## Reproducing the results
 
@@ -202,7 +204,8 @@ before 13, 14 before 16, 12 and 14 before 18 and 19, and 18 before 20; otherwise
 6. GRB 211211A: its E_peak depends strongly on the model in 0-26 s (Band against the
    two-break model, a factor of ~2), so 14 takes the two-break E_peak where that model is clean and clearly
    better, while 12 keeps Band for 230307A to compare with Dichiara. Its precursor flux is 1.5-2.7 times
-   Troja et al.'s, with the same E_peak.
+   Troja et al.'s, with the same E_peak. In 2-4 s and 8-10 s its E_peak is 20-27% above Gompertz et al.'s, and about half of
+   that is the peak trading off against the high-energy tail (34).
 7. The errors in the E_peak table are the precision, not the accuracy. GBM and GECAM differ by ~10% in the bright phase
    and ~20% in the precursor, and I can't say which is closer (15, sections 6, 7 and 10).
 8. m01, m02, m03 and t1_07_18 overlap the GBM team's pile-up intervals (2.5-7.5 s in na, 2.5-11 s in b1). The simulated
