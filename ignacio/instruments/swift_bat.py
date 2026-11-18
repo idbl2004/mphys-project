@@ -1,21 +1,21 @@
-"""Swift/BAT for the bursts that GBM and BAT both saw: the standard BAT chain, run with HEASoft's own tools, and light curves and
-spectra with responses for any time window.
+"""Swift/BAT for the bursts that both GBM and BAT saw: the standard BAT chain, run with HEASoft's own tools, and light curves and spectra
+with responses for any time window.
 
 BAT is a coded-mask instrument. Each event gets a weight from the shadow the mask casts on its detector for the burst's position
-(batmaskwtevt), and weighted sums are background-subtracted rates per fully illuminated detector. These are not Poisson counts, so BAT
+(batmaskwtevt), and the weighted sums are background-subtracted rates per fully illuminated detector. These aren't Poisson counts, so BAT
 spectra are fitted with chi-squared, and Bayesian blocks on BAT light curves need the Gaussian fitness. The band is 15-150 keV, so an
 E_peak above it can only be a limit.
 
-The chain, as in the BAT analysis threads (and the archive pipeline, which tests/test_swift_bat.py reproduces):
-  batdetmask     the detectors that were on (housekeeping bdecb), on the global bad-detector map
-  batbinevt      a detector-plane image of all events, then bathotpix to flag hot pixels
-  batmaskwtevt   the mask weight of every event for the burst's position, with the attitude file; it also writes the ray-tracing
-                 file that batupdatephakw needs to put the burst's position in each spectrum
-  batbinevt      mask-weighted light curves and 80-channel spectra for any window
-  batupdatephakw, batphasyserr, batdrmgen    position keywords, the standard systematic errors, and the response of each spectrum
+The chain follows the BAT analysis threads (and the archive pipeline, which tests/test_swift_bat.py reproduces):
+- batdetmask finds the detectors that were on (housekeeping bdecb), on top of the global bad-detector map;
+- batbinevt makes a detector-plane image of all the events, and bathotpix then flags the hot pixels;
+- batmaskwtevt gives every event its mask weight for the burst's position, using the attitude file, and also writes the ray-tracing file
+  that batupdatephakw needs to put the burst's position into each spectrum;
+- batbinevt then makes mask-weighted light curves and 80-channel spectra for any window;
+- batupdatephakw, batphasyserr and batdrmgen add the position keywords, the standard systematic errors and the response of each spectrum.
 
-Data: ~/swift_bat/data/<obsid>/ from the HEASARC archive (bat/ and auxil/ of observation 00<trigger>000), calibration in ~/caldb.
-"""
+The data go in ~/swift_bat/data/<obsid>/ from the HEASARC archive (bat/ and auxil/ of observation 00<trigger>000), with the calibration
+in ~/caldb."""
 import gzip
 import os
 import shutil
@@ -116,13 +116,15 @@ C_KM_S = 299792.458
 
 
 def light_travel(bat, gbm_trigdat, gbm_trigger_met, gbm_offset=0.0, at=0.0):
-    """Seconds by which the burst's light reaches Swift before Fermi, `at` seconds after the GBM trigger: (r_Swift - r_Fermi) . n / c, with
-    n the unit vector to the burst (BAT's position). Both positions are taken at that one instant: Fermi's from GBM's trigdat file
-    (EVNTRATE: EIC, J2000, km) at gbm_trigger_met + at, and Swift's from its orbit file (auxil/sao: POSITION, J2000, km, every second) at
-    bat.trigger_met - gbm_offset + at (gbm_offset as from gbm_offset()). The two are up to about 14,000 km apart, so this reaches about 45
-    ms, and it drifts by up to about 0.04 ms a second as they move, which is why it is worked out at the time being compared. Add it, with
-    gbm_offset, to a time from the BAT trigger to put it on GBM's axis for the same light. Good to about 0.1 ms (trigdat gives Fermi's
-    position once per time bin of up to a few seconds)."""
+    """How many seconds earlier the burst's light reaches Swift than Fermi, `at` seconds after the GBM trigger: (r_Swift - r_Fermi) . n / c,
+    where n is the unit vector to the burst (BAT's position).
+
+    Both positions are taken at that one moment. Fermi's comes from GBM's trigdat file (EVNTRATE: EIC, J2000, km) at gbm_trigger_met + at, and
+    Swift's from its orbit file (auxil/sao: POSITION, J2000, km, every second) at bat.trigger_met - gbm_offset + at, with gbm_offset from
+    gbm_offset(). The two satellites can be about 14,000 km apart, so this reaches about 45 ms, and it drifts by up to about 0.04 ms a second as
+    they move, which is why I work it out at the time being compared. Add it, together with gbm_offset, to a time from the BAT trigger to put
+    it on GBM's axis for the same light. It's good to about 0.1 ms, since trigdat only gives Fermi's position once per time bin of up to a few
+    seconds."""
     with fits.open(bat.file("auxil", "sao.fits.gz")) as f:
         t, pos = f[1].data["TIME"], np.asarray(f[1].data["POSITION"], float)
         r_swift = np.array([np.interp(bat.trigger_met - gbm_offset + at, t, pos[:, k]) for k in range(3)])
@@ -157,9 +159,9 @@ def prepare(bat):
 
 
 def light_curve(bat, tres, band=BAND):
-    """Mask-weighted rate in band (keV) at bins of tres (s): returns (time from the BAT trigger at bin centres, rate, error), in counts
-    per second per fully illuminated detector, background-subtracted by the mask weighting. Bins with no events at all (zero rate and
-    zero error, where the event data don't cover, e.g. after about +390 s for GRB 211211A) are left out."""
+    """The mask-weighted rate in band (keV) at bins of tres (s). Returns (time from the BAT trigger at the bin centres, rate, error), in counts
+    per second per fully illuminated detector, with the background already taken out by the mask weighting. Bins with no events at all are
+    left out. Those have zero rate and zero error, and they're where the event data don't reach, e.g. after about +390 s for GRB 211211A."""
     events, qmap, _ = prepare(bat)
     out = bat.work / f"lc_{tres * 1e3:g}ms_{band[0]:g}-{band[1]:g}keV.lc"
     if not out.exists():
@@ -305,9 +307,9 @@ def fit(spec, model, start, band=BAND):
 
 
 def spectrum_during_slew(bat, start, stop, label, slice_s=5.0):
-    """The spectrum of [start, stop] with a response averaged over the window, for windows in which Swift slews and the burst moves
-    across the field: one response per slice of slice_s seconds, weighted by the counts (15-150 keV) the slice contributes, as the BAT
-    catalogue does. Returns the read_spectrum dict of the whole window with the averaged matrix in place of the single one."""
+    """The spectrum of [start, stop] with a response averaged over the window, for windows in which Swift slews and the burst moves across
+    the field. There's one response per slice of slice_s seconds, weighted by the counts (15-150 keV) that slice contributes, which is what the
+    BAT catalogue does. Returns the read_spectrum dict of the whole window with the averaged matrix in place of the single one."""
     pha, rsp = spectrum(bat, start, stop, label)
     whole = read_spectrum(pha, rsp)
     edges = np.arange(start, stop, slice_s)
@@ -359,10 +361,10 @@ def blocks_gaussian(edges, counts, noise, p0=0.05):
 
 
 def episodes(bat, tres, offset, span, around=None, modes=("zhu2025", "zhu2026")):
-    """The episodes of the BAT light curve under Zhu et al.'s rules, at time resolution tres, over span (s from the GBM trigger), with
-    times from the GBM trigger (offset: gbm_offset plus light_travel). Where the BAT data have gaps inside span, only the unbroken
-    stretch that contains the time `around` (default: the middle of span) is used, and the result's flags say so. Returns
-    {mode: EpisodeResult} and the blocks."""
+    """The episodes of the BAT light curve under Zhu et al.'s rules, at time resolution tres, over span (s from the GBM trigger), with times
+    counted from the GBM trigger (the offset is gbm_offset plus light_travel). If the BAT data have gaps inside span, I only use the unbroken
+    stretch that contains the time `around` (the middle of span by default), and the result's flags say so. Returns {mode: EpisodeResult} and
+    the blocks."""
     from zhu.background import LightCurve
     from zhu.episodes import find_episodes
     t, rate, error = light_curve(bat, tres)

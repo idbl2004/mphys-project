@@ -1,13 +1,24 @@
-"""python -m grbtool GRB180728A --z 0.117"""
+"""python -m grbtool GRB180728A --z 0.117, or with --zhu or --swift, or python -m grbtool sample <name> <part> (grbtool/samples.py)"""
 import argparse
 import os
+import sys
 
 # Each worker fits one window, so the linear algebra stays on one thread
 os.environ.setdefault("OMP_NUM_THREADS", "1")
 os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
 
-parser = argparse.ArgumentParser(prog="grbtool", description="E_peak, MVT and the rest of the analysis for any GBM burst, with one set of rules.")
+if sys.argv[1:2] == ["sample"]:
+    from .samples import run_sample
+    sys.exit(run_sample(sys.argv[2:]))
+
+parser = argparse.ArgumentParser(prog="grbtool", description="E_peak, MVT and the rest of the analysis for any GBM burst, with one set of rules. "
+                                 "python -m grbtool sample zhu|coppin|burlon|limao <part> runs a whole sample.")
 parser.add_argument("burst", help="name like GRB180728A")
+parser.add_argument("--zhu", action="store_true", help="Zhu et al.'s rules instead, the way the samples were measured: episodes, T_MVT, E_peak both ways, EPI, "
+                    "and how soft and fast the precursor is (results/any/)")
+parser.add_argument("--tres", type=float, help="the light-curve bin in ms: with --zhu instead of the one the peak-flux rule gives, with --swift instead "
+                    "of 256 ms (right for the Swift samples' long precursors; a merger-like one needs a finer bin)")
+parser.add_argument("--swift", action="store_true", help="Swift/BAT instead, for a burst BAT saw: our rule on BAT's light curve and a power law in each episode")
 parser.add_argument("--trigger", help="GBM trigger like bn180728728, if the name isn't enough")
 parser.add_argument("--z", type=float, help="redshift, for the energetics")
 parser.add_argument("--detectors", nargs="+", help="instead of the catalogue's")
@@ -32,6 +43,18 @@ args = parser.parse_args()
 from .bursts import BurstError
 from .pipeline import analyse
 from .windows import WindowError
+
+if args.zhu or args.swift:
+    from .samples import bat_one, describe, zhu_one
+    try:
+        if args.zhu:
+            print(describe(zhu_one(args.burst, trigger=args.trigger, tres=1e-3 * args.tres if args.tres else None, workers=args.workers,
+                                   download=not args.no_download)))
+        if args.swift:
+            print(bat_one(args.burst, z=args.z, tres=1e-3 * args.tres if args.tres else None))
+    except (BurstError, ValueError, FileNotFoundError) as error:
+        raise SystemExit(f"{args.burst}: {error}")
+    sys.exit(0)
 
 try:
     analyse(args.burst, trigger=args.trigger, redshift=args.z, detectors=args.detectors, windows_file=args.windows, bkg_windows=[args.bkg[:2], args.bkg[2:]] if args.bkg else None,

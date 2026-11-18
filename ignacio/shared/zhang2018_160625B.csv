@@ -1,0 +1,14 @@
+# GRB 160625B: Zhang et al. (2018, Nature Astronomy 2, 69; arXiv:1612.03089). Times in s from the GBM trigger (bn160625945).
+# Precursor slices (sub-burst I): their cut-off power law E_peak and blackbody kT, Table S1. Main-burst slices (sub-burst II): their
+# Band E_peak, Table S1. span: the time-integrated Band E_peak of the main burst, Table I, over the span of their main-burst slices
+# (their table doesn't give its interval). Errors are 1 sigma. They used the two brightest NaI and the brightest BGO, PGSTAT, McSpecFit.
+label,t_start,t_stop,model,Epeak_keV,minus,plus,kT_keV,kT_minus,kT_plus
+zS1_m0p08,-0.08,0.13,cpl,57.64,3.59,4.14,13.64,0.67,0.63
+zS1_0p13,0.13,0.35,cpl,70.41,1.68,4.43,15.59,0.46,0.50
+zS1_0p35,0.35,0.57,cpl,65.45,1.32,5.19,15.38,0.45,0.51
+zS1_0p57,0.57,0.78,cpl,61.23,2.85,3.23,14.60,0.54,0.57
+zS2_188p16,188.16,188.33,band,997.93,98.30,169.32,,,
+zS2_193p44,193.44,194.14,band,447.21,12.38,22.44,,,
+zS2_199p89,199.89,200.29,band,610.44,19.91,42.63,,,
+zS2_206p78,206.78,207.78,band,256.48,10.45,30.57,,,
+zS2_span,187.23,218.24,band,448.8,4.22,4.42,,,

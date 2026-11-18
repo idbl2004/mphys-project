@@ -1,11 +1,12 @@
-"""The MVT of a window from Rodrigo's Haar code, imported as it is from his repository, and what says how far to trust it.
+"""The MVT of a window from Rodrigo's Haar code, imported as it is from his repository, plus what tells you how far to trust it.
 
-The conventions are his and Bala et al.'s (2026): 8-900 keV, NaI only, Poisson resamples with errors sqrt(counts), 300 realisations, seed 2026,
-a first-order background, and SNR_MVT = highest counts in a bin of width tau / sqrt(background rate x tau). The class (robust, likely upper limit,
-upper limit) comes from Bala et al.'s validation curve. Set MVTTOOLS and BALA_CODE to the folders of the two repositories if they aren't in the home folder.
+The conventions are his and Bala et al.'s (2026): 8-900 keV, NaI only, Poisson resamples with errors sqrt(counts), 300 realisations with
+seed 2026, a first-order background, and SNR_MVT = the highest counts in a bin of width tau / sqrt(background rate x tau). The class
+(robust, likely upper limit or upper limit) comes from Bala et al.'s validation curve. Set MVTTOOLS and BALA_CODE to the folders of the
+two repositories if they aren't in the home folder.
 
-This is a first look, with one set of detectors and no check made to measure. The values to quote come from his own program, and joint.py joins them to E_peak by label.
-"""
+This is only a first look, with one set of detectors and no made-to-measure check. The values to quote come from his own program, and
+joint.py joins them to E_peak by label."""
 import importlib.util
 import os
 import subprocess
@@ -73,11 +74,11 @@ def background_fits(burst, detectors=ALL_NAI):
 
 
 def background_rate(fitter, window, band=ENERGY):
-    """Mean background in counts per second over a window, in a band or over all channels.
+    """The mean background in counts per second over a window, in a band or over all channels.
 
-    As in his run_precursor_mvt.py: the fit is evaluated on its own 1.024 s bins, and each bin is weighted by how much of it lies inside the window.
-    There is always one bin more than the window needs, with no weight, because GDT can't integrate a model with only one bin.
-    """
+    It's done as in his run_precursor_mvt.py: the fit is evaluated on its own 1.024 s bins, and each bin is weighted by how much of it lies
+    inside the window. There's always one bin more than the window needs, with no weight, because GDT can't integrate a model over a single
+    bin."""
     first, last = int(np.floor(window[0] / BACKGROUND_BIN)), int(np.ceil(window[1] / BACKGROUND_BIN)) + 1
     edges = BACKGROUND_BIN * np.arange(first, last + 1)
     model = fitter.interpolate_bins(edges[:-1], edges[1:])
@@ -152,12 +153,12 @@ def measure(haar, events, detectors, window, bin_width, workers):
 
 
 def mvt_table(burst, windows, bin_widths=(1e-4, 1e-5, 3e-6), workers=8, detectors=None, max_bins=300000, kinds=("precursor", "main", "tail", "given")):
-    """MVT of the chosen windows, from the widest bin down, with SNR_MVT and class. All windows share one set of NaI detectors.
+    """The MVT of the chosen windows, from the widest bin down, with SNR_MVT and the class. All windows share one set of NaI detectors.
 
-    The widest bin always runs, and narrower ones only while the light curve has at most max_bins bins, because the time goes up with the number of bins.
-    The smallest bin that ran gives the value to quote, as in Bala et al.: the median if the class is robust, and the 84th percentile as an upper limit otherwise.
-    plateau says if it agrees with the next bin up within one step of the ladder, and without a plateau the value can only be an upper limit. It's left empty if only one bin ran.
-    """
+    The widest bin always runs. Narrower ones only run while the light curve has at most max_bins bins, because the run time goes up with the
+    number of bins. The smallest bin that ran gives the value to quote, as in Bala et al.: the median if the class is robust, and otherwise
+    the 84th percentile as an upper limit. plateau says whether it agrees with the next bin up within one step of the ladder. Without a plateau
+    the value can only be an upper limit, and plateau is left empty if only one bin ran."""
     haar, commit = load_haar()
     curve = validation_curve()
     chosen_windows = [w for w in windows if w.kind in kinds]

@@ -1,0 +1,18 @@
+# GRB 160625B (bn160625945): published E_peaks of the precursor and the main emission, observer frame, times in s from the GBM trigger.
+# zhang2018: Zhang et al. 2018, Nature Astronomy 2, 69 (arXiv:1612.03089), Table I (time-integrated; the table gives no intervals).
+# ravasio2018: Ravasio et al. 2018, A&A 613, A16 (arXiv:1711.03106), section 3 and Appendix A; NaI 6 and 9 with both BGO, free NaI/BGO
+#   constant; 2sbpl is their smoothly broken power law with a second, low-energy break (at 107.8 keV here).
+# gbm_catalogue: the GBM spectral catalogue's own fits (glg_scat_all_bn160625945_*_v01.fit in the burst's data folder), b1 n6 n7 n9;
+#   the file stores two errors on each parameter without saying which is which, listed here in its order.
+# Errors are 1 sigma as printed (minus, plus); empty where not given.
+source,episode,t_start,t_stop,model,Epeak_keV,minus,plus,kT_keV,note
+zhang2018,precursor,,,cpl,66.8,1.8,1.8,,their sub-burst A; T90 0.84 s; time-resolved blackbody kT 13.6 to 15.6 keV
+zhang2018,main,,,band,448.8,4.22,4.42,,their sub-burst B; T90 35.1 s
+ravasio2018,precursor,0.002,1.056,cpl,70.05,1.85,1.98,15.47,alpha -0.21; the cut-off power law beats a blackbody by 214 in C
+ravasio2018,main,186.40,207.91,2sbpl,673.5,10.8,10.8,,E_break 107.8 keV; their preferred model
+ravasio2018,main,186.40,207.91,sbpl,327.5,2.8,2.8,,reduced chi-square 6.51
+ravasio2018,main,186.40,207.91,sbpl+bb,576.3,5.99,6.15,34.45,
+gbm_catalogue,main peak second,188.451,189.475,band,593.7,15.2,16.3,,pflx interval
+gbm_catalogue,main peak second,188.451,189.475,cpl,1253.4,24.3,27.4,,pflx interval
+gbm_catalogue,whole burst,-44.001,788.782,band,471.5,6.4,6.5,,flnc interval
+gbm_catalogue,whole burst,-44.001,788.782,cpl,550.5,5.4,5.8,,flnc interval

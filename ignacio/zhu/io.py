@@ -1,9 +1,8 @@
 """Files: where each burst's results live, its state, the code version that made them, and reading them back.
 
-Each burst has a folder results/zhu/<burst>/ with one file per stage (see run.py) and a state.json saying, for every stage, whether it is
-done, failed (with the error) or skipped (with the reason), when, and with which code. A burst is never dropped without a line saying why.
-Files are written to a temporary name and renamed, so a stopped run never leaves half a file behind.
-"""
+Each burst has a folder results/zhu/<burst>/ with one file per stage (run.py lists them) and a state.json. For every stage, state.json says
+whether it is done, failed (with the error) or skipped (with the reason), when, and with which code, so a burst is never dropped without a
+line saying why. Files are written to a temporary name and then renamed, so a stopped run never leaves half a file behind."""
 import hashlib
 import json
 import os
@@ -65,10 +64,10 @@ HELD = []           # lock files this process holds (run.claim); a forked worker
 
 
 def worker_start():
-    """Run at the start of every forked worker (the initializer of the pools in episodes and spectra). A worker inherits the batch
-    process's lock on its burst, and a lock is only released when every copy of it is closed, so a worker left running after the batch
-    process was stopped would keep the burst taken. The worker closes its copies, and asks the kernel to stop it when the process that
-    made it dies (prctl PR_SET_PDEATHSIG, Linux)."""
+    """Run at the start of every forked worker (the initializer of the pools in episodes and spectra). A worker inherits the batch process's
+    lock on its burst, and a lock is only released when every copy of it is closed. So a worker left running after the batch process was
+    stopped would keep the burst taken. The worker closes its copies, and asks the kernel to stop it when the process that made it dies (prctl
+    PR_SET_PDEATHSIG, Linux only)."""
     for handle in HELD:
         try:
             os.close(handle.fileno())

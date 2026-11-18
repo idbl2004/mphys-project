@@ -1,11 +1,10 @@
-"""E_peak and the MVT of the same windows, joined by label, for one burst or several. Nothing here measures an MVT.
+"""E_peak and the MVT of the same windows, joined by label, for one burst or several. Nothing in here measures an MVT.
 
-The MVT table comes from Rodrigo's program, one csv per burst, in the format agreed on 4 Nov 2026. This reads it, refuses a table that breaks the format
-instead of guessing, joins it to the E_peak table, and draws E_peak against MVT. The axes come from the data, because the two bursts together run from
-about 2 ms to 60 ms and from about 40 keV to 1600 keV.
+The MVT table comes from Rodrigo's program, one csv per burst, in the format we agreed on 4 Nov 2026. This reads it, refuses a table that
+breaks the format instead of trying to guess what was meant, joins it to the E_peak table, and draws E_peak against MVT. The axes are set
+from the data, because the two bursts together run from about 2 ms to 60 ms and from about 40 keV to 1600 keV.
 
-Run it from ignacio/ with:  python -m grbtool.joint GRB230307A GRB211211A
-"""
+Run it from ignacio/ with:  python -m grbtool.joint GRB230307A GRB211211A"""
 import argparse
 import csv
 from pathlib import Path
@@ -129,9 +128,9 @@ def _point(ax, x, y, y_lo, y_hi, x_lo, x_hi, is_limit, colour, marker, filled=Tr
 def epeak_against_mvt(bursts, path):
     """E_peak against MVT. bursts is a list of (name, E_peak table, joined table or None, instrument fractions or None).
 
-    Colour is the burst, a square is its precursor, and an open marker is provisional, with its made-to-measure check still to run. E_peak's bars are statistical and systematic, and the pale bars add the instrument term where there is one.
-    Dichiara et al.'s MVT is in grey, at my E_peak for the same window. Returns the axis limits.
-    """
+    Each burst has its own colour, its precursor is a square, and an open marker means the value is provisional because its made-to-measure
+    check hasn't run yet. E_peak's error bars are statistical plus systematic, and the pale bars add the instrument term where there is one.
+    Dichiara et al.'s MVT is drawn in grey, at my E_peak for the same window. Returns the axis limits."""
     fig, ax = plt.subplots(figsize=(7.2, 5.2))
     xs, ys = [], []
     for (name, epeak, joined, instrument), colour in zip(bursts, BURST_COLOURS):

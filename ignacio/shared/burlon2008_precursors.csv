@@ -1,0 +1,40 @@
+# Burlon et al. (2008, ApJ 685, L19; arXiv:0806.3076) Table 1: Swift bursts with a redshift (105 detected up to March 2008) whose BAT
+# 15-350 keV light curve shows a precursor (peak flux below the main event's, back to the background before the main event): 15 bursts,
+# 16 precursors (GRB 070306 has two). Copied from the arXiv PDF (page 9) and checked against a second reading. T1, T2: observer-frame
+# times from the BAT trigger (s). alpha: power-law photon index, N(E) ~ E^alpha, 90% errors. E_iso: 15-150 keV rest frame (erg), except
+# main pulses marked konus (Konus-Wind; 20-1000 keV for 050820A, 20-2000 keV for 060124, 20-5000 keV for 061121). main_epeak: their
+# footnote's cut-off power-law E_peak of the main pulse (keV, 90%); where it is given, alpha is that fit's. Printed as is: 060729's precursor alpha error ("+-20.75", left empty
+# here) and 050315's main T2 ("52."). Two energies look like exponent misprints (kept as printed): 070411's main 1.41E51 and 071010B's
+# precursor 7.21E51, where our BAT fits of the same windows give 1.56E52 and 7.28E50 (same leading digits, one power of ten off).
+grb,z,episode,t1_s,t2_s,alpha,alpha_minus,alpha_plus,eiso_erg,eiso_err_erg,source,main_epeak_keV,main_epeak_minus,main_epeak_plus
+GRB050820A,2.6,main,225,553,-1.12,0.15,0.13,1.07e53,0.23e53,konus,367,62,95
+GRB050820A,2.6,pre1,-17,22,-1.74,0.08,0.08,1.14e52,0.16e52,bat,,,
+GRB060124,2.297,main,301.2,811.2,-1.48,0.02,0.02,1.02e53,0.14e53,konus,193,39,78
+GRB060124,2.297,pre1,-1.5,13.5,-1.80,0.20,0.20,4.57e51,0.75e51,bat,,,
+GRB061121,1.314,main,61.8,83.38,-1.32,0.05,0.05,4.19e52,0.67e52,konus,557,66,66
+GRB061121,1.314,pre1,-5,10,-1.68,0.09,0.09,1.37e51,0.22e51,bat,,,
+GRB071010B,0.947,main,-1.5,15.23,-2.03,0.04,0.04,5.40e51,0.13e51,bat,,,
+GRB071010B,0.947,pre1,-30.0,-12.77,-1.76,0.19,0.19,7.21e51,0.11e51,bat,,,
+GRB070411,2.954,main,49.3,98.3,-1.65,0.11,0.11,1.41e51,0.93e51,bat,,,
+GRB070411,2.954,pre1,-19.7,31.3,-1.64,0.14,0.14,1.28e52,0.09e52,bat,,,
+GRB070306,1.49,main,83.5,154.5,-1.64,0.06,0.06,1.10e52,0.05e52,bat,,,
+GRB070306,1.49,pre1,-118.5,-103.5,-1.40,0.65,0.65,3.77e50,2.34e50,bat,,,
+GRB070306,1.49,pre2,-12.48,40.51,-1.59,0.26,0.26,2.99e51,0.82e51,bat,,,
+GRB061007,1.261,main,27.2,71.2,-0.94,0.03,0.03,6.06e52,0.08e52,bat,,,
+GRB061007,1.261,pre1,-2.8,12.2,-1.07,0.06,0.06,7.08e51,0.18e51,bat,,,
+GRB060729,0.54,main,56.9,123.9,-1.74,0.11,0.11,1.23e51,0.14e51,bat,,,
+GRB060729,0.54,pre1,-1.1,29.4,-1.8,,,2.34e50,1.36e50,bat,,,
+GRB060714,2.711,main,69.9,116.9,-1.30,0.47,0.47,1.90e52,0.16e52,bat,41.0,8.5,8.5
+GRB060714,2.711,pre1,-13.1,43.9,-1.86,0.20,0.20,1.35e52,0.25e52,bat,,,
+GRB060707,3.425,main,-7.3,49.7,-1.70,0.15,0.15,1.97e52,0.14e52,bat,,,
+GRB060707,3.425,pre1,-48.3,-23.3,-1.69,0.35,0.35,4.00e51,1.82e51,bat,,,
+GRB060210,3.91,main,-72.3,21,-1.39,0.08,0.08,5.15e52,0.34e52,bat,,,
+GRB060210,3.91,pre1,-236.3,-200.3,-1.40,0.33,0.33,1.07e52,0.20e52,bat,,,
+GRB060115,3.53,main,78.9,129.9,-1.63,0.11,0.11,1.99e52,0.24e52,bat,,,
+GRB060115,3.53,pre1,-22.1,30.9,-1.82,0.19,0.19,1.34e52,0.34e52,bat,,,
+GRB050401,2.90,main,20.7,29.71,-1.43,0.12,0.12,1.18e52,0.14e52,bat,,,
+GRB050401,2.90,pre1,-7.28,6.71,-1.45,0.10,0.10,2.01e52,0.20e52,bat,,,
+GRB050318,1.44,main,22.9,29.9,-1.94,0.09,0.09,1.83e51,0.11e51,bat,,,
+GRB050318,1.44,pre1,-1.1,5.8,-2.11,0.24,0.24,9.63e50,2.59e50,bat,,,
+GRB050315,1.949,main,-6.4,52,-2.16,0.09,0.09,2.42e52,0.10e52,bat,,,
+GRB050315,1.949,pre1,-57.5,-25.5,-1.72,0.30,0.30,2.37e51,0.11e51,bat,,,

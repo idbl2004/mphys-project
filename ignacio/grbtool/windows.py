@@ -37,10 +37,10 @@ class Window:
 def post_burst_start(burst, pre, after_t90=30.0, step=30.0, min_length=60.0):
     """Where the background after the burst starts: 30 s after T90, and later if that interval still has the burst in it.
 
-    T90 can end well before the emission does. GRB 230307A's tail is there at 70-120 s, and 30 s after T90 is 66 s. A tail in the interval makes the
-    polynomial a worse fit, and it stays fitted by the same polynomial once it's left out, so reduced chi2 falls. Moving 30 s later lowers it by 0.12 in
-    230307A's na and by 0.016 in 211211A's n2, and by at most 0.005 in the other eight bursts. Returns the start and the reduced chi2 of each detector.
-    """
+    T90 can end well before the emission does. GRB 230307A's tail is still there at 70-120 s, and 30 s after T90 is only 66 s. A tail inside the
+    interval makes the polynomial a worse fit, and once it's left out the rest is still fitted by the same polynomial, so the reduced chi2
+    falls. Moving 30 s later lowers it by 0.12 in 230307A's na and by 0.016 in 211211A's n2, and by at most 0.005 in the other eight bursts.
+    Returns the start and the reduced chi2 of each detector."""
     stop = burst.tte_range[1] - 1.0
     post = burst.t90_start + burst.t90 + after_t90
     if stop - post < 20.0:
@@ -78,10 +78,9 @@ def set_background(burst, first_emission=None, margin=5.0):
 def lull_precursor(blocks, start_sigma=3.0, lull_fraction=0.25):
     """The second try when there's no quiet gap: a drop below a quarter of the first peak, with a higher peak after it.
 
-    GRB 230307A never goes back to background between its precursor and its main emission, but it does drop. The window ends where the rate falls, and
-    the main emission starts where it has passed half of the first peak again. A burst found this way gets the flag no_quiet_gap, because a first pulse
-    of the main emission could look the same.
-    """
+    GRB 230307A never goes back down to the background between its precursor and its main emission, but it does drop. The precursor window
+    ends where the rate falls, and the main emission starts where the rate has passed half of the first peak again. A burst found this way
+    gets the flag no_quiet_gap, because a first pulse of the main emission could look just the same."""
     excess, sigma = blocks.excess.values, blocks.sigma.values
     first = int(np.argmax(sigma > start_sigma))
     highest = int(np.argmax(excess))

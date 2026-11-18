@@ -8,20 +8,18 @@ From ignacio/:
     python -m zhu.run batch --retry-failed       the same, and try again the bursts whose code failed in an earlier batch
     python -m zhu.run status                     one line per burst: its state, why it stopped if it did, and the code version used
 
-One burst goes through five stages, each writing its own files in results/zhu/<burst>/ and a line in state.json (io.py):
-    episodes      the light curve at their Tres, its Bayesian blocks, and the episodes under all three modes      episodes.json, blocks.csv,
-                                                                                                                light_curve.npz, quick_look.png
-    errors        every mode again on 40 light curves simulated from the blocks                                     realisations.csv
-    resolutions   every mode at half and twice their Tres                                                           resolutions.csv
-    lags          tau32 and tau42 of each mode's episodes (a window shared by two modes is measured once)          lags.csv
-    spectra       each mode's PE and ME: their way and our rule for zhu2026 and zhu2025, our rule for project       spectra_zhu2026.csv,
-                  (a window shared by two modes is fitted once)                                                     spectra_zhu2025.csv,
-                                                                                                                spectra_project.csv
-A stage whose files are there is skipped, so a stopped batch loses at most the stage it was in; when the episodes are made again, every
-later file and stage record goes with them. A burst that can't be measured (no data, no usable response, emission before the data start)
-is marked not_measurable with the reason, and a burst whose code fails is marked failed with the error; neither stops the batch, and
-neither is left without a line saying why.
-"""
+One burst goes through five stages. Each one writes its own files in results/zhu/<burst>/ and a line in state.json (io.py):
+- episodes: the light curve at their Tres, its Bayesian blocks, and the episodes under all three modes (episodes.json, blocks.csv,
+  light_curve.npz, quick_look.png);
+- errors: every mode again on 40 light curves simulated from the blocks (realisations.csv);
+- resolutions: every mode at half and twice their Tres (resolutions.csv);
+- lags: tau32 and tau42 of each mode's episodes, with a window shared by two modes measured once (lags.csv);
+- spectra: each mode's PE and ME, their way and our rule for zhu2026 and zhu2025 and our rule alone for project, with a shared window
+  fitted once (spectra_zhu2026.csv, spectra_zhu2025.csv, spectra_project.csv).
+A stage whose files are already there is skipped, so a stopped batch loses at most the stage it was in. When the episodes are made again,
+every later file and stage record goes with them. A burst that can't be measured (no data, no usable response, or emission before the data
+start) is marked not_measurable with the reason, and a burst whose code fails is marked failed with the error. Neither stops the batch,
+and neither is left without a line saying why."""
 import argparse
 import fcntl
 import os
@@ -103,10 +101,10 @@ def detectors_by_angle(folder, trigger, max_angle=60.0, most=3):
 
 
 def single_responses(folder, trigger):
-    """For bursts whose archive has only one response matrix per detector (.rsp, as for many bursts of 2011-2016) rather than the
-    time-resolved .rsp2 that grbtool downloads: fetch each detector's CSPEC .rsp and save a copy named ..._single.rsp2. Both files have the
-    same layout (a primary header, the energy bounds, then the matrices), so the shared code reads it as a .rsp2 with one matrix covering
-    the whole burst. Returns the detectors done."""
+    """For bursts whose archive has only one response matrix per detector (.rsp, as for many bursts of 2011-2016) instead of the
+    time-resolved .rsp2 that grbtool downloads. I fetch each detector's CSPEC .rsp and save a copy named ..._single.rsp2. Both files have the
+    same layout (a primary header, the energy bounds, then the matrices), so the shared code reads it as a .rsp2 with one matrix covering the
+    whole burst. Returns the detectors done."""
     import re
     import subprocess
     from grbtool.bursts import ARCHIVE, _listing
@@ -179,10 +177,11 @@ def quick_look(lc, blocks, found, path):
 
 
 def claim(name, root=RESULTS):
-    """Take a burst for this process: an exclusive lock (flock) on results/zhu/<burst>/.lock. The kernel lets go of it when the process
-    ends, however it ends, so a stopped batch never leaves a burst taken, and two processes can never both hold it. Returns the open lock
-    file, to be kept open while the burst is measured and passed to release() after, or None if another process has the burst. The
-    file itself is never deleted: deleting it while another process opens it could give two locks on two different files."""
+    """Take a burst for this process, with an exclusive lock (flock) on results/zhu/<burst>/.lock. The kernel lets go of the lock when the
+    process ends, however it ends, so a stopped batch never leaves a burst taken, and two processes can never both hold it. Returns the open
+    lock file, which has to stay open while the burst is measured and is passed to release() afterwards, or None if another process already
+    has the burst. The file itself is never deleted, because deleting it while another process opens it could give two locks on two
+    different files."""
     folder = Path(root) / name
     folder.mkdir(parents=True, exist_ok=True)
     handle = open(folder / ".lock", "a+")
@@ -263,11 +262,11 @@ def stage_lags(record, burst, out):
 
 
 def stage_spectra(record, burst, out, workers):
-    """Spectra of each mode's PE and ME (and EE and WE of the 2025 bursts if WITH_EE_WE): their way and our rule on the zhu2026 and
-    zhu2025 windows, our rule on the project windows (WAYS). A window is fitted once in a run: a mode whose window is exactly one already
-    fitted copies that row (the project mode only our rule's part of it). Nothing is taken from an earlier run. The intervals at the
-    telemetry limit are cut out of each window; a window entirely inside them gets a row with no fit and the flag
-    window_inside_bad_interval. t_start and t_stop are the episode's window; pieces_s are the stretches actually fitted."""
+    """Spectra of each mode's PE and ME (and of the 2025 bursts' EE and WE if WITH_EE_WE is set). Their way and our rule run on the
+    zhu2026 and zhu2025 windows, and only our rule on the project windows (WAYS). A window is fitted once per run: a mode whose window is
+    exactly one that was already fitted copies that row (for the project mode, only our rule's part). Nothing is taken from an earlier run. The
+    intervals at the telemetry limit are cut out of each window, and a window that lies completely inside them gets a row with no fit and the
+    flag window_inside_bad_interval. t_start and t_stop are the episode's window, and pieces_s are the stretches actually fitted."""
     from .spectra import fit_episodes
     bad = record["bad_intervals"]
     done = {}

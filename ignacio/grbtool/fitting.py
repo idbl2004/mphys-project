@@ -160,11 +160,12 @@ def fit_all_models(data, stages=None):
 
 
 def choose_model(fits):
-    """Two-break if its break is clean and it beats Band by Delta C > 11.8, Band if the tail is needed by Delta C > 9, otherwise Comptonized.
+    """Which model's E_peak to quote: the two-break model if its break is clean and it beats Band by Delta C > 11.8, Band if the
+    high-energy tail is needed by Delta C > 9, and otherwise the Comptonized.
 
-    A clean break sits above the bottom of the band and below half of E_peak, with its index off the limits and beta off -2.
-    11.8 is 3 sigma for the extra parameters, and it's the threshold from notebook 14. Returns the model and the index of E_peak in its free parameters.
-    """
+    A clean break sits above the bottom of the band and below half of E_peak, with the index below the break off its limits and beta clear
+    of -2. 11.8 is 3 sigma for the extra parameters, the same threshold as in notebook 14. Returns the model and the position of E_peak among
+    its free parameters."""
     band, band_fit = fits["band"]
     lb, lb_fit = fits["lowbreak"]
     _, cpl_fit = fits["cpl"]

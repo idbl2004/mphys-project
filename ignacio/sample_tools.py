@@ -174,14 +174,13 @@ def fit_episode(data_dir, trigger, detectors, spectra, label, window):
 
 
 def ccf_lag(low, high, bin_width, half_width=4, cut=False):
-    """Lag of the low-energy light curve behind the high-energy one, in s, from the peak of their cross-correlation.
+    """The lag of the low-energy light curve behind the high-energy one, in s, from the peak of their cross-correlation.
 
-    Both are background-subtracted counts in the same bins. high covers the window and low the window plus the same number of
-    extra bins on each side, so every trial lag sums over the same bins of high. With cut=True both cover only the window, and
-    trial lags up to half its length use fewer and fewer bins. That pulls the peak towards zero, but it's the usual recipe.
-    A positive lag means the low energies come later. The peak is refined with a parabola through the points within half_width
-    bins of the highest one. NaN if the highest point is at the end of the range of lags, since that isn't a peak.
-    """
+    Both are background-subtracted counts on the same bins. high covers the window, and low covers the window plus the same number of extra
+    bins on each side, so every trial lag sums over the same bins of high. With cut=True both only cover the window, so trial lags up to half
+    its length use fewer and fewer bins. That pulls the peak towards zero, but it's the usual recipe. A positive lag means the low energies come
+    later. The peak is refined with a parabola through the points within half_width bins of the highest one. It returns NaN if the highest
+    point is at the end of the range of lags, since that isn't a real peak."""
     if cut:
         c = np.correlate(low, high, mode="full")
         lags = np.arange(len(c)) - (len(high) - 1)

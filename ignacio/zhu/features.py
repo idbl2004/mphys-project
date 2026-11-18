@@ -1,13 +1,12 @@
-"""Feature tables: each burst's measured numbers read back into one row, set against Zhu et al.'s, and EPI from our numbers with its
+"""Feature tables: each burst's measured numbers read back into one row, set against Zhu et al.'s, and EPI from my numbers with its
 uncertainty.
 
-collect(mode) reads every results/zhu/<burst>/ folder (see run.py for the files) into one row per burst for one episode mode: the
-episodes, the spread of each number over the burst's simulated light curves, the numbers at half and twice their Tres, and the lags and
-spectra measured on that mode's own windows (their way and our rule for zhu2026 and zhu2025, our rule for project). A lag or spectrum is
-only read if its window is exactly the mode's window. against_theirs() puts their nine numbers beside ours. epi_samples() draws EPI from
-our measurement: the precursor's times move together as in one simulated light curve, and E_p,ME is drawn from its profile-likelihood
-interval. write_table() writes the final table with a quality status on every number (quality.py).
-"""
+collect(mode) reads every results/zhu/<burst>/ folder (run.py lists the files) into one row per burst for one episode mode. The row holds
+the episodes, the spread of each number over the burst's simulated light curves, the numbers at half and twice their Tres, and the lags
+and spectra measured on that mode's own windows (their way and our rule for zhu2026 and zhu2025, our rule for project). A lag or a
+spectrum is only read if its window is exactly the mode's window. against_theirs() puts their nine numbers next to mine. epi_samples()
+draws EPI from my measurement: the precursor's times move together, the way they do in one simulated light curve, and E_p,ME is drawn
+from its profile-likelihood interval. write_table() writes the final table with a quality status on every number (quality.py)."""
 import json
 
 import numpy as np
@@ -52,9 +51,9 @@ def _usable_error(value, error, side):
 
 
 def draw_two_piece(value, lo, hi, n, rng):
-    """Draws of a positive quantity with uneven minus and plus errors, as a two-piece normal in log10 (so draws stay positive): widths
-    log10(value / (value - lo)) below and log10((value + hi) / value) above, joined at the value. If one error is missing the other is
-    used for both sides (flag ep_error_one_sided); if both are, there are no draws and None is returned."""
+    """Draws of a positive quantity with uneven minus and plus errors, as a two-piece normal in log10 so the draws stay positive. The widths
+    are log10(value / (value - lo)) below and log10((value + hi) / value) above, joined at the value. If one error is missing, the other one is
+    used for both sides (flag ep_error_one_sided). If both are missing there are no draws, and it returns None."""
     if value is None or not np.isfinite(value) or value <= 0:
         return None
     lo, hi = _usable_error(value, lo, "lo"), _usable_error(value, hi, "hi")
@@ -182,11 +181,11 @@ def against_theirs(ours, table):
 
 
 def epi_samples(row, folder, n=4000, way="zhu", seed=11):
-    """EPI drawn from our measurement of one burst. way='zhu' uses E_p,ME from their model choice, 'ours' from our rule.
+    """EPI drawn from our measurement of one burst. way='zhu' uses E_p,ME from their model choice, and 'ours' from our rule.
 
-    The durations and MVT of the precursor come from the burst's own light curve, moved by the deviations one simulated realisation shows
-    from the median of all of them (in log10), so the three move together. E_p,ME is drawn from a two-piece normal with its profile errors.
-    Returns the samples (empty if the precursor or E_p is missing)."""
+    The durations and MVT of the precursor come from the burst's own light curve, moved by the deviations that one simulated realisation
+    shows from the median of all of them (in log10), so the three move together. E_p,ME is drawn from a two-piece normal with its profile
+    errors. Returns the samples, which are empty if the precursor or E_p is missing."""
     base = np.array([row.get("T100_PE", np.nan), row.get("T100_QE1", np.nan), row.get("TMVT_PE", np.nan)], float)
     if not np.all(np.isfinite(base) & (base > 0)):
         return np.array([])
@@ -205,9 +204,9 @@ MIN_COMPLETE = 5            # simulated light curves that must have all the numb
 
 
 def _timing_deviations(folder, mode, columns, n, rng):
-    """n rows of log10 deviations of the given numbers from their median over the burst's simulated light curves, each row from one
-    simulated light curve in which every one of the numbers was found (so they move together). None if fewer than MIN_COMPLETE such
-    light curves exist: the spread isn't known, and no draws are made rather than draws with no spread."""
+    """n rows of log10 deviations of the given numbers from their median over the burst's simulated light curves. Each row comes from one
+    simulated light curve in which every one of the numbers was found, so they move together. Returns None if fewer than MIN_COMPLETE such
+    light curves exist: then the spread isn't known, and I'd rather make no draws than draws with no spread."""
     path = folder / "realisations.csv"
     if not path.exists():
         return None
@@ -237,12 +236,14 @@ def epi_summary(ours, root=RESULTS, way="zhu"):
 
 
 def input_draws(row, folder, n=2000, seed=13):
-    """Draws of a burst's numbers within their errors, as log10 values named as in laws.NAMES. The timing numbers move together: each
-    draw takes the deviations from the median that one simulated light curve shows, using only light curves in which every timing number
-    the burst has was found (a light curve that lost the precursor says nothing about the precursor's spread). The E_peaks are drawn from
-    two-piece normals in log10 with their profile errors (draw_two_piece); E_p,ME is their way for their modes and our rule for the
-    project mode, and E_p,PE is drawn only where our rule counts it as measured. A number that can't be drawn (missing, no error, or too
-    few complete light curves) is left out, and a law that needs it skips the burst. Returns a DataFrame with n rows."""
+    """Draws of a burst's numbers within their errors, as log10 values named as in laws.NAMES.
+
+    The timing numbers move together. Each draw takes the deviations from the median that one simulated light curve shows, and only light
+    curves in which every timing number the burst has was found are used, because a light curve that lost the precursor says nothing about
+    the precursor's spread. The E_peaks are drawn from two-piece normals in log10 with their profile errors (draw_two_piece). E_p,ME is their
+    way for their modes and our rule for the project mode, and E_p,PE is drawn only where our rule counts it as measured. A number that can't
+    be drawn (missing, no error, or too few complete light curves) is left out, and a law that needs it skips the burst. Returns a DataFrame
+    with n rows."""
     rng = np.random.default_rng(seed)
     mode = row.get("mode", "zhu2026")
     timing = {"T100_PE": "T_PE", "T100_QE1": "T_QE1", "TMVT_PE": "MVT_PE", "T100_ME": "T_ME", "TMVT_ME": "MVT_ME", "T100_WE": "T_WE"}
@@ -297,7 +298,7 @@ def write_table(ours, path):
         out.loc[unfinished, column] = ours.loc[unfinished, "status"]
     header = ("# Zhu et al.'s bursts measured again (ignacio/zhu, notebooks 23-25). Times in s from the trigger; _p16/_p84 are the 16th and 84th\n"
               "# percentiles over 40 light curves simulated from each burst's blocks. E_peak in keV with profile-likelihood errors, their way (their\n"
-              "# models, BIC, PGSTAT, their energy ranges) and by our rule (notebook 14). Ep_PE_95_low/high: the 95% interval of the Comptonized\n"
+              "# models, BIC, PGSTAT, their energy ranges) and by our rule (notebook 14). Ep_PE_95_low/high: the one-sided 95% limits of the Comptonized\n"
               "# E_peak where the precursor's E_peak isn't measured. Lags in ms, soft behind hard; _cut_ms with both bands cut at the window.\n"
               "# EPI from E_p,ME their way; p16/p84 and P_EPI_above_6.2 from 4000 draws (features.epi_samples). *_status: see zhu/quality.py.\n")
     with open(path, "w") as f:

@@ -1,14 +1,13 @@
 """What each flag means, and a quality status for every number a burst gets.
 
-A number is only quoted with its status:
+I only quote a number together with its status:
   measured     found by the rule, with an error from the simulated light curves or the profile likelihood
   unstable     found in the data, but in fewer than STABLE_SHARE of the simulated light curves, so the rule's choice is fragile
   lower_limit  the episode runs into the background interval, so its end (and the durations that use it) can only be larger
-  limit        a spectrum not counted as measured: the 95% interval of the Comptonized E_peak is given instead of a value
+  limit        a spectrum not counted as measured: the Comptonized E_peak's 90% interval (one-sided 95% limits) is given instead
   unusable     not enough signal (a lag with no real peak, a spectrum that couldn't be fitted)
   unconstrained  a best-fit E_peak whose profile-likelihood search found no error on either side
-  missing      the episode or quantity isn't there for this burst
-"""
+  missing      the episode or quantity isn't there for this burst"""
 import numpy as np
 
 STABLE_SHARE = 0.8
@@ -87,7 +86,7 @@ def timing_status(row, quantity):
 
 
 def epeak_status(row, label, way="ours"):
-    """The status of a spectrum's E_peak: measured, limit (our rule: not measured, with its 95% interval), unusable, unconstrained,
+    """The status of a spectrum's E_peak: measured, limit (our rule: not measured, with its 90% interval), unusable, unconstrained,
     missing (no such episode) or not_fitted (their way isn't fitted on the project mode's windows)."""
     if _episode_missing(row, label):
         return "missing"

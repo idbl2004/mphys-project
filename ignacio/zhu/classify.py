@@ -1,18 +1,17 @@
-"""Their classification repeated on their own table, then tested; and EPI's threshold with an uncertainty.
+"""Zhu et al.'s classification repeated on their own table, then tested, and EPI's threshold with an uncertainty.
 
-Zhu et al. 2026 (sections 2.3 and 3): nine numbers per burst (T100 of PE, ME, WE and QE1, T_MVT of PE and ME, tau32 of ME and WE, E_p,ME),
-log10 of all but the two lags, then z-scored; t-SNE (perplexity 6) and UMAP (6 neighbours, min_dist 1e-4) down to two dimensions; HDBSCAN
-from scikit-learn on each map. They name the clusters by the bursts of known origin in them: the cluster with the kilonova bursts is
-Type I-L, the one with the supernova bursts Type II, and the one with three short bursts in old hosts (090510, 111117A, 161001A) Type I-S.
-Their Type I-L are the Type I with T100,ME > 2 s and T100,WE > 10 s.
+What they do (2026, sections 2.3 and 3): nine numbers per burst (T100 of the PE, ME, WE and QE1, T_MVT of the PE and ME, tau32 of the ME
+and WE, and E_p,ME), log10 of all but the two lags, then z-scored. These go down to two dimensions with t-SNE (perplexity 6) and UMAP (6
+neighbours, min_dist 1e-4), and HDBSCAN from scikit-learn finds clusters on each map. They name the clusters by the bursts of known origin
+inside them. The cluster with the kilonova bursts is Type I-L, the one with the supernova bursts is Type II, and the one with three short
+bursts in old hosts (090510, 111117A, 161001A) is Type I-S. Their Type I-L are the Type I with T100,ME > 2 s and T100,WE > 10 s.
 
-Here the same steps run on their table, with each random seed and setting recorded, and then:
-  - many seeds and settings, to see how often the merger group comes back the same;
-  - clustering in the nine-dimensional space itself (no map), with Gaussian mixtures of three kinds and with HDBSCAN;
-  - which numbers carry the split: the separation of each one alone, and the map with each one left out;
-  - groups made only from the five numbers that are not in EPI, to see how much of the split those numbers carry on their own;
-  - the EPI line with a bootstrap interval, and the chance a burst with a measured EPI and error lies above it.
-"""
+I run the same steps on their table, recording every random seed and setting, and then test them:
+- many seeds and settings, to see how often the merger group comes back the same;
+- clustering in the nine-dimensional space itself, with no map, using Gaussian mixtures of three kinds and HDBSCAN;
+- which numbers carry the split, from the separation each one gives on its own and from the map with each one left out;
+- groups made only from the five numbers that aren't in EPI, to see how much of the split those carry by themselves;
+- the EPI line with a bootstrap interval, and the chance that a burst with a measured EPI and error lies above it."""
 import numpy as np
 import pandas as pd
 from sklearn.cluster import HDBSCAN
@@ -53,12 +52,13 @@ def clusters(points, min_cluster_size=SETTINGS["min_cluster_size"]):
 
 
 def name_clusters(labels, names):
-    """Their naming, as it works out on their own table: a cluster holding a kilonova or old-host short burst and no supernova burst is
-    'merger'; one holding a supernova burst and none of the others is 'collapsar'; every other cluster, and the noise, is 'other'.
+    """Their naming, applied to the clusters found on their own table. A cluster holding a kilonova or old-host short burst and no
+    supernova burst is 'merger', one holding a supernova burst and none of the others is 'collapsar', and every other cluster (and the noise)
+    is 'other'.
 
-    With scikit-learn's default HDBSCAN (min_cluster_size 5) the t-SNE map of their table splits into about 26 clusters, and the ones with
-    merger anchors hold exactly their 44 Type I bursts, while only about a sixth of their Type II sit in clusters with a supernova burst.
-    So their Type II is in practice "not in a merger cluster", and compare() scores it that way. Returns a Series indexed by burst."""
+    With scikit-learn's default HDBSCAN (min_cluster_size 5) the t-SNE map of their table splits into about 26 clusters. The ones with
+    merger anchors hold exactly their 44 Type I bursts, but only about a sixth of their Type II sit in clusters with a supernova burst. So
+    their Type II really means "not in a merger cluster", and compare() scores it that way. Returns a Series indexed by burst."""
     names = pd.Index(names)
     merger_anchor = names.isin(KILONOVA_ANCHORS + SHORT_HOST_ANCHORS)
     sn_anchor = names.isin(SUPERNOVA_ANCHORS)
@@ -121,10 +121,10 @@ def robustness(table, seeds=range(20)):
 
 
 def mixture_in_feature_space(x, types, max_components=6, seeds=range(10), covariances=("full", "tied", "diag")):
-    """Gaussian mixtures on the nine numbers themselves, 1 to max_components, each the best of several seeds by BIC, for each kind of
-    covariance (full: each component its own; tied: one shared; diag: no correlations). For each, the component holding the most of their
-    Type I: its size, how many of their Type I and Type II it holds, and the adjusted Rand index of 'in that component' against their
-    Type I. Returns one row per covariance kind and number of components."""
+    """Gaussian mixtures fitted to the nine numbers themselves, with 1 to max_components components, each the best of several seeds by BIC,
+    for each kind of covariance (full, where each component has its own; tied, one shared by all; diag, no correlations). For each fit I take
+    the component holding most of their Type I, and record its size, how many of their Type I and Type II it holds, and the adjusted Rand
+    index of 'in that component' against their Type I. Returns one row per kind of covariance and number of components."""
     merger_theirs = types.str.startswith("I-").values
     rows = []
     for covariance in covariances:
@@ -175,10 +175,10 @@ def leave_one_out(table, method="umap", seeds=range(20)):
 
 
 def without_epi_inputs(table, method="umap", seeds=range(10), min_cluster_size=SETTINGS["min_cluster_size"]):
-    """Groups made only from the five numbers that are not in EPI (T100,ME, T100,WE, T_MVT,ME and the two lags), named by the same anchors,
-    against EPI on either side of 6.2 and against their types. The groups share no column with EPI, but they do share information:
-    T100,WE is T100,PE + T100,QE1 + T100,ME for every burst without extended emission, and tau32,WE is measured over the whole burst. So
-    this measures how much of the split those five numbers carry, not how circular EPI is."""
+    """Groups made only from the five numbers that aren't in EPI (T100,ME, T100,WE, T_MVT,ME and the two lags), named by the same anchors,
+    and compared with EPI on either side of 6.2 and with their types. These groups share no column with EPI, but they do share information:
+    T100,WE is T100,PE + T100,QE1 + T100,ME for every burst without extended emission, and tau32,WE is measured over the whole burst. So this
+    measures how much of the split those five numbers carry, not how circular EPI is."""
     rest = [f for f in FEATURES if f not in EPI_INPUTS]
     x = design_matrix(table, rest)
     above = table.EPI > EPI_LINE

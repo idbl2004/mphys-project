@@ -30,7 +30,7 @@ def test_saved_of_a_burst_never_measured_is_empty():
 
 @pytest.mark.slow
 @pytest.mark.skipif(not (HAVE_RESULTS and HAVE_DATA), reason=f"needs GRB {NAME} in data/fermiGBM and its batch results")
-def test_episodes_through_the_adapter_are_the_batch_episodes():
+def test_adapter_episodes_match_batch():
     from zhu.io import code_version, read_json
     saved_code = read_json(G.RESULTS / NAME / "episodes.json", {}).get("code_version", "")
     if saved_code.split("zhu:")[-1] != code_version().split("zhu:")[-1]:

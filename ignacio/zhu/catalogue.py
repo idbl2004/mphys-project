@@ -79,12 +79,9 @@ def read_table_2026(path=TABLE_2026):
 
 
 def build_sample(table, near_line=5.0, n_random=20, seed=CONTROL_SEED):
-    """The bursts we measure, each with the reason it's in.
-
-    z25: the 29 of 2025. type_I: every other GBM burst they call I-S or I-L. supernova: bursts with a supernova. near_line: Type II with
-    their EPI at least near_line, where a different measurement could move a burst across 6.2. random: a seeded draw from the other Type II,
-    so the controls aren't only the hard cases.
-    """
+    """The bursts I measure, each with the reason it's in. z25: the 29 bursts of the 2025 paper. type_I: every other GBM burst they call I-S
+    or I-L. supernova: the bursts with a supernova. near_line: Type II bursts with their EPI at least near_line, where a different measurement
+    could move a burst across 6.2. random: a seeded draw from the other Type II, so the controls aren't only the hard cases."""
     gbm = table[table.trigger.notna()]
     reasons = {}
     for name in SAMPLE_2025:

@@ -1,22 +1,21 @@
 """Looking for a classification law in the precursor: the simplest product of powers of measured numbers that separates the two kinds.
 
-A law here has the same form as EPI: a burst is called Type I (a merger) when
+A law has the same form as EPI. A burst is called Type I (a merger) when
 
     sum_i a_i log10(x_i) > c,
 
-for a few numbers x_i (durations, MVTs, E_peaks) with exponents a_i in steps of 0.5, like EPI's 2, -1, -1/2 and -1. That keeps a law short
-enough to write down and read physically. EPI is one such law, with four terms.
+for a few numbers x_i (durations, MVTs, E_peaks), with exponents a_i in steps of 0.5, like EPI's 2, -1, -1/2 and -1. That keeps a law short
+enough to write down and to read physically, and EPI itself is one of these laws, with four terms.
 
-How laws are found and judged:
-  - search() tries every set of up to max_terms numbers with every allowed exponent, and scores each by the area under the ROC curve
-    (threshold-free: how well the score orders Type I above Type II).
-  - nested_score() gives an honest success rate for the whole procedure: the burst sample is split into folds, the search is run on all
-    folds but one, the best law and its threshold are taken from those, and the law is tried on the fold left out. Picking the best of
-    thousands of laws on the same bursts used to judge it would flatter it; this doesn't.
-  - probabilities() gives each burst a chance of being Type I under a law, from draws of its inputs within their errors (features.py).
-The labels are Zhu et al.'s types, which come from clustering numbers that most laws also use, so agreement with them is partly built in
-(notebook 22, section 8). The precursor's own E_peak is not among their numbers, so a law that needs it is a test they didn't make.
-"""
+How the laws are found and judged:
+- search() tries every set of up to max_terms numbers with every allowed exponent, and scores each by the area under the ROC curve. That
+  score doesn't need a threshold: it measures how well the law puts Type I above Type II.
+- nested_score() gives a fair success rate for the whole procedure. The bursts are split into folds, the search runs on all the folds but
+  one, the best law and its threshold are taken from those, and then the law is tried on the fold that was left out. Picking the best of
+  thousands of laws on the same bursts used to judge it would make it look better than it is, and this avoids that.
+- probabilities() gives each burst a chance of being Type I under a law, from draws of its inputs within their errors (features.py).
+The labels are Zhu et al.'s types. Those come from clustering numbers that most laws also use, so some agreement with them is built in
+(notebook 22, section 8). The precursor's own E_peak is not one of their numbers, so a law that needs it is a test they didn't make."""
 from itertools import combinations, product
 
 import numpy as np
@@ -177,9 +176,9 @@ def probabilities(law, threshold, draws):
 
 
 def inputs(ours, measured_pe_only=True, way=None):
-    """log10 of the numbers a law can use, one row per burst, named as in NAMES. E_p,ME is their way (Ep_ME_zhu) unless way="ours" or the
-    table is from the project mode, whose E_peaks are all by our rule. The precursor's E_peak is kept only where our rule counts it as
-    measured (otherwise it is missing, and a law that needs it skips that burst)."""
+    """log10 of the numbers a law can use, one row per burst, named as in NAMES. E_p,ME is their way (Ep_ME_zhu) unless way="ours", or the
+    table comes from the project mode, whose E_peaks are all by our rule. The precursor's E_peak is only kept where our rule counts it as
+    measured. Otherwise it's missing, and a law that needs it skips that burst."""
     if way is None:
         way = "ours" if "mode" in ours and (ours["mode"] == "project").all() else "zhu"
     names = {(f"Ep_ME_{way}" if long == "Ep_ME_zhu" else long): short for long, short in NAMES.items()}
@@ -241,9 +240,10 @@ def compare_feature_sets(X, y, sets, folds=5, repeats=20, seed=7):
 
 
 def permutation_test(X, y, base_cols, extra, permutations=200, folds=5, repeats=4, seed=11):
-    """Does the column `extra` add to base_cols? The cross-validated log loss with it is compared with the same after shuffling `extra`
-    among the bursts, which keeps its spread but breaks any link with the labels. Returns (observed gain, the gains with it shuffled, p): p
-    is the share of shuffles that gain as much as the real column, so a small p means the column carries information about the labels."""
+    """Does the column `extra` add anything to base_cols? I compare the cross-validated log loss with it against the same thing after
+    shuffling `extra` among the bursts, which keeps its spread but breaks any link with the labels. Returns (observed gain, the gains with it
+    shuffled, p). p is the share of shuffles that gain as much as the real column, so a small p means the column carries information about
+    the labels."""
     rng = np.random.default_rng(seed)
     base = _cv_scores(X[base_cols], y, folds, repeats, seed).log_loss.mean()
     observed = base - _cv_scores(X[base_cols + [extra]], y, folds, repeats, seed).log_loss.mean()

@@ -1,13 +1,12 @@
-"""Everything instruments/swift_bat.py needs from outside the repository, fetched the same way every time (all public, from HEASARC and
-the BAT GRB catalogue at NASA GSFC). Run from ignacio/:
+"""Everything instruments/swift_bat.py needs from outside the repository, fetched the same way every time. It's all public, from HEASARC
+and the BAT GRB catalogue at NASA GSFC. Run from ignacio/:
 
-    python -m instruments.bat_data caldb        the BAT calibration database (about 70 MB) into ~/caldb
-    python -m instruments.bat_data catalogue    the BAT GRB catalogue's summary, 1-s peak and T100 power-law tables into ~/swift_bat
+    python -m instruments.bat_data caldb        the BAT calibration database (about 70 MB), into ~/caldb
+    python -m instruments.bat_data catalogue    the BAT GRB catalogue's summary, 1-s peak and T100 power-law tables, into ~/swift_bat
     python -m instruments.bat_data match        which bursts of Zhu et al.'s sample BAT saw (sample_in_bat_catalogue.csv)
-    python -m instruments.bat_data fetch        the bat/ and auxil/ folders of each matched burst's observation into ~/swift_bat/data
+    python -m instruments.bat_data fetch        the bat/ and auxil/ folders of each matched burst's observation, into ~/swift_bat/data
 
-HEASoft itself (with the BAT tools) is in the MVTEnvHEA environment; swift_bat.py finds it at ~/miniforge3/envs/MVTEnvHEA/heasoft.
-"""
+HEASoft itself (with the BAT tools) lives in the MVTEnvHEA environment, and swift_bat.py finds it at ~/miniforge3/envs/MVTEnvHEA/heasoft."""
 import subprocess
 import sys
 from pathlib import Path

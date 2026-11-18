@@ -1,10 +1,10 @@
 # GRB 230307A: light curves, precursor and time-resolved spectra (MPhys, Ignacio)
 
-Reproduction of Dichiara et al. (2023, ApJL 954, L29) from Fermi/GBM TTE data, Fig. 1 to Table 2, then checks
-that go beyond the paper, the same pipeline run on GRB 211211A, and a first run on a sample of other bursts. Scripts 01-07 run from the repo root
-(`python ignacio/03_reproduce_dichiara_fig1.py`); notebooks 08-20 run from `ignacio/` with the MVTEnv kernel, in
-the order given under Run times. Figures go to `ignacio/figures/` (01 and 02 write theirs to `ignacio/`, and those aren't tracked). Burst, data folder, detectors, bands and time windows are in
-`settings.py` (`settings_211211A.py` for GRB 211211A).
+This started as a reproduction of Dichiara et al. (2023, ApJL 954, L29) from the Fermi/GBM TTE data, from Fig. 1 to Table 2. Then come
+checks that go beyond the paper, the same pipeline run on GRB 211211A, and a first run on a sample of other bursts. Scripts 01-07 run from
+the repo root (`python ignacio/03_reproduce_dichiara_fig1.py`), and notebooks 08-20 run from `ignacio/` with the MVTEnv kernel, in the
+order given under Run times. Figures go to `ignacio/figures/` (01 and 02 write theirs to `ignacio/`, and those aren't tracked). The burst,
+data folder, detectors, bands and time windows are in `settings.py` (`settings_211211A.py` for GRB 211211A).
 
 | Script / notebook | What it does | Key result |
 |---|---|---|
@@ -28,13 +28,16 @@ the order given under Run times. Figures go to `ignacio/figures/` (01 and 02 wri
 | `19_energetics.ipynb` | k-corrections, E_iso, L_iso, the Amati plane, and the energy budget of a resonant shattering flare for both known bursts | precursors 3.63e50 and 1.84e49 erg/s in 10-1000 keV (4.05e50 and 2.14e49 with the k-correction); 211211A's needs 0.92 times the fiducial tidal rate, 230307A's 18 times |
 | `20_spectral_lags.ipynb` | spectral lags from the cross-correlation, tested with real photons and a known shift; Dichiara's and Troja's values; the sample | Dichiara's values and Troja's precursor value recovered; cutting both light curves at a short window returns only 60% of a shift; 230307A's precursor is 7.9 (-2.4/+2.9) ms when that's avoided; precursor lags follow the duration |
 
-`lightcurve_tools.py` holds the light-curve functions; `spectral_fit_tools.py` the spectral-fit ones (including
-the `BandLowBreak` model used in 12 and 14); `pileup_tools.py` the simulation of GBM's electronics used in 15 and 16; `sample_tools.py` the set-up of a new burst, the precursor rule and the lag code, used in 18 and 20. Tests of these are in `tests/` (`python -m pytest tests -q`, from `ignacio/`; pytest is in the environment file), and `environment_MVTEnv.yml` has the environment with exact versions. Notebook 17, the spectral half of the join with the MVT, goes in with the MVT table.
+`lightcurve_tools.py` holds the light-curve functions, `spectral_fit_tools.py` the spectral-fit ones (including the `BandLowBreak` model
+used in 12 and 14), `pileup_tools.py` the simulation of GBM's electronics used in 15 and 16, and `sample_tools.py` the set-up of a new
+burst, the precursor rule and the lag code, used in 18 and 20. Their tests are in `tests/` (`python -m pytest tests -q`, from `ignacio/`,
+with pytest in the environment file), and `environment_MVTEnv.yml` has the environment with exact versions. Notebook 17, the spectral half
+of the join with the MVT, goes in with the MVT table.
 
 ## Zhu et al. 2025 and 2026 measured again (`zhu/`, notebooks 22-26)
 
-The bursts of Zhu et al. (2025, MNRAS 541, 3236; 2026, ApJ 1003, 142) measured again from the GBM photons with their episode rules written
-as code, so every number has an error bar and a stated rule. All of it is in the package `zhu/`; the notebooks only read its results and
+The bursts of Zhu et al. (2025, MNRAS 541, 3236; 2026, ApJ 1003, 142), measured again from the GBM photons with their episode rules written
+as code, so every number has an error bar and a stated rule. All of it is in the package `zhu/`, and the notebooks only read its results to
 show, check and interpret them.
 
 | Module | What it does |
@@ -54,7 +57,7 @@ show, check and interpret them.
 |---|---|
 | `22_zhu_table_and_classification.ipynb` | their table alone: EPI and its line, their t-SNE/UMAP/HDBSCAN repeated, then tested over seeds and settings, without a map and with each number left out |
 | `23_zhu_episodes.ipynb` | their bursts measured again: the checks on every burst, the episodes and durations under the three rules against their printed edges and Table 1, what the rule changes of 13 Nov did, which quiet gap follows a precursor, what their T_MVT is and what that means for EPI, the detector choice, the error bars, every disagreement with its cause, and the threshold of a quiet episode (why GRB 230307A has no precursor under the rule as written) |
-| `24_zhu_spectra_and_lags.ipynb` | E_p of the main emission fitted their way and by our rule, against their table and the GBM catalogue's own fits; the precursor's E_p (measured, or a 95% interval); Tan et al.'s three Type IL candidates; the lags |
+| `24_zhu_spectra_and_lags.ipynb` | E_p of the main emission fitted their way and by our rule, against their table and the GBM catalogue's own fits; the precursor's E_p (measured, or a 90% interval); Tan et al.'s three Type IL candidates; the lags |
 | `25_zhu_epi_and_physics.ipynb` | EPI from our own numbers with its uncertainty and what it is made of; the precursor's E_p against EPI; the delay from precursor to main emission as an inspiral time; the size of the emitting region; energetics and the Amati plane |
 | `26_zhu_classification_laws.ipynb` | confirmed labels kept apart from candidates; the three populations (kilonova mergers, merger candidates, supernova collapsars); whether E_p,PE or E_p,PE/E_p,ME adds to EPI (nested cross-validation, permutation tests, bootstrap, limits at both ends) and whether it adds anything once E_p,ME is known; which of EPI's terms matter; the compact-law search, with its sensitivity to the least certain labels and to GBM's energy scale; how many confirmed mergers a test would need |
 
@@ -75,7 +78,7 @@ from the journal's machine-readable Table 1 (`shared/zhu2026_table1.csv`).
 ## Swift/BAT and the instrument layer (`instruments/`, notebook 27)
 
 The same burst seen by two instruments: Fermi/GBM and Swift/BAT through the same verbs (`burst`, `light_curve`, `episodes`, `spectrum`),
-each with its own implementation, since the two record and calibrate photons differently (the table in `fermi_gbm.py` sets out how).
+each with its own implementation, since the two record and calibrate photons differently (the top of `fermi_gbm.py` says how).
 
 | Module | What it does |
 |---|---|
@@ -89,11 +92,31 @@ each with its own implementation, since the two record and calibrate photons dif
 | `27_bat_check.ipynb` | the BAT chain against the catalogue; episode edges from BAT against GBM's; the precursors in BAT's band against what GBM's fits predict there |
 | `00_demonstration.ipynb` | the whole project once, in order, on one burst and then on the sample, every step calling the package or reading a saved table |
 
+## More samples and checks (`coppin/`, notebooks 29-33)
+
+| Module | What it does |
+|---|---|
+| `coppin/` | Coppin et al.'s (2020) GBM bursts with a precursor: the 103 long bursts not in Zhu et al.'s table whose precursor the data cover, measured with `zhu.run` unchanged into `results/coppin/` |
+| `instruments/bat_sample.py` | Swift/BAT bursts GBM didn't see: Burlon et al.'s (2008) precursors on their own windows, Li & Mao's (2022) bursts with the windows our rule finds in BAT's light curve, and any burst BAT saw |
+| `zhu/refit.py` | fits run again on chosen windows, set up exactly as the batch did: the windows whose fits ran out of time, a paper's own time slices, and the GBM catalogue's fits of each burst's brightest second |
+| `grbtool/samples.py` | one way in: `python -m grbtool sample zhu\|coppin\|burlon\|limao ...`, and `python -m grbtool <burst> --zhu` or `--swift` for one burst measured the way the samples were |
+
+| Notebook | What it shows |
+|---|---|
+| `29_coppin_precursors.ipynb` | Coppin et al.'s sample: their precursors against ours, the precursor's E_peak against the main emission's, EPI, and the windows for the MVT; GRB 160625B's soft precursor |
+| `30_swift_precursors.ipynb` | Burlon et al.'s 15 Swift bursts with BAT: their indices, our rule on BAT's light curve, softness in BAT's band, the shattering-flare budget, and the selection |
+| `31_which_nai.ipynb` | Zhu et al.'s 110 bursts with four choices of NaI, and why the choice decides GRB 230307A's quiet gap |
+| `32_swift_li_mao.ipynb` | Li & Mao's 52 Swift bursts through the same BAT chain |
+| `33_checks_on_epeak.ipynb` | the fits' time limit, GRB 160625B against the papers that measured it, our fits against the GBM catalogue's, and the confirmed bursts whose precursor E_peak is only bounded |
+
+29 needs `python -m coppin sample`, `prefetch` and `batch` first; 30 and 32 need `python -m instruments.bat_sample fetch`, `measure`
+and `limao`; 33 reads `python -m zhu.refit late --run` and `python -m zhu.refit catalogue` (the first about 14 hours on three cores).
+
 ## Reproducing the results
 
-Everything from the GBM and BAT photons to the tables and figures is code in this repository; nothing is edited by hand. The expensive
-part (the batch, hours) writes `results/zhu/` and `results/bat/`; the notebooks only read those and run in minutes, so their saved outputs
-can be read without running anything.
+Everything from the GBM and BAT photons to the tables and figures is code in this repository, and nothing is edited by hand. The expensive
+part (the batch, which takes hours) writes `results/zhu/` and `results/bat/`. The notebooks only read those and run in minutes, so their
+saved outputs can be read without running anything.
 
 **Environment.** `conda env create -f environment_MVTEnv.yml` (every package at its exact version). Swift/BAT needs HEASoft 6.37.1 with
 the BAT tools (the conda `heasoft` package, in a second environment, MVTEnvHEA) and the BAT calibration release of 7 June 2023
@@ -137,7 +160,7 @@ each burst's tables, and its `state.json`); the final batch ran every burst on c
 4. BAT: `python -m instruments.bat_data caldb`, `catalogue`, `match` and `fetch` (once), then `python -m instruments.bat_compare validate
    <BAT names>` (about 2 hours for 15 bursts, mostly the responses made every 5 s during slews), `episodes <names>` and
    `precursors <names>` (about 20 minutes together for 19 bursts), and notebook 27.
-5. `python -m pytest tests -q`: 131 tests in about 11 minutes; `-m "not slow"` leaves out the six that refit real spectra or run the
+5. `python -m pytest tests -q`: 149 tests in about 3 minutes; `-m "not slow"` leaves out the six that refit real spectra or run the
    BAT chain.
 
 **Rodrigo's MVT (Chandra).** The Haar-wavelet MVT is Rodrigo's code (MVTTools, branch haar-fix, commit 74b8ff2), run by him on Bath's
@@ -185,4 +208,8 @@ before 13, 14 before 16, 12 and 14 before 18 and 19, and 18 before 20; otherwise
 8. m01, m02, m03 and t1_07_18 overlap the GBM team's pile-up intervals (2.5-7.5 s in na, 2.5-11 s in b1). The simulated
    effect on E_peak is up to ~4% and isn't corrected in the table (15, section 5). Unexplained: why the b1 interval starts
    at 2.5 s when b1 reaches 87 kcps at ~1.8 s, and why the long data gaps start just after CSPEC bin edges (15, section 2).
-9. The sample is small. With 5 mergers and candidates against 4 collapsars, 18 only rules out a large difference in precursor E_p, and candidates aren't confirmed mergers. 200914A's main emission is 2 sigma above Tan et al.'s, and the two longest bursts are 12-18% above the catalogue, unexplained.
+9. 18's sample is small (5 mergers and candidates against 4 collapsars), so it only rules out a large difference in precursor E_p.
+   23-26 repeat the test on Zhu et al.'s 110 bursts, and 29 on Coppin et al.'s. 200914A's main emission is 2 sigma above Tan et al.'s,
+   and 18's two longest bursts are 10-20% above the catalogue's whole-burst fits. On the same interval (each burst's brightest
+   second) our fits give the catalogue's E_peak back, a median ratio of 1.000 over 144 bursts (33), so the fitting agrees and the
+   difference is in what is compared, or in response files remade since, as for GRB 160625B.

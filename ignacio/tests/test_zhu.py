@@ -47,7 +47,7 @@ def burst_and_episodes():
     return lc, blocks, find_episodes(lc, blocks)
 
 
-def test_the_rule_finds_each_episode_of_a_made_up_burst(burst_and_episodes):
+def test_episodes_of_made_up_burst(burst_and_episodes):
     _, _, found = burst_and_episodes
     for got, want in ((found.pe, (0.0, 0.2)), (found.qe1, (0.2, 0.8)), (found.me, (0.8, 4.0)), (found.qe2, (4.0, 5.0)), (found.ee, (5.0, 8.0))):
         assert got is not None
@@ -55,7 +55,7 @@ def test_the_rule_finds_each_episode_of_a_made_up_burst(burst_and_episodes):
     assert found.flags == []
 
 
-def test_durations_are_whole_numbers_of_bins_and_mvts_whole_numbers_of_half_bins(burst_and_episodes):
+def test_durations_and_mvts_on_bin_grid(burst_and_episodes):
     _, _, found = burst_and_episodes
     d = found.durations()
     for key in ("T100_PE", "T100_QE1", "T100_ME", "T100_EE", "T100_WE"):
@@ -92,7 +92,7 @@ def _two_pieces(pe, me, tail=None, seed=3):
     return LightCurve(edges, counts, np.full(len(counts), TRES), np.full(len(counts), 2000.0 * TRES), TRES)
 
 
-def test_a_precursor_brighter_than_the_main_emission_is_found():
+def test_bright_precursor_found():
     # zhu2026: "the peak count of the PE may be comparable to that of the ME, though with lower flux" when the QE is at the background
     lc = _two_pieces((0.0, 0.1, 30000.0), (0.5, 2.5, 24000.0))
     found = find_episodes(lc, blocks_of(lc), mode="zhu2026")
@@ -103,7 +103,7 @@ def test_a_precursor_brighter_than_the_main_emission_is_found():
     assert find_episodes(lc, blocks_of(lc), mode="zhu2025").pe is None
 
 
-def test_a_bright_spike_with_a_faint_long_tail_is_not_a_precursor():
+def test_spike_with_tail_not_precursor():
     # a short burst with extended emission: the tail has more counts but peaks far below the spike, so the spike stays the ME
     lc = _two_pieces((0.0, 0.3, 40000.0), (1.0, 20.0, 3000.0))
     found = find_episodes(lc, blocks_of(lc), mode="zhu2026")
@@ -119,7 +119,7 @@ def test_a_change_point_profile_peaks_at_the_step():
     assert prob[edges >= 200].sum() < 1e-10       # the block between 100 and 200 is certainly there
 
 
-def test_a_block_with_uncertain_edges_does_not_set_the_mvt():
+def test_uncertain_block_not_mvt():
     # a strong 20-bin step, and later one bin a little high (80 counts on 50, 4 sigma): the single bin is the shortest block, but its
     # edges aren't certain at 5 sigma, so the MVT comes from the step
     counts = np.full(400, 50.0)
@@ -132,7 +132,7 @@ def test_a_block_with_uncertain_edges_does_not_set_the_mvt():
     assert nbins == 20 and mvt == pytest.approx(10 * TRES) and overlap < 3e-7
 
 
-def test_simulated_realisations_find_the_precursor_with_a_spread(burst_and_episodes):
+def test_realisations_spread(burst_and_episodes):
     lc, blocks, _ = burst_and_episodes
     table = with_errors(lc, blocks, realisations=4)
     assert set(table["mode"]) == set(MODES) and len(table) == 4 * len(MODES)
@@ -188,7 +188,7 @@ def test_redshifts_come_from_the_project_first():
     assert redshift_of("100101A", found) is None
 
 
-def test_clusters_are_named_by_the_bursts_of_known_origin():
+def test_cluster_names():
     names = ["211211A", "a", "b", "090618A", "c", "d", "e"]
     labels = np.array([0, 0, 1, 1, 2, -1, 0])
     named = classify.name_clusters(labels, names)
@@ -210,14 +210,14 @@ def test_the_chance_of_lying_above_the_line():
     assert classify.probability_above(6.0, 0.1, 0.3, line=6.0) == pytest.approx(0.75)
 
 
-def test_the_threshold_sits_in_the_gap_between_two_clean_groups():
+def test_threshold_between_groups():
     table = pd.DataFrame(dict(EPI=np.r_[np.linspace(4, 5.9, 50), np.linspace(6.5, 8, 20)], Type=["II"] * 50 + ["I-S"] * 20))
     best, lo, hi, _ = classify.epi_threshold(table, boot=200)
     assert 5.9 < best < 6.5
 
 
 @real_data
-def test_their_channels_leave_out_the_k_edge_and_low_bgo():
+def test_their_channel_ranges():
     from grbtool.bursts import set_up
     from grbtool.fitting import all_spectra
     from grbtool.windows import Window
@@ -256,7 +256,7 @@ def test_the_quick_background_matches_the_full_one():
     assert len(background_counts(fitter, (8.0, 1000.0), np.array([0.0, 0.032]))) == 1
 
 
-def test_a_fit_away_from_its_limits_with_finite_errors_counts_as_constrained(monkeypatch):
+def test_constrained_fit(monkeypatch):
     from types import SimpleNamespace
     from gdt.core.spectra.functions import Comptonized
     from zhu import spectra
@@ -271,7 +271,7 @@ def test_a_fit_away_from_its_limits_with_finite_errors_counts_as_constrained(mon
     assert not spectra.constrained(function, fit, [0, 1])
 
 
-def test_the_inspiral_time_matches_the_textbook_numbers():
+def test_inspiral_time():
     from zhu.physics import BNS, frequency_at, inspiral_time
     assert BNS == pytest.approx(1.219, abs=1e-3)                     # two 1.4 solar-mass stars
     assert inspiral_time(100.0) == pytest.approx(2.16, abs=0.02)      # course notes: 2.2 s at 100 Hz
@@ -280,7 +280,7 @@ def test_the_inspiral_time_matches_the_textbook_numbers():
     assert inspiral_time(100.0) / inspiral_time(200.0) == pytest.approx(2 ** (8 / 3))
 
 
-def test_a_longer_delay_allows_a_lower_mode_frequency_and_a_redshift_raises_it():
+def test_delay_limits():
     from zhu.physics import delay_limits
     ours = pd.DataFrame(dict(pe_start=[0.0, 0.0], me_start=[0.5, 2.0]), index=["a", "b"])
     out = delay_limits(ours)
@@ -291,7 +291,7 @@ def test_a_longer_delay_allows_a_lower_mode_frequency_and_a_redshift_raises_it()
     assert with_z.f_min_nsbh["a"] < with_z.f_min_bns["a"]           # a heavier pair sweeps faster, so the same delay allows a lower frequency
 
 
-def test_the_guarded_pgstat_is_gdts_where_gdts_is_defined_and_finite_where_it_is_not():
+def test_safe_pgstat():
     from gdt.core.spectra.fitting import pgstat
     from zhu.spectra import safe_pgstat
     rng = np.random.default_rng(8)
@@ -307,7 +307,7 @@ def test_the_guarded_pgstat_is_gdts_where_gdts_is_defined_and_finite_where_it_is
     assert np.isfinite(safe_pgstat(*wild))
 
 
-def test_two_batches_cannot_take_the_same_burst_and_a_stopped_one_lets_go(tmp_path):
+def test_burst_lock(tmp_path):
     import subprocess
     from zhu import io, run
     held = run.claim("200101A", tmp_path)
@@ -334,7 +334,7 @@ def test_two_batches_cannot_take_the_same_burst_and_a_stopped_one_lets_go(tmp_pa
     assert run.finished("200101A", out_root=tmp_path, retry_failed=True, since="2000-01-01 00:00:00")     # failed again in this batch
 
 
-def test_a_law_search_finds_the_law_that_made_the_labels():
+def test_law_search_recovers_law():
     from zhu import laws
     rng = np.random.default_rng(3)
     X = pd.DataFrame(rng.normal(size=(300, 4)), columns=["a", "b", "c", "d"])
@@ -346,7 +346,7 @@ def test_a_law_search_finds_the_law_that_made_the_labels():
     assert folds.balanced_accuracy.mean() > 0.9
 
 
-def test_the_best_threshold_is_in_the_gap_and_auc_counts_ties_half():
+def test_best_threshold_and_auc_ties():
     from zhu import laws
     c, balanced = laws.best_threshold([1, 2, 3, 10, 11, 12], [0, 0, 0, 1, 1, 1])
     assert 3 < c < 10 and balanced == 1.0
@@ -354,7 +354,7 @@ def test_the_best_threshold_is_in_the_gap_and_auc_counts_ties_half():
     assert np.allclose(laws.aucs(np.array([[1.0, 3.0], [2.0, 2.0], [3.0, 1.0]]), [0, 0, 1]), [1.0, 0.0])
 
 
-def test_detectors_by_angle_take_the_closest_nais_and_the_bgo_on_their_side(monkeypatch):
+def test_detectors_by_angle(monkeypatch):
     from zhu import run
     angles = {"n0": 80.0, "n1": 55.0, "n2": 30.0, "n3": 70.0, "n4": 90.0, "n5": 100.0, "n6": 45.0, "n7": 120.0, "n8": 130.0, "n9": 140.0, "na": 50.0, "nb": 59.0}
     monkeypatch.setattr(run, "_angle", lambda data_dir, trigger, det: angles[det])
@@ -363,7 +363,7 @@ def test_detectors_by_angle_take_the_closest_nais_and_the_bgo_on_their_side(monk
     assert run.detectors_by_angle("GRBx", "bnx") == ["n6", "na", "n1", "b1"]
 
 
-def test_an_excess_in_the_first_block_is_not_a_precursor():
+def test_first_block_excess_ignored():
     lc = made_up_burst()
     edges = lc.edges[lc.edges >= -2.0]
     counts = lc.counts.copy()
@@ -385,7 +385,7 @@ def gap_burst(gap_bins, seed=4):
     return LightCurve(edges, counts, np.full(len(counts), TRES), np.full(len(counts), 2000.0 * TRES), TRES)
 
 
-def test_the_two_papers_differ_in_the_shortest_quiet_gap():
+def test_shortest_quiet_gap_by_paper():
     lc = gap_burst(9)                                   # a 36 ms gap: 9 bins, enough for 2026 (8) but not for 2025 (10)
     blocks = blocks_of(lc)
     assert find_episodes(lc, blocks, mode="zhu2026").pe is not None
@@ -398,7 +398,7 @@ def test_the_two_papers_differ_in_the_shortest_quiet_gap():
         assert abs(found.qe1[1] - (0.2 + 30 * TRES)) <= 2 * TRES
 
 
-def test_an_episode_result_records_its_blocks_and_reasons(burst_and_episodes):
+def test_episode_result_record(burst_and_episodes):
     _, blocks, found = burst_and_episodes
     record = found.record()
     for key in ("mode", "bin_width", "p0", "pe_blocks", "qe1_blocks", "me_blocks", "qe2_blocks", "ee_blocks", "pe_peak_rate", "qe1_snr_bin",
@@ -412,7 +412,7 @@ def test_an_episode_result_records_its_blocks_and_reasons(burst_and_episodes):
         find_episodes(made_up_burst(), blocks, mode="zhu2027")
 
 
-def test_each_burst_keeps_a_state_and_a_failure_is_recorded_not_skipped(tmp_path, monkeypatch):
+def test_burst_state_records_failure(tmp_path, monkeypatch):
     from grbtool.bursts import BurstError
     from zhu import io, run
     monkeypatch.setattr(run, "RESULTS", tmp_path)
@@ -448,7 +448,7 @@ def test_each_burst_keeps_a_state_and_a_failure_is_recorded_not_skipped(tmp_path
     assert calls == ["broken"]                           # unless asked to try the failures again, once
 
 
-def test_quality_statuses_say_what_kind_of_number_each_is():
+def test_quality_statuses():
     from zhu import quality
     row = dict(T100_PE=0.2, pe_found_fraction=0.95, T100_WE=80.0, flags="emission_reaches_background", measured_PE="False",
                Ep_PE_cpl_limit_lo=40.0, Ep_PE_ours=60.0, Ep_ME_zhu=np.nan, tau32_ME_ms=np.nan, tau32_ME_status="unusable:faint")
@@ -462,7 +462,7 @@ def test_quality_statuses_say_what_kind_of_number_each_is():
     assert "lower limits" in quality.meaning("emission_reaches_background")
 
 
-def test_the_literature_table_keeps_each_numbers_source():
+def test_literature_sources():
     from zhu.catalogue import read_literature
     lit = read_literature()
     assert {"paper", "where", "burst", "quantity", "value", "minus", "plus", "units", "definition", "source"} <= set(lit.columns)
@@ -493,7 +493,7 @@ def _precursor_fit(folder, trigger, window):
 
 @pytest.mark.slow
 @real_data
-def test_grb211211a_precursor_spectrum_matches_notebook_14():
+def test_211211a_precursor_spectrum():
     # notebook 14: the precursor is Comptonized with E_peak 64-67 keV
     row = _precursor_fit("GRB211211A", "bn211211549", (-0.016, 0.408))
     assert row["model"] == "Comptonized" and row["measured"]
@@ -503,7 +503,7 @@ def test_grb211211a_precursor_spectrum_matches_notebook_14():
 
 @pytest.mark.slow
 @pytest.mark.skipif(not HAVE_230307A, reason="needs GRB 230307A in data/fermiGBM")
-def test_grb230307a_precursor_band_peak_matches_notebook_09():
+def test_230307a_precursor_band_peak():
     # notebook 09: Band E_peak 170.3 +/- 5.3 keV with Dichiara's four detectors; with na and b1 alone notebook 12 found 0-14 keV higher
     row = _precursor_fit("GRB230307A", "bn230307656", (0.0, 0.4))
     assert row["measured"]
@@ -511,7 +511,7 @@ def test_grb230307a_precursor_band_peak_matches_notebook_09():
     assert row["model"] in ("Band", "BandLowBreak")         # the two-break model wins in na, the low-energy break of open point 3
 
 
-def test_a_column_that_carries_the_labels_passes_the_permutation_test_and_noise_does_not():
+def test_permutation_test():
     from zhu import laws
     rng = np.random.default_rng(12)
     X = pd.DataFrame(dict(base=rng.normal(size=160), signal=rng.normal(size=160), noise=rng.normal(size=160)))
@@ -524,7 +524,7 @@ def test_a_column_that_carries_the_labels_passes_the_permutation_test_and_noise_
     assert labels.label_status.tolist() == ["confirmed", "candidate", "confirmed"]
 
 
-def test_the_2026_count_test_uses_the_main_emission_alone():
+def test_2026_count_test_uses_me():
     """A precursor with more counts than the main pulse but fewer than the main pulse and its extended emission together. The gap after
     the precursor is at the background, so the 2026 rule compares counts: the main emission's alone, not the extended emission's too."""
     edges = np.round(np.arange(-2.0, 9.0 + TRES / 2, TRES), 9)
@@ -540,7 +540,7 @@ def test_the_2026_count_test_uses_the_main_emission_alone():
     assert find_episodes(lc, blocks, mode="zhu2025").pe is not None          # 2025 compares peaks, and the main peak is higher
 
 
-def test_the_light_curve_runs_between_the_background_intervals_on_whichever_sides_there_are():
+def test_light_curve_span():
     from types import SimpleNamespace
     from zhu.background import emission_span
     burst = SimpleNamespace(t90_start=0.0, t90=10.0, tte_range=(-30.0, 300.0), bkg_windows=[(-25.0, -5.0), (50.0, 250.0)])
@@ -567,7 +567,7 @@ def test_a_ccf_peak_counts_only_if_it_is_a_real_top():
     assert real and lag == pytest.approx(ccf_lag(np.roll(pulse, 3), pulse, 0.004, cut=True))
 
 
-def test_epeak_draws_stay_positive_and_keep_uneven_errors():
+def test_epeak_draws():
     from zhu.features import draw_two_piece
     rng = np.random.default_rng(0)
     draws = 10 ** draw_two_piece(100.0, 30.0, 60.0, 40000, rng)
@@ -599,7 +599,7 @@ def _write_burst(folder, spectra_me=(1.0, 3.0), measured_pe=False):
     real.to_csv(folder / "realisations.csv", index=False)
 
 
-def test_a_spectrum_is_read_only_on_the_window_it_was_fitted_to(tmp_path):
+def test_spectrum_window_match(tmp_path):
     from zhu.features import load_burst
     _write_burst(tmp_path / "b1", spectra_me=(1.0, 2.5))
     row = load_burst(tmp_path / "b1", "zhu2026")
@@ -607,7 +607,7 @@ def test_a_spectrum_is_read_only_on_the_window_it_was_fitted_to(tmp_path):
     assert row["Ep_PE_zhu"] == 55.0 and "ep_error_one_sided:PE_zhu" in row["flags"]
 
 
-def test_draws_of_a_bursts_numbers_skip_light_curves_that_lost_the_precursor(tmp_path):
+def test_input_draws_skip_lost_precursor(tmp_path):
     from zhu.features import epi_samples, input_draws, load_burst
     _write_burst(tmp_path / "b1")
     row = load_burst(tmp_path / "b1", "zhu2026")
@@ -620,7 +620,7 @@ def test_draws_of_a_bursts_numbers_skip_light_curves_that_lost_the_precursor(tmp
     assert "Ep_PE" in input_draws(load_burst(tmp_path / "b2", "zhu2026"), tmp_path / "b2", n=50)
 
 
-def test_each_modes_spectra_are_on_its_own_windows_and_a_window_is_fitted_once(tmp_path, monkeypatch):
+def test_spectra_windows_per_mode(tmp_path, monkeypatch):
     from zhu import run, spectra
     calls = []
 
@@ -650,7 +650,7 @@ def test_each_modes_spectra_are_on_its_own_windows_and_a_window_is_fitted_once(t
 
 
 
-def test_a_lag_is_quoted_only_when_its_own_resamples_pass_the_peak_rule(monkeypatch):
+def test_lag_peak_rule(monkeypatch):
     from zhu import lags
     source = object.__new__(lags.EpisodeLags)            # no photons needed: the curves and resamples are made up
     curves = (np.ones(450), np.zeros(450), np.ones(400), np.zeros(400), slice(25, 425), 50.0, 50.0)
@@ -672,7 +672,7 @@ def test_a_lag_is_quoted_only_when_its_own_resamples_pass_the_peak_rule(monkeypa
     assert np.isnan(out["lag_cut_ms"]) and out["cut_status"] == "unusable:peak_in_0.880" and out["lag_ms"] == pytest.approx(1.0)
 
 
-def test_statuses_for_a_missing_episode_an_unfinished_burst_and_the_cut_lag(tmp_path):
+def test_missing_and_unfinished_statuses(tmp_path):
     from zhu.features import write_table
     from zhu.quality import epeak_status, lag_status
     rows = pd.DataFrame([
@@ -691,7 +691,7 @@ def test_statuses_for_a_missing_episode_an_unfinished_burst_and_the_cut_lag(tmp_
     assert epeak_status(dict(mode="project", me_start=1.0, Ep_ME_ours=300.0), "ME", "zhu") == "not_fitted"
 
 
-def test_a_stopped_batch_lets_go_of_its_burst_while_its_workers_are_busy(tmp_path):
+def test_stopped_batch_releases_lock(tmp_path):
     import signal
     import subprocess
     import time
@@ -717,7 +717,7 @@ def test_a_stopped_batch_lets_go_of_its_burst_while_its_workers_are_busy(tmp_pat
         child.kill()
 
 
-def test_the_one_burst_command_records_a_failure_and_goes_on(tmp_path, monkeypatch):
+def test_burst_command_records_failure(tmp_path, monkeypatch):
     from zhu import io, run
     sample = pd.DataFrame(dict(trigger=["t1", "t2"], reason=["z25"] * 2, Tres=[0.004] * 2), index=["broken", "good"])
     done = []
@@ -734,7 +734,7 @@ def test_the_one_burst_command_records_a_failure_and_goes_on(tmp_path, monkeypat
     assert done == ["good"]
 
 
-def test_a_rejected_bright_precursor_leaves_the_main_emission_as_it_was():
+def test_rejected_bright_precursor():
     # a bright spike, background, then a fainter, shorter piece: moving the main peak to the second piece gives no acceptable PE (the
     # spike has more counts), so the spike stays the ME and the second piece is the extended emission
     lc = _two_pieces((0.0, 0.5, 40000.0), (3.5, 3.8, 24000.0))
@@ -745,7 +745,7 @@ def test_a_rejected_bright_precursor_leaves_the_main_emission_as_it_was():
     assert found.me_peak_rate > 30000 and "pe_peak_above_me_peak" not in found.flags
 
 
-def test_the_main_peak_is_the_brightest_emission_after_the_gap():
+def test_main_peak_after_gap():
     # bright spike, background, then 24k, a short dip and 36k: the main emission's peak is the 36k block, not the 24k piece after the gap
     lc = _two_pieces((0.0, 0.5, 40000.0), (2.0, 2.3, 24000.0), (2.5, 3.0, 36000.0))
     found = find_episodes(lc, blocks_of(lc), mode="zhu2026")

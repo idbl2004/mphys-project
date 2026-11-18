@@ -1,22 +1,21 @@
-"""Spectral lags in their bands, at a time resolution chosen by a written rule, measured two ways.
+"""Spectral lags in Zhu et al.'s bands, at a time resolution picked by a written rule, measured in two ways.
 
-Zhu et al. measure the lag of 25-50 keV behind 50-100 keV (tau32, 2025 and 2026) and behind 100-200 keV (tau42, 2025) from the peak of the
-cross-correlation function (CCF), with a time resolution chosen for each episode, and leave a lag out "if the CCF cannot be reliably fitted
-at a time resolution below 256 ms". Positive means the softer band comes later, as in long bursts.
+Zhu et al. measure how far 25-50 keV lags behind 50-100 keV (tau32, both papers) and behind 100-200 keV (tau42, 2025 only), from the peak
+of the cross-correlation function (CCF). They pick the time resolution for each episode, and they leave a lag out "if the CCF cannot be
+reliably fitted at a time resolution below 256 ms". A positive lag means the softer band comes later, as it usually does in long bursts.
 
-Here the resolution is the finest of 4, 8, ... 256 ms (and no finer than their Tres) at which
-  - both bands are at least MIN_SIGMA above the background in the episode,
-  - the episode is at least MIN_BINS bins long, and
-  - at least MIN_PEAK_FRACTION of the Poisson resamples have a real CCF peak (ccf_peak): the highest point at least 4 bins from either end
-    of the range of lags, a parabola through the 9 points around it that opens downwards, and its top inside those 9 points.
-That last test is our reading of "reliably fitted". It is made first on TRIAL_RESAMPLES as a quick screen, and then again on the 1000
-resamples the quoted lag comes from, so a quoted lag always meets it on its own resamples. A lag that fails is not quoted: its status says
-why (faint, too few bins, or no reliable peak up to 256 ms), and a lag that raises an error is stored as failed by run.py. The lag is
-measured two ways at that resolution:
-with the soft band running MARGIN_BINS past the episode, so every trial lag uses the same bins, and with both bands cut at the episode,
-the usual recipe and probably theirs, which pulls lags towards zero. The value is the median of 1000 Poisson resamples with a real peak and
-the errors their 16th and 84th percentiles; the cut version is judged by the same rule on its own resamples and has its own status.
-"""
+I use the finest of 4, 8, ... 256 ms (and nothing finer than their Tres) at which three things hold. Both bands have to be at least
+MIN_SIGMA above the background in the episode. The episode has to be at least MIN_BINS bins long. And at least MIN_PEAK_FRACTION of the
+Poisson resamples have to show a real CCF peak (ccf_peak). A real peak means the highest point is at least 4 bins from either end of the
+range of lags, and a parabola through the 9 points around it opens downwards with its top inside those 9 points. That last test is my
+reading of "reliably fitted". I run it first on TRIAL_RESAMPLES as a quick screen, and then again on the 1000 resamples the quoted lag
+comes from, so a quoted lag always passes it on its own resamples. A lag that fails isn't quoted, and its status says why (too faint, too
+few bins, or no reliable peak up to 256 ms). A lag that raises an error is stored as failed by run.py.
+
+At that resolution the lag is measured twice. Once with the soft band running MARGIN_BINS past the episode, so every trial lag uses the
+same bins, and once with both bands cut at the episode, which is the usual recipe (and probably theirs) but pulls lags towards zero. The
+value is the median of 1000 Poisson resamples that have a real peak, with the errors from their 16th and 84th percentiles. The cut version
+goes through the same rule on its own resamples and gets its own status."""
 import numpy as np
 from gdt.core.data_primitives import TimeBins
 from gdt.misc.bayesian_blocks import bayesian_blocks
@@ -37,12 +36,11 @@ TRIAL_RESAMPLES = 200           # for the "reliably fitted" test at each resolut
 
 
 def ccf_lag_fft(low, high, bin_width, half_width=4, cut=False):
-    """sample_tools.ccf_lag with the cut version's cross-correlation done by FFT, which gives the same lag (tests/test_zhu.py checks it).
+    """sample_tools.ccf_lag with the cut version's cross-correlation done by FFT. It gives the same lag (tests/test_zhu.py checks it).
 
-    With both bands cut at the episode every trial lag is needed, and a direct correlation of a 20,000-bin episode takes about 0.3 s, so the
-    1000 resamples of a long episode took minutes. The version with the soft band running past the episode only needs 2 MARGIN_BINS + 1
-    trial lags and is left to ccf_lag.
-    """
+    With both bands cut at the episode, every trial lag is needed, and a direct correlation of a 20,000-bin episode takes about 0.3 s, so the
+    1000 resamples of a long episode took minutes. The version with the soft band running past the episode only needs 2 MARGIN_BINS + 1 trial
+    lags, so that one is left to ccf_lag."""
     if not cut:
         return ccf_lag(low, high, bin_width, half_width)
     c = correlate(low, high, mode="full", method="auto")      # scipy picks FFT when it is faster
@@ -57,10 +55,11 @@ def ccf_lag_fft(low, high, bin_width, half_width=4, cut=False):
 
 
 def ccf_peak(low, high, bin_width, half_width=4, cut=False):
-    """The lag of sample_tools.ccf_lag (same CCF, same parabola), and whether it is a real peak: the highest point of the CCF is at least
-    half_width bins from either end of the range of lags, the parabola through the points within half_width of it opens downwards, and
-    its top lies strictly inside those points. ccf_lag only checks the first, and only for the version with the margin; a parabola that
-    opens upwards, or whose top is clipped to the edge of the points, is a shoulder or a plateau rather than a peak. Returns (lag in s, real)."""
+    """The lag of sample_tools.ccf_lag (same CCF, same parabola), and whether it's a real peak. A real peak has its highest point at least
+    half_width bins from either end of the range of lags, the parabola through the points within half_width of it opens downwards, and the
+    parabola's top lies strictly inside those points. ccf_lag only checks the first of these, and only for the version with the margin. A
+    parabola that opens upwards, or whose top gets clipped to the edge of the points, is a shoulder or a plateau, not a peak. Returns (lag in
+    s, real)."""
     if cut:
         c = correlate(low, high, mode="full", method="auto")
         lags = np.arange(len(c)) - (len(high) - 1)
@@ -167,13 +166,13 @@ class EpisodeLags:
 
 
 def known_shift_check(times, window, bin_width, shifts=(0.0, 0.006, 0.020), realisations=300, seed=3):
-    """The lag code on light curves with a known answer. Returns {shift: (mean lag, scatter, error of the mean)} in s.
+    """The lag code tested on light curves where I know the answer. Returns {shift: (mean lag, scatter, error of the mean)} in s.
 
-    A rate model is made from real photons (their Bayesian blocks at 4 ms, over the window and 1 s either side). Two light curves are drawn
-    from it with independent Poisson noise, each with half the counts, the soft one delayed by the shift, and the lag is measured with
-    sample_tools.ccf_lag. Over many draws the mean should be the shift. (Splitting the real photons into two halves instead leaves an
-    offset of about a quarter of a bin, because the halves share each bin's photons and so are anticorrelated at exactly the true lag.)
-    """
+    I make a rate model from real photons (their Bayesian blocks at 4 ms, over the window and 1 s either side). Then I draw two light curves
+    from it with independent Poisson noise, each with half the counts, delay the soft one by the shift, and measure the lag with
+    sample_tools.ccf_lag. Over many draws the mean should come out at the shift. I don't split the real photons into two halves instead,
+    because the two halves share each bin's photons, so they are anticorrelated at exactly the true lag, and that leaves an offset of about
+    a quarter of a bin."""
     fine = aligned_bin_edges((window[0] - 1.0, window[1] + 1.0), 0.004)
     counts = np.histogram(times, bins=fine)[0].astype(float)
     cp = bayesian_blocks(TimeBins(counts, fine[:-1], fine[1:], np.diff(fine)), p0=0.05)

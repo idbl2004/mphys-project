@@ -1,17 +1,18 @@
-"""E_peak of each episode two ways on the same spectra: their five models chosen by BIC, and our rule.
+"""The E_peak of each episode measured two ways on the same spectra: their five models chosen by BIC, and our rule.
 
-Their way (Zhu et al. 2025 section 2.3, 2026 section 2.2): NaI 10-900 keV without 30-40 keV, around the iodine K edge at 33 keV; BGO
-0.3-40 MeV, or 0.3-10 MeV for a precursor; PGSTAT; Band, CPL, Band+BB, CPL+BB and PL+BB; the model with the lowest
-BIC = -2 ln L + k ln N (k free parameters, N channels) among those "with all parameters well constrained". They sample each fit with MCMC in
-XSPEC. Here each model is fitted from many starts (the same minimiser as the rest of the project, with PGSTAT, guarded so it can't return
-NaN: safe_pgstat), and the chosen model's E_peak gets a profile-likelihood error. "Well constrained" is read as: every free parameter has a finite error from the covariance, sits
-away from its limits, and the amplitudes, E_peak and kT are known to better than 100%.
+Their way follows Zhu et al. 2025 (section 2.3) and 2026 (section 2.2). NaI 10-900 keV without 30-40 keV, around the iodine K edge at
+33 keV. BGO 0.3-40 MeV, or 0.3-10 MeV for a precursor. PGSTAT. Five models: Band, CPL, Band+BB, CPL+BB and PL+BB. The chosen model is the
+one with the lowest BIC = -2 ln L + k ln N (k free parameters, N channels) among those "with all parameters well constrained". They sample
+each fit with MCMC in XSPEC. I fit each model from many starts instead (the same minimiser as the rest of the project, with PGSTAT guarded
+so it can't return NaN, see safe_pgstat), and give the chosen model's E_peak a profile-likelihood error. I read "well constrained" as:
+every free parameter has a finite error from the covariance and sits away from its limits, and the amplitudes, E_peak and kT are known
+to better than 100%.
 
-Our way is grbtool.fitting.fit_window, the rule from notebook 14: Comptonized, Band or a two-break Band chosen by Delta C, NaI 8-900 keV and
-BGO 0.2-40 MeV, PSTAT. It runs as fit_window_ours, the same steps, except that an error search that stops without an answer gives a NaN
-error and a flag rather than losing the window (it happened in GRB 090618's main emission). Both run in the same worker on the same source and background spectra, so a difference between the two E_peaks
-is the model choice and the energy range, not the data.
-"""
+Our way is grbtool.fitting.fit_window, the rule from notebook 14: Comptonized, Band or a two-break Band, chosen by Delta C, with NaI
+8-900 keV, BGO 0.2-40 MeV and PSTAT. It runs as fit_window_ours, which is the same steps except that an error search that stops without an
+answer gives a NaN error and a flag instead of losing the whole window (this happened in GRB 090618's main emission). Both ways run in the
+same worker on the same source and background spectra, so a difference between the two E_peaks comes from the model choice and the
+energy range, not from the data."""
 import contextlib
 import copy
 import multiprocessing
@@ -47,14 +48,13 @@ TINY = 1e-12
 
 
 def safe_pgstat(obs_counts, mod_rates, exposure, back_counts, back_var, back_exp):
-    """GDT's pgstat (the profile Gaussian likelihood of the XSPEC manual), guarded so it is never NaN.
+    """GDT's pgstat (the profile Gaussian likelihood of the XSPEC manual), guarded so it never gives NaN.
 
-    PGSTAT treats the background in each channel as Gaussian with the variance of its fit, and profiles over it. Where that variance is
-    much larger than the background counts, as in the sparse high-energy channels after a cubic fit interpolated across a long burst
-    (GRB 090618's main emission: 25 counts of uncertainty on 8), the square root in the profiled background can go negative for some
-    model values, and GDT returns NaN, which also stops the minimiser comparing starts. Here the square root's argument is floored at
-    zero and the logarithm's at TINY. Where GDT's value is finite the two are the same (tests/test_zhu.py checks it).
-    """
+    PGSTAT treats the background in each channel as Gaussian, with the variance from its fit, and profiles over it. Where that variance is
+    much bigger than the background counts, as in the sparse high-energy channels after a cubic fit interpolated across a long burst (GRB
+    090618's main emission has 25 counts of uncertainty on 8), the square root in the profiled background can go negative for some model
+    values. GDT then returns NaN, which also stops the minimiser from comparing its starts. So I floor the square root's argument at zero and
+    the logarithm's at TINY. Where GDT's value is finite the two are identical, and tests/test_zhu.py checks that."""
     mask = obs_counts > 0
     pg = np.zeros_like(obs_counts, dtype=float)
     pg[~mask] = exposure * mod_rates[~mask] + back_counts[~mask] * (exposure / back_exp) - back_var[~mask] * (exposure / back_exp) ** 2 / 2.0
@@ -115,9 +115,10 @@ def constrained(function, fit, scale):
 
 
 def profile_error_pg(data, function, fit, index, reach=10.0, delta=1.0, seconds=None):
-    """(-, +) profile-likelihood error of free parameter `index` with PGSTAT: spectral_fit_tools.profile_error, which fits with PSTAT.
-    Each side is searched on its own, with half the time if seconds is given, so a side that fails or runs out of time leaves the other
-    side's error. Returns (minus, plus, notes): NaN for a side with no answer, and a note such as "error_search_failed:minus:ValueError"."""
+    """(-, +) profile-likelihood error of free parameter `index`, with PGSTAT (spectral_fit_tools.profile_error does the same with PSTAT).
+    Each side is searched on its own, with half the time each if seconds is given, so a side that fails or runs out of time still leaves the
+    other side's error. Returns (minus, plus, notes), with NaN for a side that has no answer and a note such as
+    "error_search_failed:minus:ValueError"."""
     best = list(function.default_values)
     k = np.flatnonzero(function.free)[index]
     with np.errstate(invalid="ignore"):

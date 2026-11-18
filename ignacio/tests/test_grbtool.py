@@ -50,7 +50,7 @@ def made_up_blocks(excess, sigma):
     return pd.DataFrame(dict(start=starts, stop=starts + 1.0, excess=excess, sigma=sigma))
 
 
-def test_a_dip_that_never_gets_quiet_is_found_only_by_the_second_rule():
+def test_lull_precursor_second_rule():
     blocks = made_up_blocks([0.0, 100.0, 10.0, 30.0, 500.0, 200.0], [0.0, 30.0, 12.0, 15.0, 80.0, 40.0])
     assert precursor_from_blocks(blocks) is None
     found = lull_precursor(blocks)
@@ -71,7 +71,7 @@ def test_the_telemetry_rule_rounds_out_to_half_seconds():
     assert Rates.telemetry_intervals(SimpleNamespace(edges=edges, summed=summed)) == [(3.0, 7.0)]
 
 
-def test_hits_of_the_limit_close_together_are_one_stretch_and_far_apart_are_not():
+def test_telemetry_stretches():
     edges = np.arange(0.0, 40.0, 0.016)
     summed = np.full(len(edges) - 1, 200.0)
     for a, b in ((3.25, 3.3), (5.95, 6.72), (30.1, 30.3)):
@@ -101,7 +101,7 @@ def test_the_model_rule():
     assert choose_model(fake_fits(500.0, 520.0, 499.0, band=(1.0, 300.0, -1.0, -2.0)))[0] == "cpl"
 
 
-def test_the_table_says_when_a_better_two_break_was_thrown_out():
+def test_rejected_two_break_flag():
     not_clean = fake_fits(500.0, 520.0, 480.0, lb=(1.0, 40.0, -1.9, -1.5, 300.0, -3.0))
     assert fit_flags(not_clean, choose_model(not_clean)[0], []) == "two_break_rejected"
     # nothing to say when the two-break isn't much better, or when it's the one quoted
@@ -110,7 +110,7 @@ def test_the_table_says_when_a_better_two_break_was_thrown_out():
     assert fit_flags(fake_fits(500.0, 520.0, 480.0), "lowbreak", ["band"]) == "out_of_time"
 
 
-def test_the_flags_of_the_rates_the_fits_and_the_checks_end_up_in_one_column():
+def test_flags_in_one_column():
     table = pd.DataFrame(dict(flags=["data_gaps", "", np.nan], fit_flags=["two_break_rejected", "", np.nan], check_failed=[np.nan, "OutOfTime: late", np.nan]))
     assert merged_flags(table) == ["data_gaps two_break_rejected", "checks_failed", ""]
     assert merged_flags(table[["flags"]]) == ["data_gaps", "", ""]
@@ -123,7 +123,7 @@ def test_the_time_limit_stops_a_slow_step():
                 pass
 
 
-def test_the_time_limit_leaves_nothing_behind_after_a_quick_step():
+def test_time_limit_cleans_up():
     with time_limit(5.0):
         pass
     assert signal.getitimer(signal.ITIMER_REAL) == (0.0, 0.0)
@@ -143,7 +143,7 @@ def made_up_table(**columns):
     return pd.DataFrame(base | columns, index=["pre", "main"])
 
 
-def test_quick_look_draws_with_and_without_a_precursor_and_a_failed_fit(tmp_path):
+def test_quick_look_draws(tmp_path):
     burst = SimpleNamespace(name="GRB000000A", detectors=["n0", "b0"], redshift=None)
     blocks = pd.DataFrame(dict(start=[-5.0, -1.0, 0.0, 5.0, 15.0], stop=[-1.0, 0.0, 5.0, 15.0, 20.0], excess=[0.0, 1000.0, 0.0, 5000.0, 0.0], sigma=[0.0, 10.0, 0.0, 50.0, 0.0]))
     quick_look(burst, made_up_table(), blocks, [(7.0, 8.0)], tmp_path / "both.png")
@@ -153,7 +153,7 @@ def test_quick_look_draws_with_and_without_a_precursor_and_a_failed_fit(tmp_path
         assert (tmp_path / f"{name}.png").stat().st_size > 0
 
 
-def test_k_correction_of_a_flat_spectrum_is_the_ratio_of_decades():
+def test_k_correction_flat_spectrum():
     # N(E) = E^-2 is flat in nuFnu, so the energy goes as the log of the range, whatever the redshift
     assert np.isclose(k_correction(lambda e: e**-2.0, 0.5), np.log(1e4) / np.log(100.0), rtol=1e-6)
 
@@ -202,7 +202,7 @@ def test_set_up_from_the_catalogue():
     assert b.redshift == 0.065
 
 
-def test_the_tool_gives_back_the_table_for_the_precursor(burst):
+def test_precursor_table(burst):
     windows = {w.label: w for w in windows_from_file(PRESETS["GRB230307A"]["windows_file"])}
     spectra, _ = all_spectra(burst, [windows["pre"]])
     row = fit_window(burst, windows["pre"], spectra)
@@ -219,7 +219,7 @@ def precursor_data(burst):
     return window_data(burst, windows["pre"], spectra)
 
 
-def test_a_fit_given_the_time_is_the_fit_from_fit_model(precursor_data):
+def test_timed_fit_matches_fit_model(precursor_data):
     starts = scaled_starts(Band(), *precursor_data, BAND_SHAPES[:6])
     expected = fit_model(*precursor_data, Band(), starts, polish=True)
     stages = Stages()
@@ -229,7 +229,7 @@ def test_a_fit_given_the_time_is_the_fit_from_fit_model(precursor_data):
     assert stages.late == []
 
 
-def test_running_out_of_time_keeps_the_best_start_and_says_so(precursor_data, monkeypatch):
+def test_time_out_keeps_best_start(precursor_data, monkeypatch):
     starts = scaled_starts(Band(), *precursor_data, BAND_SHAPES[:6])
     real, calls = fit_model, []
 
@@ -276,7 +276,7 @@ def mvt_file(tmp_path, text):
     return path
 
 
-def test_his_table_joins_to_the_epeak_table_of_both_bursts(tmp_path):
+def test_join_both_bursts(tmp_path):
     first = joint.read_mvt_table(mvt_file(tmp_path, MVT_HEADER + MVT_PRE + MVT_LIMIT))
     second = joint.read_mvt_table(mvt_file(tmp_path, MVT_HEADER + MVT_PRE))
     for name, table in (("230307A", first), ("211211A", second)):
@@ -286,7 +286,7 @@ def test_his_table_joins_to_the_epeak_table_of_both_bursts(tmp_path):
         assert (joined.Epeak_total_hi >= joined.Epeak_err_hi).all()
 
 
-def test_the_join_also_takes_a_results_table_of_the_tool_whose_flags_are_about_the_spectra(tmp_path):
+def test_join_tool_results_table(tmp_path):
     epeak = pd.DataFrame(dict(label=["pre"], t_start=[-0.064], t_stop=[0.32], Epeak=[170.3], Epeak_err_lo=[5.0], Epeak_err_hi=[5.0], flags=["no_quiet_gap"]))
     results = tmp_path / "windows.csv"
     epeak.to_csv(results, index=False)
@@ -323,7 +323,7 @@ def test_a_column_name_in_both_tables_is_refused(tmp_path):
         joint.join_tables(joint.read_epeak_table(joint.SHARED / "epeak_230307A.csv"), table)
 
 
-def test_an_mvt_written_in_ms_is_refused_because_it_is_longer_than_its_window(tmp_path):
+def test_mvt_in_ms_refused(tmp_path):
     table = joint.read_mvt_table(mvt_file(tmp_path, MVT_HEADER + MVT_PRE.replace("0.01522", "15.22")))
     with pytest.raises(joint.TableError, match="longer than its window"):
         joint.join_tables(joint.read_epeak_table(joint.SHARED / "epeak_230307A.csv"), table)
@@ -336,7 +336,7 @@ def test_what_does_not_join_is_listed(tmp_path):
     assert list(joined.index) == ["pre", "m11"] and left_out["no_epeak"] == ["bala_G"] and left_out["no_value"] == ["m11"] and "m02" in left_out["no_mvt"]
 
 
-def test_a_value_whose_check_has_not_run_is_marked_provisional_and_a_limit_is_not(tmp_path):
+def test_untested_value_is_provisional(tmp_path):
     joined, left_out = joint.join_tables(joint.read_epeak_table(joint.SHARED / "epeak_230307A.csv"), joint.read_mvt_table(mvt_file(tmp_path, MVT_HEADER + MVT_PRE + MVT_LIMIT + MVT_NA_ALONE)))
     assert left_out["provisional"] == ["pre"] and not joined.loc["m01", "provisional"] and not joined.loc["m08", "provisional"]
 
@@ -353,7 +353,7 @@ def test_the_axes_of_the_figure_hold_both_bursts(tmp_path):
 
 
 @pytest.mark.skipif(not (Path(os.environ.get("BALA_CODE", Path.home() / "bala_GBM_MVT_paper" / "MVTfermi")) / "clasify_mvt_value.py").exists(), reason="Bala et al.'s code isn't there")
-def test_snr_and_class_of_the_precursor_come_back_at_his_value(burst):
+def test_precursor_snr_and_class(burst):
     """His document of 4 Nov gives 121.6, 111.1 and robust at 15.22 ms, with his six detectors and Bala et al.'s background intervals."""
     detectors, window, tau_ms = ["n0", "n1", "n6", "n7", "n9", "na"], (-0.064, 0.320), 15.22
     assert background_intervals(burst) == BALA_BACKGROUND[burst.trigger]

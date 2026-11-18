@@ -1,20 +1,19 @@
-"""What the measured numbers mean physically: the inspiral time between precursor and main emission, the size the variability allows,
-and the energetics and shattering-flare budget where a redshift is known (the last two from grbtool.physics, unchanged).
+"""What the measured numbers mean physically: the time from precursor to main emission read as an inspiral time, and the size the
+variability allows. The energetics and the shattering-flare budget, where a redshift is known, come from grbtool.physics unchanged.
 
-Inspiral time. Two compact objects reach a gravitational-wave frequency f at a time
+Inspiral time. Two compact objects reach a gravitational-wave frequency f a time
 
     tau = (5/256) (G M_c / c^3)^(-5/3) (pi f)^(-8/3)
 
-before they merge (leading order, the same formula as the course notes: 2.2 s at 100 Hz for two 1.4 solar-mass stars). In the resonant
-shattering picture (Tsang et al. 2012) the crust breaks when f reaches the frequency of the crust-core interface mode, so the precursor
-starts tau before the merger. The main emission can't start before the merger, so the time from the start of the precursor to the start
-of the main emission, in the burst's rest frame, is at least tau. That puts a lower limit on the mode frequency, for an assumed chirp
-mass. Without a redshift the observed delay is used, which gives the lowest (safest) limit, since any redshift shortens the rest-frame
-delay and raises the limit.
+before they merge. This is the leading-order formula from the course notes, and it gives 2.2 s at 100 Hz for two 1.4 solar-mass stars.
+In the resonant shattering picture (Tsang et al. 2012) the crust breaks when f reaches the frequency of the crust-core interface mode,
+so the precursor starts tau before the merger. The main emission can't start before the merger, so the time from the start of the
+precursor to the start of the main emission, in the burst's rest frame, has to be at least tau. For a chosen chirp mass that gives a lower
+limit on the mode frequency. Without a redshift I use the observed delay. That gives the lowest, safest limit, because any redshift makes
+the rest-frame delay shorter and the limit higher.
 
-Size. Variability on a time dt (in the rest frame) means the region that changes is at most about c dt across, or 2 Gamma^2 c dt if it
-moves towards us with Lorentz factor Gamma.
-"""
+Size. If something varies on a time dt (in the rest frame), the region that changes can be at most about c dt across, or 2 Gamma^2 c dt if
+it is moving towards us with Lorentz factor Gamma."""
 import numpy as np
 import pandas as pd
 from astropy import constants as const
@@ -43,9 +42,10 @@ def frequency_at(tau, mc=BNS):
 
 
 def delay_limits(ours, z=None):
-    """For each burst with a precursor: the delay from the precursor's start to the main emission's start (observed, and in the rest frame
-    if z is given), and the lowest interface-mode frequency it allows for a neutron-star pair and for a neutron star with a 5 solar-mass
-    black hole. ours needs pe_start and me_start; z is a Series of redshifts (missing ones use the observed delay)."""
+    """For each burst with a precursor: the delay from the start of the precursor to the start of the main emission (observed, and in the
+    rest frame if z is given), and the lowest interface-mode frequency that delay allows, for a pair of neutron stars and for a neutron star
+    with a 5 solar-mass black hole. ours needs pe_start and me_start, and z is a Series of redshifts (bursts without one use the observed
+    delay)."""
     out = pd.DataFrame(index=ours.index)
     out["delay_obs"] = ours.me_start - ours.pe_start
     redshift = pd.Series(np.nan, index=ours.index) if z is None else z.reindex(ours.index)

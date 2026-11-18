@@ -21,7 +21,7 @@ bat_data = pytest.mark.skipif(not HAVE_BAT, reason="needs HEASoft, the BAT CALDB
 @bat_data
 @pytest.mark.slow
 @pytest.mark.parametrize("product", ["bevas", "bevps"])
-def test_the_chain_gives_the_archive_spectrum_and_response(product):
+def test_chain_matches_archive(product):
     check = B.against_archive(B.burst("GRB211211A"), product)
     assert abs(check["total_rate_ratio"] - 1) < 0.02            # the position differs slightly from the pipeline's
     assert check["worst_channel_sigma"] < 1.5
@@ -39,7 +39,7 @@ def test_the_light_curve_peaks_in_the_main_emission():
     assert 0 < t[np.argmax(rate)] < 15                          # the brightest part of GRB 211211A is in its first 15 s
 
 
-def test_the_gbm_offset_is_the_difference_of_the_two_trigger_times():
+def test_gbm_offset():
     bat = B.BatBurst("x", "00000000000", 0.0, "2021-12-11T13:09:59.634", 0.0, 0.0, Path("."), Path("."))
     assert B.gbm_offset(bat, "2021-12-11T13:09:59.651") == pytest.approx(-0.017, abs=1e-6)
 
@@ -59,13 +59,13 @@ def _orbit_files(folder, swift_km, fermi_km, ra=0.0, dec=90.0):
     return B.BatBurst("x", "00000000000", 0.0, "2021-12-11T13:09:59.634", ra, dec, folder, folder), folder / "trigdat.fit"
 
 
-def test_light_travel_is_positive_when_swift_is_nearer_the_burst(tmp_path):
+def test_light_travel_sign(tmp_path):
     # the burst straight above the north pole (dec 90): Swift 7000 km nearer to it than Fermi sees its light 7000/c = 23.35 ms earlier
     bat, trigdat = _orbit_files(tmp_path, [0.0, 0.0, 7000.0], [0.0, 0.0, 0.0])
     assert B.light_travel(bat, trigdat, 0.0) == pytest.approx(7000.0 / 299792.458, rel=1e-6)
 
 
-def test_light_travel_ignores_separations_across_the_line_of_sight(tmp_path):
+def test_light_travel_transverse(tmp_path):
     bat, trigdat = _orbit_files(tmp_path, [7000.0, 0.0, -100.0], [-7000.0, 300.0, 0.0])
     assert B.light_travel(bat, trigdat, 0.0) == pytest.approx(-100.0 / 299792.458, rel=1e-5)
 
@@ -76,12 +76,12 @@ def _diagonal_spectrum():
     return dict(rate=np.zeros(40), error=np.ones(40), e_min=edges[:-1], e_max=edges[1:], e_lo=edges[:-1], e_hi=edges[1:], matrix=np.eye(40))
 
 
-def test_expected_index_of_a_peak_far_above_the_band_is_alpha():
+def test_expected_index_peak_above_band():
     from instruments.bat_compare import expected_index
     assert expected_index(_diagonal_spectrum(), lambda e: B.cutoff_power_law(e, 1.0, -1.5, 1e5)) == pytest.approx(-1.5, abs=0.01)
 
 
-def test_expected_index_of_a_peak_inside_the_band_is_softer_than_alpha():
+def test_expected_index_peak_in_band():
     from instruments.bat_compare import expected_index
     spec = _diagonal_spectrum()
     cpl = lambda e_peak: (lambda e: B.cutoff_power_law(e, 1.0, -1.0, e_peak))
@@ -105,7 +105,7 @@ def test_light_travel_follows_the_burst_direction(tmp_path):
     assert B.light_travel(bat, trigdat, 0.0) == pytest.approx(4000.0 / 299792.458, rel=1e-5)
 
 
-def test_the_offset_adds_the_light_travel_time_at_the_time_asked(monkeypatch):
+def test_offset_includes_light_travel(monkeypatch):
     from instruments import bat_compare as C
     calls = {}
     monkeypatch.setattr(C.B, "burst", lambda name: "bat")
@@ -142,7 +142,7 @@ def test_expected_index_with_a_rectangular_response():
     assert expected_index(spec, lambda e: B.cutoff_power_law(e, 1.0, -1.3, 1e5)) == pytest.approx(-1.3, abs=0.02)
 
 
-def test_two_break_model_without_its_break_folds_like_band():
+def test_two_break_without_break_is_band():
     from gdt.core.spectra.functions import Band
     from spectral_fit_tools import BandLowBreak
     from instruments.bat_compare import _shape, expected_index

@@ -38,11 +38,12 @@ class Rates:
         self.gaps = pd.DataFrame({"t": merged[:-1][lost], "gap_ms": 1e3 * lengths[lost], "summed_kcps": local[lost] / 1e3})
 
     def telemetry_intervals(self, join=3.0, grid=0.5):
-        """Stretches where the summed rate is at the limit, rounded outwards to the next half second. Bins at the limit less than `join` seconds apart are one stretch.
+        """Stretches where the summed rate sits at the telemetry limit, rounded outwards to the next half second. Bins at the limit that are
+        less than `join` seconds apart count as one stretch.
 
-        In GRB 230307A the bins at the limit are at 3.25-3.30 s and 5.95-6.72 s, with the rate down to 82 kcps between them and gaps in the data at 4.80 and 5.83 s.
-        One stretch gives 3-7 s, the interval the GBM team give for TTE losses. `join` is set by this burst, the only one here that reaches the limit.
-        """
+        In GRB 230307A the bins at the limit are at 3.25-3.30 s and 5.95-6.72 s. Between them the rate drops to 82 kcps, and there are gaps in the
+        data at 4.80 and 5.83 s. Taking them as one stretch gives 3-7 s, which is the interval the GBM team give for the TTE losses. `join` is set
+        from this burst, since it's the only one here that reaches the limit."""
         at_limit = np.flatnonzero(self.summed >= TELEMETRY_KCPS)
         if not at_limit.size:
             return []

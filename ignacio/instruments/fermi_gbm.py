@@ -1,30 +1,26 @@
-"""Fermi/GBM through the same verbs as instruments/swift_bat.py (burst, light_curve, episodes, spectrum), so the two instruments can be
-compared burst by burst. Nothing here is new analysis: each function calls the GBM code already validated in notebooks 12-26 (grbtool and
-the zhu package) the way the batch (zhu/run.py) does, so a GBM number got here is the number in results/zhu.
+"""Fermi/GBM through the same functions as instruments/swift_bat.py (burst, light_curve, episodes, spectrum), so the two instruments can
+be compared burst by burst. There's no new analysis in here. Each function calls the GBM code already checked in notebooks 12-26 (grbtool
+and the zhu package) the same way the batch (zhu/run.py) does, so a GBM number from here is the number in results/zhu.
 
-How the two instruments differ, and what each module does about it:
+The two instruments record and calibrate photons in quite different ways, and each module deals with that in its own way:
+- Data. GBM gives time-tagged events (TTE): each photon's time (to 2 us) and one of 128 energy channels, for 12 NaI and 2 BGO detectors.
+  BAT's event file gives each photon's time, energy and detector, on 32,768 CdZnTe detectors under a coded mask.
+- Time zero. GBM uses its own trigger time. BAT times start at the BAT trigger, and gbm_offset() and light_travel() move them onto GBM's
+  axis for the same light.
+- Background. For GBM it's a polynomial in time for each detector and channel, fitted before and after the burst and kept clear of all
+  the emission (zhu.background.clear_background). BAT uses mask weighting instead: each event is weighted by whether the burst could reach
+  its detector through the mask, which takes the background out without a fit.
+- Statistics. GBM has Poisson counts on a modelled background, so PGSTAT or C-stat fits and Poisson Bayesian blocks. BAT has weighted
+  rates with Gaussian errors, so chi-squared fits and the Gaussian fitness for the blocks.
+- Response. GBM uses the catalogue's response for each detector (RSP2, interpolated to the window's time). For BAT, batdrmgen makes one
+  for each window, averaged over the slew when the burst moves across the field.
+- Band. GBM fits NaI 8-900 keV and BGO 0.3-40 MeV together. BAT only covers 15-150 keV, so most main-emission peaks are limits there.
+- Systematics. GBM's E_peak is about 10% off GECAM's in the bright phase and 20% in the precursor (notebook 15), and there is pile-up near
+  the telemetry limit. BAT has the standard systematic error vector (batphasyserr).
+- Time resolution. GBM uses Zhu et al.'s bin for each burst (4-64 ms here). BAT uses bins of at least 16 ms, because mask-weighted bins at
+  4 ms are often empty.
 
-                    Fermi/GBM (this file)                                  Swift/BAT (swift_bat.py)
-  data              time-tagged events (TTE): each photon's time (2 us)    the burst's event file: each photon's time, energy and
-                    and one of 128 energy channels, 12 NaI and 2 BGO       detector, on 32,768 CdZnTe detectors under a coded mask
-  time zero         the GBM trigger time                                   the BAT trigger time; gbm_offset() and light_travel()
-                                                                           put a BAT time on GBM's axis for the same light
-  background        a polynomial in time for each detector and channel,    mask weighting: each event is weighted by whether the burst
-                    fitted before and after the burst, clear of all the    could reach its detector through the mask, which removes
-                    emission (zhu.background.clear_background)             the background without a fit
-  statistics        Poisson counts on a modelled background: PGSTAT or     weighted rates with Gaussian errors: chi-squared, and the
-                    C-stat fits, and Poisson Bayesian blocks               Gaussian fitness for Bayesian blocks
-  response          the catalogue's response for each detector             batdrmgen for the window, averaged over the slew when the
-                    (RSP2, interpolated to the window's time)              burst moves across the field
-  band              NaI 8-900 keV and BGO 0.3-40 MeV fitted together       15-150 keV, so most main-emission peaks are limits
-  systematics       E_peak about 10% off GECAM's in the bright phase       the standard systematic error vector (batphasyserr)
-                    and 20% in the precursor (notebook 15), and
-                    pile-up near the telemetry limit
-  time resolution   Zhu et al.'s bin for each burst (4-64 ms here)         bins of at least 16 ms, since mask-weighted bins at 4 ms are
-                                                                           often empty
-
-Run from ignacio/ (or put it on sys.path), with GBM data in data/fermiGBM (python -m zhu.run prefetch).
-"""
+Run from ignacio/ (or put it on sys.path), with the GBM data in data/fermiGBM (python -m zhu.run prefetch)."""
 import sys
 from pathlib import Path
 
@@ -64,10 +60,10 @@ def episodes(gbm, tres, mode="zhu2026", name=""):
 
 
 def spectrum(gbm, start, stop, label="ME", bad_intervals=None, ways=("ours", "zhu"), minutes=None):
-    """Fits of one window, the stretches inside bad_intervals cut out: our rule (power law, Comptonized, Band, blackbody and the two-break
-    model, chosen by delta C) and their way (PGSTAT, lowest BIC). One row per window, as the batch writes it. By default the batch's own
-    choices: the intervals where the summed rate reaches GBM's telemetry limit (worked out as the batch does, which reads the photons
-    again) and its time per slow fitting step (zhu.run.SPECTRUM_MINUTES)."""
+    """Fits of one window, with the stretches inside bad_intervals cut out: our rule (power law, Comptonized, Band, blackbody and the
+    two-break model, chosen by Delta C) and their way (PGSTAT, lowest BIC), one row per window, just as the batch writes it. By default it
+    makes the batch's own choices: the intervals where the summed rate reaches GBM's telemetry limit (worked out the way the batch does, which
+    means reading the photons again) and the batch's time for each slow fitting step (zhu.run.SPECTRUM_MINUTES)."""
     from grbtool.checks import Rates
     from zhu.background import emission_span
     from zhu.run import SPECTRUM_MINUTES

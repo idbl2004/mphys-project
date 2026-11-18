@@ -1,26 +1,26 @@
-"""BAT against GBM for the bursts both saw: the chain checked against the BAT catalogue, episode boundaries from BAT's light curve against
-ours from GBM's, and BAT's spectrum of the precursor GBM defines. Results go to results/bat/.
+"""BAT against GBM for the bursts both of them saw: the BAT chain checked against the BAT catalogue, the episode edges from BAT's light
+curve against ours from GBM's, and BAT's spectrum of the precursor that GBM defines. Results go to results/bat/.
 
     python -m instruments.bat_compare validate GRB211211A GRB190114C ...     BAT catalogue names
     python -m instruments.bat_compare episodes 211211A 190114C ...           sample names (needs the zhu batch)
     python -m instruments.bat_compare precursors 211211A 190114C ...
 
-Times are put on GBM's axis with the difference of the two trigger times and the light-travel time between Swift and Fermi (up to about
-45 ms, swift_bat.light_travel), worked out at the time compared, which matters for precursors only tens of ms long. Every burst is
-handled on its own: one that can't be compared (no GBM episodes, no BAT data, a tool that fails) keeps its rows with the reason, so one
-burst never costs the rest of the table.
+Times are put on GBM's axis using the difference of the two trigger times and the light-travel time between Swift and Fermi (up to about
+45 ms, see swift_bat.light_travel). I work that out at the time being compared, which matters for precursors that only last tens of ms.
+Every burst is handled on its own. A burst that can't be compared (no GBM episodes, no BAT data, or a tool that fails) keeps its rows with
+the reason, so one burst never costs the rest of the table.
 
-For every precursor BAT has, GBM's best-supported fit of the same window (lowest AIC among the Comptonized, Band and two-break model) is
-folded through BAT's response and fitted with a power law, which gives the index BAT should measure if the two instruments agree
-(bat_pl_index_from_gbm); tension_sigma compares it with BAT's own index, allowing for GBM's model choice and statistics, and is left out
-where GBM doesn't measure the precursor's E_peak. This compares the instruments only where BAT's band can: no E_peak is forced on BAT.
+For every precursor BAT has, I take GBM's best-supported fit of the same window (the lowest AIC among the Comptonized, Band and two-break
+models), fold it through BAT's response and fit it with a power law. That gives the index BAT should measure if the two instruments agree
+(bat_pl_index_from_gbm). tension_sigma compares it with BAT's own index, allowing for GBM's model choice and statistics, and it is left out
+where GBM doesn't measure the precursor's E_peak. That way the instruments are only compared where BAT's band can say something, and no
+E_peak is forced on BAT.
 
-BAT's band is 15-150 keV, so an E_peak is only reported when the Comptonized fit (alpha > -2, so that it has a peak) puts it inside the
-band with finite profile errors and improves on the power law by Delta chi2 > 9 (3 sigma for one parameter). Otherwise the power-law
-photon index Gamma is given. Sakamoto et al. (2009, ApJ 693, 922) find that for 1.3 < Gamma < 2.3 the peak can lie anywhere from about 30
-to 220 keV, so the peak is only said to be above the band if Gamma < 1.3, or below it if Gamma > 2.3, by more than 2 sigma. Nothing is
-forced, and a fit that fails is recorded, not dropped.
-"""
+BAT's band is 15-150 keV, so I only report an E_peak when the Comptonized fit (alpha > -2, so that it has a peak) puts it inside the band
+with finite profile errors and beats the power law by Delta chi2 > 9 (3 sigma for one parameter). Otherwise the power-law photon index
+Gamma is given. Sakamoto et al. (2009, ApJ 693, 922) find that for 1.3 < Gamma < 2.3 the peak can be anywhere from about 30 to 220 keV, so I
+only say the peak is above the band if Gamma is below 1.3 by more than 2 sigma, or below the band if Gamma is above 2.3 by more than 2
+sigma. Nothing is forced, and a fit that fails is recorded, not dropped."""
 import json
 import sys
 from pathlib import Path
@@ -95,10 +95,10 @@ def _gbm(name):
 
 
 def _bat_and_offset(name, match, utc, trigdat, met, at=0.0):
-    """The BAT burst, the seconds to add to a time from the BAT trigger to put it on GBM's axis for the same light, the light-travel part
-    of that, and a note. The offset is the difference of the trigger times (gbm_offset) plus the light-travel time between the spacecraft
-    at `at` s from the GBM trigger (light_travel); if either spacecraft's position can't be read, the light-travel time is left out and the
-    note says so. Raises FileNotFoundError if there are no BAT data for the burst."""
+    """The BAT burst, the seconds to add to a time from the BAT trigger to put it on GBM's axis for the same light, the light-travel part of
+    that, and a note. The offset is the difference of the trigger times (gbm_offset) plus the light-travel time between the two spacecraft at
+    `at` s after the GBM trigger (light_travel). If either spacecraft's position can't be read, the light-travel time is left out and the note
+    says so. Raises FileNotFoundError if there are no BAT data for the burst."""
     bat = B.burst(match.loc[name, "bat"])
     shift = B.gbm_offset(bat, utc)
     try:
@@ -126,9 +126,10 @@ EPISODE_COLUMNS = ["burst", "episode", "bat_pcode", "gbm_start", "gbm_stop", "ba
 
 
 def episodes(names):
-    """zhu2026 episodes from BAT's light curve (bins of max(Tres, 16 ms)) against ours from GBM, on GBM's time axis (the difference of the
-    trigger times plus the light-travel time between the spacecraft at the start of the main emission, so the same light has the same
-    time). Three rows per burst (pe, qe1, me); a burst that can't be compared keeps its rows with the reason in bat_flags."""
+    """zhu2026 episodes from BAT's light curve (bins of max(Tres, 16 ms)) against ours from GBM, on GBM's time axis. To get there I add the
+    difference of the trigger times and the light-travel time between the spacecraft at the start of the main emission, so the same light has
+    the same time. There are three rows per burst (pe, qe1, me), and a burst that can't be compared keeps its rows with the reason in
+    bat_flags."""
     match = pd.read_csv(MATCH).set_index("burst")
     rows = []
     for name in names:
@@ -180,10 +181,10 @@ def _shape(function, params):
 
 
 def expected_index(spec, shape):
-    """The power-law index BAT would measure for a photon spectrum of this shape (one of GBM's fits): the shape folded through the
+    """The power-law index BAT would measure for a photon spectrum of this shape (one of GBM's fits). The shape is folded through the
     spectrum's own response and fitted with a power law on the same channels, with the same errors and no noise added. The overall scale
-    doesn't matter (it only rescales the power law's norm), so the shape alone sets the index. Raises ValueError if the shape can't be
-    folded (it isn't finite and positive in the band)."""
+    doesn't matter, because it only rescales the power law's normalisation, so the shape alone sets the index. Raises ValueError if the shape
+    can't be folded (if it isn't finite and positive across the band)."""
     from scipy.optimize import least_squares
     use = (spec["e_min"] >= B.BAND[0] - 1e-6) & (spec["e_max"] <= B.BAND[1] + 1e-6) & (spec["error"] > 0)
     model = B._photons(lambda e: shape(e), [], spec["e_lo"], spec["e_hi"]) @ spec["matrix"]
@@ -197,11 +198,11 @@ def expected_index(spec, shape):
 
 
 def gbm_shapes(name):
-    """GBM's fits of the zhu2026 precursor window that can be folded into BAT's band (our rule fits all of them whatever model it then
-    quotes): {model: (shape, C-stat, free parameters)} for the Comptonized, Band and two-break model; the shapes at the corners of the
-    Comptonized's 68% errors, for GBM's statistical spread; and a note. The corners are only used when GBM measures the precursor's E_peak
-    (otherwise the spread is undefined and so is the tension), alpha's error only when the Comptonized is the quoted model (the only case
-    it is stored), and alpha is kept above -1.99 so that the shape still has a peak."""
+    """GBM's fits of the zhu2026 precursor window that can be folded into BAT's band (our rule fits all three models, whichever one it then
+    quotes): {model: (shape, C-stat, free parameters)} for the Comptonized, Band and two-break models, the Comptonized shapes at the corners of
+    its 68% errors (for GBM's statistical spread), and a note. The corners are only used when GBM measures the precursor's E_peak, since
+    otherwise the spread isn't defined and neither is the tension. alpha's error is only used when the Comptonized is the quoted model,
+    because that's the only case where it is stored. alpha is kept above -1.99 so that the shape still has a peak."""
     from gdt.core.spectra.functions import Band, Comptonized
     from spectral_fit_tools import BandLowBreak
     from zhu import RESULTS
@@ -267,9 +268,9 @@ def _from_gbm(name, spec, index, i_minus, i_plus):
 
 
 def precursors(names):
-    """BAT's spectrum of the precursor GBM defines (zhu2026 rule), fitted with a power law and a Comptonized, beside GBM's E_peak and the
-    index GBM's fit predicts in BAT's band (_from_gbm). The response is averaged over the window as for the catalogue's T100
-    (swift_bat.spectrum_during_slew), which for a window of 5 s or less is the single response; times go to BAT's axis with the
+    """BAT's spectrum of the precursor that GBM defines (zhu2026 rule), fitted with a power law and a Comptonized, next to GBM's E_peak and
+    the index GBM's fit predicts in BAT's band (the _from_gbm columns). The response is averaged over the window, as the catalogue does for its
+    T100 (swift_bat.spectrum_during_slew), which for a window of 5 s or less is just the single response. Times go onto BAT's axis with the
     light-travel time at the middle of the window. A burst that can't be compared keeps a row with the reason in note."""
     from zhu.features import collect
     ours = collect("zhu2026")

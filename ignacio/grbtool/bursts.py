@@ -124,14 +124,32 @@ def download(name, trigger, root=DATA_ROOT):
 
 
 def _angle(data_dir, trigger, det):
-    """Angle between the detector and the burst from the response header, at the first response after the burst starts. None if there's no response."""
+    """The angle between the detector and the burst, from the response header, at the first response after the burst starts. None if
+    there's no response. Some responses from 2010-2012 have no DET_ANG. For those I work the angle out from the burst's spacecraft azimuth and
+    elevation (SRC_AZ, SRC_EL) and the detector's pointing (_angle_from_az_el), which gives DET_ANG back to within 0.1 deg on the responses
+    that have both."""
     try:
         path = rsp2_path(data_dir, trigger, det)
     except IndexError:
         return None
     with fits.open(path) as h:
         trigtime = h[0].header["TRIGTIME"]
-        return float([e.header["DET_ANG"] for e in h[2:] if e.header["TSTOP"] - trigtime > -1.0][0])
+        header = [e.header for e in h[2:] if e.header["TSTOP"] - trigtime > -1.0][0]
+        if "DET_ANG" in header:
+            return float(header["DET_ANG"])
+        return _angle_from_az_el(det, header["SRC_AZ"], header["SRC_EL"])
+
+
+def _angle_from_az_el(det, src_az, src_el):
+    """Angle (deg) between detector det's axis and a source at spacecraft azimuth src_az and elevation src_el (deg), with the detector
+    pointings of GDT's GbmDetectors."""
+    import astropy.units as u
+    from gdt.missions.fermi.gbm.detectors import GbmDetectors
+    d = GbmDetectors.from_str(det)
+    az, zen = d.azimuth.to_value(u.rad), d.zenith.to_value(u.rad)
+    s_az, s_zen = np.radians(src_az), np.radians(90.0 - src_el)
+    cos = np.sin(zen) * np.sin(s_zen) * np.cos(az - s_az) + np.cos(zen) * np.cos(s_zen)
+    return float(np.degrees(np.arccos(np.clip(cos, -1.0, 1.0))))
 
 
 def _detector_name(name):

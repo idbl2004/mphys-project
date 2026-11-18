@@ -1,10 +1,10 @@
-"""The light curve the episodes are found on, and its background.
+"""The light curve that the episodes are found on, and its background.
 
-The light curve is 8-1000 keV from the NaI detectors of the GBM catalogue for the burst (summed counts, mean live time), at the time
-resolution Zhu et al. chose for that burst. The background is a polynomial fitted in time to each detector and channel over an interval
-before and after the burst (lightcurve_tools.fit_background, as in every notebook since 05). Zhu et al. say only that they used GBM Data
-Tools; the choices here are the project's and are the same in every episode mode, so differences between the modes come from the rules.
-"""
+The light curve is 8-1000 keV from the NaI detectors the GBM catalogue lists for the burst (counts summed, live time averaged), binned at
+the time resolution Zhu et al. chose for that burst. The background is a polynomial in time for each detector and channel, fitted to an
+interval before and one after the burst (lightcurve_tools.fit_background, the same as in every notebook since 05). Zhu et al. only say
+that they used the GBM Data Tools, so these choices are mine. They are the same in every episode mode, so any difference between the
+modes comes from the rules and not from the light curve."""
 from dataclasses import dataclass
 
 import numpy as np
@@ -40,12 +40,11 @@ class LightCurve:
 
 
 def background_counts(fitter, band, edges, step=COARSE_BACKGROUND):
-    """Background counts in each bin from a fitted polynomial: lightcurve_tools.background_in_band, without its per-bin uncertainty.
+    """Background counts in each bin from a fitted polynomial. It's lightcurve_tools.background_in_band without the per-bin uncertainty.
 
-    GDT works out the uncertainty of the polynomial in every bin, which takes about 10 s per detector and band for 17,000 bins of 4 ms and
-    isn't used here. The polynomial is smooth over seconds, so it is evaluated on bins of `step` and spread over the fine bins through its
-    running sum (tests/test_zhu.py checks the two agree).
-    """
+    GDT works out the uncertainty of the polynomial in every bin, which takes about 10 s per detector and band for 17,000 bins of 4 ms, and I
+    don't use it here. The polynomial is smooth over seconds, so I evaluate it on bins of `step` and spread it over the fine bins through its
+    running sum (tests/test_zhu.py checks that the two agree)."""
     if len(edges) > 2 and np.min(np.diff(edges)) >= step:
         return background_in_band(fitter, band, edges)[0]
     # at least two coarse bins: GDT can't integrate a single bin
@@ -94,20 +93,22 @@ def light_curve(burst, tres, span=None, detectors=None):
 
 
 def clear_background(burst, rounds=5):
-    """Background intervals that keep clear of all the emission, extended emission and early precursors included. Returns flags.
+    """Background intervals that keep clear of all the emission, including extended emission and early precursors. Returns flags.
 
-    grbtool's set_background starts the interval after the burst 30 s after T90 (or later if the fit improves), and ends the one before it
-    5 s before T90 starts. T90 can miss a long weak tail: Zhu et al.'s whole-burst duration of GRB 090618 ends at about 195 s, and their
-    230307A at about 133 s, both after grbtool's interval has begun. So the light curve is binned at COARSE over the whole TTE, split into
-    blocks, and any block EMISSION_SIGMA above the fitted background pushes the intervals back to CLEAR_MARGIN from it. Before the
-    burst's first emission the search is made again at FINE, where a block PRECURSOR_SIGMA above the background counts too, because a
-    precursor of half a second is diluted in COARSE bins and can sit inside the interval before the burst (GRB 131216A's, 107 s before its
-    main emission, and 131209B's, 16 s before), where it would be fitted as background. The fit is then
-    redone without the emission, which can show more of a tail, and this repeats until nothing moves. Where the data start or end close to
-    the burst, an interval is kept as long as the data allow but never closer than EDGE_MARGIN to the emission, and the burst is flagged.
-    (Short GRB 130804A's data start 8 s before it, and an interval stretched to 20 s would have covered the burst.) Where grbtool found no
-    room after the burst, an interval after the emission is added if at least MIN_POST is left, with a straight-line background.
-    """
+    grbtool's set_background starts the interval after the burst 30 s after T90 (or later if that makes the fit better), and ends the one
+    before it 5 s before T90 starts. But T90 can miss a long weak tail. Zhu et al.'s whole-burst duration of GRB 090618 ends at about 195 s,
+    and their 230307A at about 133 s, both after grbtool's interval has already begun. So I bin the light curve at COARSE over the whole TTE,
+    split it into blocks, and any block EMISSION_SIGMA above the fitted background pushes the intervals back to CLEAR_MARGIN away from it.
+    Before the burst's first emission I search again at FINE, where a block PRECURSOR_SIGMA above the background counts too. A precursor of
+    half a second gets diluted in COARSE bins and could end up inside the interval before the burst, where it would be fitted as background
+    (GRB 131216A's is 107 s before its main emission, and 131209B's 16 s before). Then the fit is redone without the emission, which can show
+    more of a tail, and this repeats until nothing moves.
+
+    Where the data start or end close to the burst, I keep the interval as long as the data allow, but never closer than EDGE_MARGIN to the
+    emission, and flag the burst (short GRB 130804A's data start 8 s before it, and stretching the interval to 20 s would have covered the
+    burst). Where grbtool found no room after the burst, an interval after the emission is added if at least MIN_POST is left, with a
+    straight-line background. A long, faint precursor can still slip through: GRB 180722C (not in the sample) has a 7 s excess at about
+    -90 s that is only 3 sigma once the 1% systematic is included, so it stays in the background."""
     from .episodes import blocks_of          # here, because episodes imports this module
     flags = set_background(burst)
     tte_start, tte_stop = burst.tte_range[0] + 1.0, burst.tte_range[1] - 1.0
