@@ -123,7 +123,7 @@ def window_response(data_dir, burst_id, det, window, bin_width=0.256):
     if covers.size:
         rsp, how = rsp2.extract_drm(index=covers[0]), "single DRM"
     else:
-        edges = np.append(np.arange(window[0], window[1], bin_width), window[1])
+        edges = response_bin_edges(window, bin_width)
         tte = GbmTte.open(tte_path(data_dir, burst_id, det))
         lightcurve = tte.to_phaii(bin_by_edges, edges).to_lightcurve()
         tte.close()
@@ -297,3 +297,14 @@ def simulate_pha(pha, bak, rsp, function, params, rng):
         + np.asarray(bak.data.counts)
     fake = EnergyBins(rng.poisson(expected), pha.data.lo_edges, pha.data.hi_edges, pha.exposure)
     return Pha.from_data(fake, gti=pha.gti, trigger_time=pha.trigtime)
+
+
+def response_bin_edges(window, bin_width=0.256):
+    """Edges of the bins a window is cut into for its counts-weighted response: one every bin_width from the start, then the end.
+
+    When the window is a whole number of bins, np.arange can give the end itself as the last start (to within rounding), and the
+    end would then appear twice, which stops GDT's histogram. So a start within a microsecond of the end is dropped. The TTE clock
+    ticks every 2 microseconds, so no real bin is lost, and every other window gets the edges it always had.
+    """
+    starts = np.arange(window[0], window[1], bin_width)
+    return np.append(starts[starts < window[1] - 1e-6], window[1])
